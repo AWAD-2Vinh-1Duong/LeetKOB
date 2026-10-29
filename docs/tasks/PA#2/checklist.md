@@ -108,7 +108,7 @@ Dưới đây là Checklist chi tiết dành cho bạn và đồng đội (đặ
 
 
 
-**Giai đoạn 7: Đóng gói & Nộp bài (Tiêu chí 7 & Quy định chung)** - Bình Dương làm
+**Giai đoạn 7: Đóng gói & Nộp bài (Tiêu chí 7 & Quy định chung)** - Bình Dương l
 
 * [ ] Hoàn tất file `AI-LOG.md` với ít nhất 2 mục Changed/Rejected có nguồn gốc từ sự cố thực tế xảy ra trong lúc code.
 
