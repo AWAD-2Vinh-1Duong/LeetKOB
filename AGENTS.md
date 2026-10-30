@@ -32,7 +32,8 @@ Run these commands to verify code changes. CI and local development use the exac
 - **Idempotency & Paging:** Mutation endpoints (e.g., submission uploads, publishing marks) must respect idempotency keys. List/queue endpoints must implement cursor-based pagination.
 - **Exports & Functions:** Use named exports exclusively. No default exports.
 - **Clean Logging:** No `console.log` statements inside the `src/` directory. Use a structured logger or clean output streams.
-
+- **Git & Commit Conventions:** All commit messages must follow Conventional Commits: `<type>(<scope>): <summary>`. Types: `feat`, `fix`, `test`, `ci`, `docs`, `chore`, `refactor`. Scopes: `contract`, `submissions`, `sandbox`, `auth`, `rules`. Maximum 72 characters, imperative present tense, no period at end.
+- **Branch Naming:** Feature branches must use `feat/*`, `test/*`, `fix/*`, or `gate/*`. Never commit directly to protected branch `main`.
 ---
 
 ## 4. The "Never" List (LeeTKOB Strict Prohibitions)
@@ -40,3 +41,5 @@ Run these commands to verify code changes. CI and local development use the exac
 - **NEVER call real LLM models in unit/contract tests:** Always mock or stub external model API invocations in CI and automated test suites. Zero network calls to model providers during test runs.
 - **NEVER tamper with tests or evaluation data:** Never modify test files, dev set cases, labels, or thresholds (`eval.mjs`) simply to make a failing CI check pass. Code must adapt to the test, not the reverse.
 - **NEVER bypass sandbox security bas
+- **NEVER push directly to `main` branch:** All changes must go through a pull request and pass required CI status checks before merging.
+- **NEVER create generic commit messages:** Messages like "update code", "fix bug", or "ai changes" are strictly forbidden. Always state the exact scope and intent.
