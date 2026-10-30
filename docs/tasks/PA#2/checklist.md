@@ -1,5 +1,7 @@
 ### **Checklist Thực Hiện PA#2 — Harness and Quality Gate**
 
+**Lưu ý quan trọng:** sau khi hoàn thành các task của mỗi thành viên, hãy báo cáo (mình đã làm gì và minh chứng kèm theo (link, ...)) ở trong file của folder "/docs/tasks/proof-report/PA#2"
+
 **Giai đoạn 1: Khởi tạo Repository & Cấu hình AI Rules (Tiêu chí 1 & 7)**
 
 * [x] Khởi tạo Public Repository trên GitHub cho LeeTKOB - Dương

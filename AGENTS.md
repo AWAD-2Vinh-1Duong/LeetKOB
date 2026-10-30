@@ -27,7 +27,7 @@ Run these commands to verify code changes. CI and local development use the exac
 ---
 
 ## 3. Code Conventions
-- **Architectural Flow:** Adhere strictly to 3 layers. Controllers handle HTTP transport and RFC 9457 formatting; Services execute domain logic and sandbox coordination; Repositories handle database persistence. Wire dependencies explicitly via constructor Dependency Injection.
+- **Architectural Flow:** . Controllers handle HTTP transport and RFC 9457 formatting; Services execute domain logic and sandbox coordination; Repositories handle database persistence. Wire dependencies explicitly via constructor Dependency Injection.
 - **API Errors:** All HTTP error responses MUST conform to **RFC 9457 (Problem Details for HTTP APIs)** with `type`, `title`, `status`, `detail`, and `instance`. Do not return ad-hoc `{ code, message }` JSON objects.
 - **Idempotency & Paging:** Mutation endpoints (e.g., submission uploads, publishing marks) must respect idempotency keys. List/queue endpoints must implement cursor-based pagination.
 - **Exports & Functions:** Use named exports exclusively. No default exports.
