@@ -1,5 +1,3 @@
-Dưới đây là Checklist chi tiết dành cho bạn và đồng đội (đặc biệt là Tống Dương Thái Hoà và Nguyễn Phúc Hoàng) để thực hiện các task của đồ án PA#2 - LeeTKOB, bám sát các yêu cầu từ Rubric và Class Brief.
-
 ### **Checklist Thực Hiện PA#2 — Harness and Quality Gate**
 
 **Giai đoạn 1: Khởi tạo Repository & Cấu hình AI Rules (Tiêu chí 1 & 7)**
