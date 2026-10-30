@@ -53,7 +53,7 @@ Chạy lệnh cài đặt các gói phụ thuộc tương ứng với môi trư�
 
 ```bash
 # Ví dụ: cài đặt package quản lý phụ thuộc của dự án
-<package_manager> install
+npm install
 
 ```
 
@@ -78,11 +78,11 @@ cp .env.example .env
 
 | Mục đích kiểm tra | Lệnh thực thi (Local & CI) | Mô tả |
 | --- | --- | --- |
-| **Lint Check** | `<command_for_lint>` | Kiểm tra quy tắc định dạng và lỗi cú pháp tĩnh|
-| **Format Check** | `<command_for_format>` | Xác minh mã nguồn tuân thủ quy chuẩn trình bày|
-| **Type Check** | `<command_for_typecheck>` | Phân tích kiểu dữ liệu tĩnh (nếu áp dụng)|
-| **Contract Tests** | `<command_for_contract_tests>` | Chạy toàn bộ các bài kiểm tra hợp đồng API trong `tests/contract/`|
-| **Chạy tất cả** | `<command_for_all_checks>` | Lệnh tổng hợp chạy toàn bộ các kiểm tra trên trước khi commit/push|
+| **Lint Check** | `npm run lint` | Kiểm tra quy tắc định dạng và lỗi cú pháp tĩnh|
+| **Format Check** | `npm run format:check` | Xác minh mã nguồn tuân thủ quy chuẩn trình bày|
+| **Type Check** | `npm run typecheck` | Phân tích kiểu dữ liệu tĩnh (nếu áp dụng)|
+| **Contract Tests** | `npm test` | Chạy toàn bộ các bài kiểm tra hợp đồng API trong `tests/contract/`|
+| **Chạy tất cả** | `npm run check` | Lệnh tổng hợp chạy toàn bộ các kiểm tra trên trước khi commit/push|
 
 Tất cả các lệnh trên khi chạy trên một bản clone mới đều phải trả về trạng thái màu xanh (green/pass).
 

@@ -40,5 +40,11 @@ Kept: Kept all the content, excluding the "stack" which is need to be further re
 Changed: Adjust the "stack" to "example stack"
 Rejected: Didn't reject any content
 
-## 2026-
+## 2026-10-30 — Thiết lập CI chặn merge
+
+Tool: GitHub Copilot
+Asked for: Thiết lập workflow CI cho pull request, chuẩn bị nhánh thử lint/format đỏ và chuyển các lệnh hướng dẫn từ pnpm sang npm.
+Kept: Dùng `npm run check` làm lệnh kiểm tra duy nhất trong workflow theo hướng dẫn tại `AGENTS.md`.
+Changed: Đổi các lệnh trong `AGENTS.md` và `README.md` sang npm; thêm workflow `.github/workflows/ci.yml`; tạo nhánh `gate/ci-test` và thêm đoạn mã cố ý vi phạm lint/format vào `src/app.js`.
+Rejected: Không thêm `package.json`, script kiểm tra hay cấu hình lint/format vì nằm ngoài phạm vi bước được yêu cầu. `npm run check` hiện không chạy được do repository chưa có `package.json`; chưa có PR hoặc ảnh CI vì chưa commit/push.
 

@@ -9,20 +9,20 @@ You are an AI programming assistant working on the LeeTKOB grading harness and p
 - **Backend:** Express 5
 - **Architecture:** Microservices/ 3-tier/ ???
 - **Database:** PostgreSQL 16 (Access via pg / query builders; no heavy ORM bypasses)
-- **Package Manager:** pnpm
+- **Package Manager:** npm
 - *Enforcement:* Never introduce new languages, alternative package managers (npm/yarn), or extraneous libraries without explicit user confirmation.
 
 ---
 
 ## 2. Core Commands
 Run these commands to verify code changes. CI and local development use the exact same commands.
-- Run single quality check (all-in-one): `pnpm check`
-- Lint code: `pnpm lint`
-- Format check: `pnpm format:check`
-- Type checking: `pnpm typecheck`
-- Run contract & unit tests: `pnpm test`
-- Start local dev server: `pnpm dev`
-- Run database migrations: `pnpm db:migrate`
+- Run single quality check (all-in-one): `npm run check`
+- Lint code: `npm run lint`
+- Format check: `npm run format:check`
+- Type checking: `npm run typecheck`
+- Run contract & unit tests: `npm test`
+- Start local dev server: `npm run dev`
+- Run database migrations: `npm run db:migrate`
 
 ---
 
@@ -43,3 +43,27 @@ Run these commands to verify code changes. CI and local development use the exac
 - **NEVER bypass sandbox security bas
 - **NEVER push directly to `main` branch:** All changes must go through a pull request and pass required CI status checks before merging.
 - **NEVER create generic commit messages:** Messages like "update code", "fix bug", or "ai changes" are strictly forbidden. Always state the exact scope and intent.
+
+## 5. Permission Boundaries (Three Tiers of Action)
+Your autonomous capabilities are strictly categorized into three tiers.
+
+### Tier 1: Run Freely (No permission needed)
+You may execute these read-only or easily reversible actions autonomously:
+- Read files, `grep`, and search codebase.
+- Run `pnpm test`, `pnpm lint`, `pnpm typecheck`.
+- Check git status (`git status`, `git diff`).
+- Start the local dev server.
+
+### Tier 2: Ask First (Requires explicit user confirmation)
+You MUST pause and ask for my approval before executing:
+- Pushing to remote (`git push`) or opening a Pull Request.
+- Adding, updating, or removing a package dependency.
+- Writing a new database migration file.
+- Modifying CI/CD configuration files.
+
+### Tier 3: Never the Agent (I will type this myself)
+Under NO circumstances are you allowed to:
+- Run a migration on the production database.
+- Trigger a deploy or rollback.
+- Delete database records, drop tables, or rotate API keys.
+- Trigger emails or charge real users.
