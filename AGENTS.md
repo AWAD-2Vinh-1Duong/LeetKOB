@@ -5,17 +5,20 @@ You are an AI programming assistant working on the LeeTKOB grading harness and p
 ---
 
 ## 1. Example Stack
+
 - **Runtime & Language:** Node.js (v22+)
 - **Backend:** Express 5
 - **Architecture:** Microservices/ 3-tier/ ???
 - **Database:** PostgreSQL 16 (Access via pg / query builders; no heavy ORM bypasses)
 - **Package Manager:** npm
-- *Enforcement:* Never introduce new languages, alternative package managers (npm/yarn), or extraneous libraries without explicit user confirmation.
+- _Enforcement:_ Never introduce new languages, alternative package managers (npm/yarn), or extraneous libraries without explicit user confirmation.
 
 ---
 
 ## 2. Core Commands
+
 Run these commands to verify code changes. CI and local development use the exact same commands.
+
 - Run single quality check (all-in-one): `npm run check`
 - Lint code: `npm run lint`
 - Format check: `npm run format:check`
@@ -27,6 +30,7 @@ Run these commands to verify code changes. CI and local development use the exac
 ---
 
 ## 3. Code Conventions
+
 - **Architectural Flow:** . Controllers handle HTTP transport and RFC 9457 formatting; Services execute domain logic and sandbox coordination; Repositories handle database persistence. Wire dependencies explicitly via constructor Dependency Injection.
 - **API Errors:** All HTTP error responses MUST conform to **RFC 9457 (Problem Details for HTTP APIs)** with `type`, `title`, `status`, `detail`, and `instance`. Do not return ad-hoc `{ code, message }` JSON objects.
 - **Idempotency & Paging:** Mutation endpoints (e.g., submission uploads, publishing marks) must respect idempotency keys. List/queue endpoints must implement cursor-based pagination.
@@ -34,9 +38,11 @@ Run these commands to verify code changes. CI and local development use the exac
 - **Clean Logging:** No `console.log` statements inside the `src/` directory. Use a structured logger or clean output streams.
 - **Git & Commit Conventions:** All commit messages must follow Conventional Commits: `<type>(<scope>): <summary>`. Types: `feat`, `fix`, `test`, `ci`, `docs`, `chore`, `refactor`. Scopes: `contract`, `submissions`, `sandbox`, `auth`, `rules`. Maximum 72 characters, imperative present tense, no period at end.
 - **Branch Naming:** Feature branches must use `feat/*`, `test/*`, `fix/*`, or `gate/*`. Never commit directly to protected branch `main`.
+
 ---
 
 ## 4. The "Never" List (LeeTKOB Strict Prohibitions)
+
 - **NEVER leak secrets to Sandbox:** Never expose the LLM model API key, database credentials, or `.env` secrets inside the execution sandbox container, its filesystem, or its environment variables.
 - **NEVER call real LLM models in unit/contract tests:** Always mock or stub external model API invocations in CI and automated test suites. Zero network calls to model providers during test runs.
 - **NEVER tamper with tests or evaluation data:** Never modify test files, dev set cases, labels, or thresholds (`eval.mjs`) simply to make a failing CI check pass. Code must adapt to the test, not the reverse.
@@ -45,24 +51,31 @@ Run these commands to verify code changes. CI and local development use the exac
 - **NEVER create generic commit messages:** Messages like "update code", "fix bug", or "ai changes" are strictly forbidden. Always state the exact scope and intent.
 
 ## 5. Permission Boundaries (Three Tiers of Action)
+
 Your autonomous capabilities are strictly categorized into three tiers.
 
 ### Tier 1: Run Freely (No permission needed)
+
 You may execute these read-only or easily reversible actions autonomously:
+
 - Read files, `grep`, and search codebase.
 - Run `pnpm test`, `pnpm lint`, `pnpm typecheck`.
 - Check git status (`git status`, `git diff`).
 - Start the local dev server.
 
 ### Tier 2: Ask First (Requires explicit user confirmation)
+
 You MUST pause and ask for my approval before executing:
+
 - Pushing to remote (`git push`) or opening a Pull Request.
 - Adding, updating, or removing a package dependency.
 - Writing a new database migration file.
 - Modifying CI/CD configuration files.
 
 ### Tier 3: Never the Agent (I will type this myself)
+
 Under NO circumstances are you allowed to:
+
 - Run a migration on the production database.
 - Trigger a deploy or rollback.
 - Delete database records, drop tables, or rotate API keys.

@@ -1,10 +1,12 @@
 # AI Log
 
 ---
+
 ## Template for each Entry Log
 
 ```md
 ## <YYYY-MM-DD> — <what you were working on>
+
 Tool: <Claude Code / Copilot / Cursor / something else / none>
 Asked for: <the task you gave it, in one sentence>
 Kept: <what you took as it came>
@@ -47,4 +49,3 @@ Asked for: Thiết lập workflow CI cho pull request, chuẩn bị nhánh thử
 Kept: Dùng `npm run check` làm lệnh kiểm tra duy nhất trong workflow theo hướng dẫn tại `AGENTS.md`.
 Changed: Đổi các lệnh trong `AGENTS.md` và `README.md` sang npm; thêm workflow `.github/workflows/ci.yml`; tạo nhánh `gate/ci-test` và thêm đoạn mã cố ý vi phạm lint/format vào `src/app.js`.
 Rejected: Không thêm `package.json`, script kiểm tra hay cấu hình lint/format vì nằm ngoài phạm vi bước được yêu cầu. `npm run check` hiện không chạy được do repository chưa có `package.json`; chưa có PR hoặc ảnh CI vì chưa commit/push.
-
