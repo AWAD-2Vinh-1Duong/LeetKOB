@@ -20,8 +20,6 @@ Rejected: <what you threw away, and why>
 
 ---
 
-## 2026-10-31 — Thiết lập và kiểm chứng CI (PA#2)
-
 ## 2026-10-31 — Sửa lỗi định dạng tài liệu CI
 
 Tool: GitHub Copilot
