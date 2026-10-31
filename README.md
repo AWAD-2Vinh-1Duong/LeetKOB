@@ -102,11 +102,11 @@ Tuân thủ Tiêu chí 2 về quản lý chi phí và an toàn bảo mật:
 
   Kết quả ngày 2026-10-31: `11 commits scanned … no leaks found`.
 
-- **Model Provider & Model được chọn**: **TODO** — nhóm chưa chốt (cần trước PA#3).
+- **Model Provider & Model được chọn**: Google Gemini — **Gemini 1.5 Flash (free tier)**.
 
-- **Hạn mức chi tiêu (Spending Cap)**: **TODO** — đặt hạn mức trần tại bảng điều khiển của nhà cung cấp ở mức tối đa **`<số>` USD/tháng** (hoặc dùng gói miễn phí có rate-limit), chụp màn hình làm minh chứng, rồi điền số vào đây. Mục đích: không tràn ngân sách khi chạy đánh giá hàng loạt.
+- **Hạn mức chi tiêu (Spending Cap)**: **1 USD/tháng**. Mục đích: không tràn ngân sách khi chạy đánh giá hàng loạt.
 
-- **Ước tính chi phí một bài Lab**: **TODO** — dự kiến không vượt quá **`<số>` USD / 80 bài nộp**.
+- **Ước tính chi phí một bài Lab**: dự kiến không vượt quá $0.05 USD / 80 bài nộp (Tính theo đơn giá $0.075/1M input tokens của Gemini 1.5 Flash. Hiện tại đang sử dụng gói Free Tier nên chi phí thực tế là $0).
 
 - **Cô lập Sandbox**: Toàn bộ tiến trình chạy mã nguồn sinh viên trong sandbox hoàn toàn **không có quyền truy cập Internet** và **không nhận bất kỳ API secret nào** trong biến môi trường cũng như hệ thống tập tin.
 
@@ -114,7 +114,7 @@ Tuân thủ Tiêu chí 2 về quản lý chi phí và an toàn bảo mật:
 
 Dự án áp dụng quy chuẩn quản lý mã nguồn có sự hỗ trợ của AI, được phân tách minh bạch thành các tài liệu tại thư mục gốc:
 
-- `AGENTS.md`: Chứa các quy tắc nền tảng chung (Core Rules) gồm 4 mục: Stack, Commands, Conventions, và Never. **Mọi Coding Agent bắt buộc phải đọc file này trước tiên.**
+- `AGENTS.md`: Chứa các quy tắc nền tảng chung gồm 5 mục: Stack, Commands, Conventions, Never, và Permission Boundaries. **Mọi Coding Agent bắt buộc phải đọc file này trước tiên.**
 
 - `CLAUDE.md`: Chỉ dẫn bổ sung dành riêng cho Claude Code; dòng đầu `@AGENTS.md` nạp luật chung trước.
 
