@@ -7,7 +7,7 @@ The shared rules above (stack, commands, conventions, never list, permission tie
 ### Working style
 
 - Reply to the team in Vietnamese. Code, identifiers, commit messages and contract docs stay in English.
-- Package manager is **npm only**. Where `AGENTS.md` Tier 1 still says `pnpm test/lint/typecheck`, run the `npm run …` equivalent.
+- Package manager is **npm only**.
 - Start every change on a `feat/*`, `test/*`, `fix/*` or `gate/*` branch. If the current branch is `main`, create a branch before editing.
 - Before saying a task is done, run `npm run check` and quote the real result. If it cannot run (e.g. no `package.json` yet), say so — never report a check as green that did not run.
 
@@ -16,7 +16,7 @@ The shared rules above (stack, commands, conventions, never list, permission tie
 - **Deliberate breaks live only on `gate/*` branches.** A lint-breaking line meant for `gate/ci-test` landed on `main` instead (commit `cfcb089`, `src/app.js`). Before committing any intentionally failing code, confirm `git branch --show-current` starts with `gate/`.
 - **Never log work that does not exist yet.** An AI-LOG entry (2026-10-30) said `.github/workflows/ci.yml` was added, but the committed file is empty. Before writing an AI-LOG entry or commit summary, open the files it mentions and check they contain what you claim.
 - **Only reference files that exist.** `README.md` and `.github/copilot-instructions.md` pointed agents at `AI-RULES.md`, which was never created. Before linking a path in docs, check it exists.
-- **Command changes are repo-wide.** The npm switch left `pnpm` in `AGENTS.md` Tier 1. When renaming a command or tool, `grep` the whole repo (README, AGENTS.md, CI, scripts) and update every occurrence in the same change.
+- **Command changes are repo-wide.** The npm switch left `pnpm` in `AGENTS.md` Tier 1 (fixed later). When renaming a command or tool, `grep` the whole repo (README, AGENTS.md, CI, scripts) and update every occurrence in the same change.
 
 ### Contract & tests
 
