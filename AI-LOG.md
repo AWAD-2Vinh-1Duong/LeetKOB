@@ -20,7 +20,7 @@ Rejected: <what you threw away, and why>
 
 ---
 
-## 2026-10-31 — Sửa lỗi định dạng tài liệu CI
+## 2026-10-31 — Sửa lỗi định dạng tài liệu CI - Dương
 
 Tool: GitHub Copilot
 Asked for: Fix the Prettier failures reported for `docs/tasks/PA#2/checklist.md` and `PA2.md` in the CI run.
@@ -28,7 +28,7 @@ Kept: Ran Prettier on the two reported files and confirmed the full `npm run che
 Changed:
 Rejected:
 
-## 2026-10-31 — Thiết lập và kiểm chứng CI (PA#2)
+## 2026-10-31 — Thiết lập và kiểm chứng CI (PA#2 - Dương)
 
 Tool: GitHub Copilot
 Asked for: Complete the CI and branch-protection tasks in Giai đoạn 4 and verify a deliberate red-to-green pull request.
