@@ -53,7 +53,7 @@
 
 - [x] Test CI: Tạo một nhánh mới, push một đoạn code vi phạm Lint/Format, tạo PR và chụp ảnh màn hình PR bị chặn lại bởi CI đỏ. Đã có [PR #6](https://github.com/AWAD-2Vinh-1Duong/LeetKOB/pull/6) và [CI đỏ](https://github.com/AWAD-2Vinh-1Duong/LeetKOB/actions/runs/41222159341); .
 - [x] Sửa lỗi trên nhánh đó, commit để CI chuyển sang xanh và merge PR. Lưu lại các link PR này để nộp bài. Đã có [CI xanh](https://github.com/AWAD-2Vinh-1Duong/LeetKOB/actions/runs/41222245456); PR được quyền merge và đã merged (pass quality gate và approved bởi 1 thành viên).
-Link commit sửa lỗi: https://github.com/AWAD-2Vinh-1Duong/LeetKOB/pull/6/changes/e04ff6f349e07bf7cfe1b6658e7caabfc289cc1e
+      Link commit sửa lỗi: https://github.com/AWAD-2Vinh-1Duong/LeetKOB/pull/6/changes/e04ff6f349e07bf7cfe1b6658e7caabfc289cc1e
 
 **Giai đoạn 5: Hoàn thiện Hợp đồng Endpoint (Tiêu chí 5)**
 
