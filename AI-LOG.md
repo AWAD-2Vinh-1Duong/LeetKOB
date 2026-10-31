@@ -49,3 +49,11 @@ Asked for: Thiết lập workflow CI cho pull request, chuẩn bị nhánh thử
 Kept: Dùng `npm run check` làm lệnh kiểm tra duy nhất trong workflow theo hướng dẫn tại `AGENTS.md`.
 Changed: Đổi các lệnh trong `AGENTS.md` và `README.md` sang npm; thêm workflow `.github/workflows/ci.yml`; tạo nhánh `gate/ci-test` và thêm đoạn mã cố ý vi phạm lint/format vào `src/app.js`.
 Rejected: Không thêm `package.json`, script kiểm tra hay cấu hình lint/format vì nằm ngoài phạm vi bước được yêu cầu. `npm run check` hiện không chạy được do repository chưa có `package.json`; chưa có PR hoặc ảnh CI vì chưa commit/push.
+
+## 2026-10-31 — Review AGENTS.md and choose the tech stack (PA#2, Thế Vinh)
+
+Tool: DeepSeek V4.1 Flash Free (OpenCode)
+Asked for: Review the AGENTS.md draft against the PA#2 rubric and propose a tech stack with reasons.
+Kept: The three permission tiers, the completed sandbox never line and npm as the package manager — all match the rubric, so they were left untouched.
+Changed: Wrote the review as a separate file instead of editing AGENTS.md, which is Quang Vinh's deliverable. In that file, replaced the "Example Stack / Microservices / 3-tier / ???" placeholder with a concrete stack, and chose JavaScript + checkJs over TypeScript because package.json, tsconfig.json and the test glob are already wired for it.
+Rejected: Rejected rewriting AGENTS.md directly. Rejected treating the 0-byte ci.yml as a gate: an empty workflow always passes, the exact case rubric 7 warns about. Rejected Redis, Prisma, Jest and Judge0 — reasons in the stack table.
