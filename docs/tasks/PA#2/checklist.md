@@ -23,9 +23,9 @@
 
 - [x] Khởi tạo file `.env.example` liệt kê toàn bộ các biến môi trường cần thiết (ví dụ: Port, Database URL, API Key) nhưng **để trống giá trị**.
 
-- [ ] Thiết lập hạn mức chi tiêu (spending cap) cho Model API trên bảng điều khiển của nhà cung cấp.
+- [x] Thiết lập hạn mức chi tiêu (spending cap) cho Model API trên bảng điều khiển của nhà cung cấp. - Dương đã ghi
 
-- [ ] Cập nhật `README.md`: Khai báo loại Model đang dùng và ghi rõ hạn mức chi tiêu đã cài đặt. _(README đã có mục, còn chờ chốt model + số tiền cap)_
+- [x] Cập nhật `README.md`: Khai báo loại Model đang dùng và ghi rõ hạn mức chi tiêu đã cài đặt. _(README đã có mục, còn chờ chốt model + số tiền cap)_ - Dương đã ghi
 
 - [x] Kiểm tra lịch sử Git: Đảm bảo chưa từng có commit nào chứa mật khẩu hoặc API Key. (Nếu lỡ commit, hãy rotate key và ghi nhận cách xử lý vào `AI-LOG.md`).
 
@@ -49,10 +49,11 @@
 
 - [x] Bật tính năng "Branch Protection" cho nhánh `main` trên GitHub Settings.
 
-- [ ] Đặt pipeline CI vừa tạo thành "Required status checks" để chặn tính năng Merge nếu CI báo đỏ (fail). Branch protection đã bật theo xác nhận; chưa xác nhận context `quality` do GitHub API từ chối quyền đọc.
+- [x] Đặt pipeline CI vừa tạo thành "Required status checks" để chặn tính năng Merge nếu CI báo đỏ (fail).
 
-- [ ] Test CI: Tạo một nhánh mới, push một đoạn code vi phạm Lint/Format, tạo PR và chụp ảnh màn hình PR bị chặn lại bởi CI đỏ. Đã có [PR #6](https://github.com/AWAD-2Vinh-1Duong/LeetKOB/pull/6) và [CI đỏ](https://github.com/AWAD-2Vinh-1Duong/LeetKOB/actions/runs/41222159341); chưa lưu ảnh chụp.
-- [ ] Sửa lỗi trên nhánh đó, commit để CI chuyển sang xanh và merge PR. Lưu lại các link PR này để nộp bài. Đã có [CI xanh](https://github.com/AWAD-2Vinh-1Duong/LeetKOB/actions/runs/41222245456); PR đang mở, chưa merge.
+- [x] Test CI: Tạo một nhánh mới, push một đoạn code vi phạm Lint/Format, tạo PR và chụp ảnh màn hình PR bị chặn lại bởi CI đỏ. Đã có [PR #6](https://github.com/AWAD-2Vinh-1Duong/LeetKOB/pull/6) và [CI đỏ](https://github.com/AWAD-2Vinh-1Duong/LeetKOB/actions/runs/41222159341); .
+- [x] Sửa lỗi trên nhánh đó, commit để CI chuyển sang xanh và merge PR. Lưu lại các link PR này để nộp bài. Đã có [CI xanh](https://github.com/AWAD-2Vinh-1Duong/LeetKOB/actions/runs/41222245456); PR được quyền merge và đã merged (pass quality gate và approved bởi 1 thành viên).
+Link commit sửa lỗi: https://github.com/AWAD-2Vinh-1Duong/LeetKOB/pull/6/changes/e04ff6f349e07bf7cfe1b6658e7caabfc289cc1e
 
 **Giai đoạn 5: Hoàn thiện Hợp đồng Endpoint (Tiêu chí 5)**
 

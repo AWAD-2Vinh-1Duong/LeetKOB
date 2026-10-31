@@ -20,8 +20,6 @@ Rejected: <what you threw away, and why>
 
 ---
 
-## 2026-10-31 — Cập nhật luật Agent và README (PA#2, Bình Dương)
-
 ## 2026-10-31 — Thiết lập và kiểm chứng CI (PA#2)
 
 Tool: GitHub Copilot
