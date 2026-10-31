@@ -19,20 +19,20 @@ Ngày: 2026-10-31. Phạm vi: nhận xét file luật và chốt stack. **Không
 
 ### 1.2 Vấn đề
 
-| # | Dòng | Vấn đề | Mức | Đề xuất |
-| --- | --- | --- | --- | --- |
-| 1 | 7–14 | `Example Stack`, `Microservices/ 3-tier/ ???` — chưa quyết, nhưng đầu file bảo agent "strictly follow" | Cao | Thay bằng bảng stack ở mục 2 |
-| 2 | 34 | `**Architectural Flow:** . Controllers...` — dấu chấm lơ lửng, đọc như câu bị xoá đầu | Cao | Xoá `. ` sau dấu hai chấm |
-| 3 | 22–28 | `npm run check` hiện **đỏ**: `src/app.js` là dòng cố ý vi phạm, đã commit lên `main` ở `cfcb089` | Cao | Chuyển dòng đó sang nhánh `gate/ci-test`, trả `main` về xanh trước khi nộp |
-| 4 | 47 | Never chỉ nói unit/contract test, không nói eval — PA#4 chạy eval trong CI sẽ gọi model thật | Cao | Thêm "eval replays recorded fixtures; live run là lệnh tay" |
-| 5 | 44–51 | Thiếu luật "CI step không thể fail"; `ci.yml` đang 0 byte, mà AI-LOG 2026-10-30 lại ghi là đã thêm | Cao | Thêm luật cấm `\|\| true`, `continue-on-error`, workflow rỗng |
-| 6 | 57–84 | Tier 1 cho "Read files", Tier 3 cấm đọc `.env` — không nói tầng nào thắng | Vừa | Thêm một dòng: "Tier 3 overrides Tier 1 and Tier 2" |
-| 7 | 35 | RFC 9457 bắt có `type` nhưng không quy ước giá trị, mỗi endpoint sẽ tự bịa | Vừa | `https://leettkob.dev/problems/<slug>`, slug khai trong contract |
-| 8 | 36 | Idempotency nói "respect" nhưng không nói lưu ở đâu | Vừa | Postgres + unique index, đặt ở repository |
-| 9 | 14 | "extraneous libraries" không định nghĩa được — agent không biết ranh giới | Nhẹ | Runtime dependency phải hỏi; dev tooling đã có trong `package.json` thì được |
-| 10 | 52–53 | Mục 5 thiếu `---` ngăn cách, khác 4 mục trên | Nhẹ | Thêm cho đồng bộ |
-| 11 | toàn file | Chưa dòng nào dẫn được commit/AI-LOG; rubric 1 đòi ≥2 dòng có câu chuyện | Vừa | Dán 2 dòng ở mục 1.3 |
-| 12 | README 117 | README nói `AGENTS.md` có 4 mục, thực tế 5 | Nhẹ | Sửa README (lỗi lệch tài liệu, không nằm trong `AGENTS.md`) |
+| #   | Dòng       | Vấn đề                                                                                                 | Mức | Đề xuất                                                                      |
+| --- | ---------- | ------------------------------------------------------------------------------------------------------ | --- | ---------------------------------------------------------------------------- |
+| 1   | 7–14       | `Example Stack`, `Microservices/ 3-tier/ ???` — chưa quyết, nhưng đầu file bảo agent "strictly follow" | Cao | Thay bằng bảng stack ở mục 2                                                 |
+| 2   | 34         | `**Architectural Flow:** . Controllers...` — dấu chấm lơ lửng, đọc như câu bị xoá đầu                  | Cao | Xoá `. ` sau dấu hai chấm                                                    |
+| 3   | 22–28      | `npm run check` hiện **đỏ**: `src/app.js` là dòng cố ý vi phạm, đã commit lên `main` ở `cfcb089`       | Cao | Chuyển dòng đó sang nhánh `gate/ci-test`, trả `main` về xanh trước khi nộp   |
+| 4   | 47         | Never chỉ nói unit/contract test, không nói eval — PA#4 chạy eval trong CI sẽ gọi model thật           | Cao | Thêm "eval replays recorded fixtures; live run là lệnh tay"                  |
+| 5   | 44–51      | Thiếu luật "CI step không thể fail"; `ci.yml` đang 0 byte, mà AI-LOG 2026-10-30 lại ghi là đã thêm     | Cao | Thêm luật cấm `\|\| true`, `continue-on-error`, workflow rỗng                |
+| 6   | 57–84      | Tier 1 cho "Read files", Tier 3 cấm đọc `.env` — không nói tầng nào thắng                              | Vừa | Thêm một dòng: "Tier 3 overrides Tier 1 and Tier 2"                          |
+| 7   | 35         | RFC 9457 bắt có `type` nhưng không quy ước giá trị, mỗi endpoint sẽ tự bịa                             | Vừa | `https://leettkob.dev/problems/<slug>`, slug khai trong contract             |
+| 8   | 36         | Idempotency nói "respect" nhưng không nói lưu ở đâu                                                    | Vừa | Postgres + unique index, đặt ở repository                                    |
+| 9   | 14         | "extraneous libraries" không định nghĩa được — agent không biết ranh giới                              | Nhẹ | Runtime dependency phải hỏi; dev tooling đã có trong `package.json` thì được |
+| 10  | 52–53      | Mục 5 thiếu `---` ngăn cách, khác 4 mục trên                                                           | Nhẹ | Thêm cho đồng bộ                                                             |
+| 11  | toàn file  | Chưa dòng nào dẫn được commit/AI-LOG; rubric 1 đòi ≥2 dòng có câu chuyện                               | Vừa | Dán 2 dòng ở mục 1.3                                                         |
+| 12  | README 117 | README nói `AGENTS.md` có 4 mục, thực tế 5                                                             | Nhẹ | Sửa README (lỗi lệch tài liệu, không nằm trong `AGENTS.md`)                  |
 
 ### 1.3 Hai dòng nên dán vào `AGENTS.md` (rubric 1, band 13–15)
 
@@ -52,22 +52,22 @@ Mỗi dòng dẫn được một sự cố thật, đúng thứ rubric đòi:
 
 ### 2.1 Chốt
 
-| Tầng | Chọn | Vì sao |
-| --- | --- | --- |
-| Runtime | Node.js 22 LTS, ESM | `package.json` đã `"type": "module"`, `engines >=22`; một ngôn ngữ cho HTTP, worker và driver sandbox |
-| Ngôn ngữ | JavaScript + JSDoc, `checkJs` strict | `tsconfig.json` đã bật `allowJs`/`checkJs`/`strict`, `npm run typecheck` đã chạy `tsc --noEmit`; không cần build step |
-| HTTP | Express 5 | Đã có trong luật; v5 tự bắt async error, middleware nhỏ |
-| Kiến trúc | 1 process, 3 lớp controllers → services → repositories, DI qua constructor | 3 người, 5 tuần; brief nói ít moving part là lựa chọn hợp lệ |
-| Database | PostgreSQL 16 + `pg`, SQL tay, migrate bằng `node-pg-migrate` | Một chỗ chứa user / lab / submission / queue / verdict / idempotency key |
-| Queue | Bảng Postgres + `FOR UPDATE SKIP LOCKED` | 80 bài cùng lúc không cần thêm Redis; worker chạy trong cùng process |
-| Validation | `zod` | Một schema dùng cho cả parse request và assert response trong contract test |
-| Test | `node:test` + `supertest` | `npm test` đã dùng `node --test`; supertest gọi app Express thật |
-| Lint / format | ESLint 10 flat + Prettier 3 | Đã cấu hình và đang chạy |
-| Auth | JWT (`jose`) + `scrypt` của `node:crypto` | `.env.example` đã có `JWT_SECRET`; scrypt tránh native dependency |
-| Sandbox | Docker runner tự viết | Mỗi minimum của brief map 1-1 với một flag và một attack test |
-| LLM | Adapter `ConstraintJudge`, mặc định Gemini Flash free tier, mock trong test | Đổi provider không phải sửa service; free tier đủ cho 80 bài |
-| Log | `pino` + request id | Structured, thay `console.log` đã bị cấm |
-| Deploy | 1 VPS + docker compose (app, postgres, runner, Caddy) | PaaS free thường không cho nested Docker; compose đủ cho quy mô lớp |
+| Tầng          | Chọn                                                                        | Vì sao                                                                                                                |
+| ------------- | --------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| Runtime       | Node.js 22 LTS, ESM                                                         | `package.json` đã `"type": "module"`, `engines >=22`; một ngôn ngữ cho HTTP, worker và driver sandbox                 |
+| Ngôn ngữ      | JavaScript + JSDoc, `checkJs` strict                                        | `tsconfig.json` đã bật `allowJs`/`checkJs`/`strict`, `npm run typecheck` đã chạy `tsc --noEmit`; không cần build step |
+| HTTP          | Express 5                                                                   | Đã có trong luật; v5 tự bắt async error, middleware nhỏ                                                               |
+| Kiến trúc     | 1 process, 3 lớp controllers → services → repositories, DI qua constructor  | 3 người, 5 tuần; brief nói ít moving part là lựa chọn hợp lệ                                                          |
+| Database      | PostgreSQL 16 + `pg`, SQL tay, migrate bằng `node-pg-migrate`               | Một chỗ chứa user / lab / submission / queue / verdict / idempotency key                                              |
+| Queue         | Bảng Postgres + `FOR UPDATE SKIP LOCKED`                                    | 80 bài cùng lúc không cần thêm Redis; worker chạy trong cùng process                                                  |
+| Validation    | `zod`                                                                       | Một schema dùng cho cả parse request và assert response trong contract test                                           |
+| Test          | `node:test` + `supertest`                                                   | `npm test` đã dùng `node --test`; supertest gọi app Express thật                                                      |
+| Lint / format | ESLint 10 flat + Prettier 3                                                 | Đã cấu hình và đang chạy                                                                                              |
+| Auth          | JWT (`jose`) + `scrypt` của `node:crypto`                                   | `.env.example` đã có `JWT_SECRET`; scrypt tránh native dependency                                                     |
+| Sandbox       | Docker runner tự viết                                                       | Mỗi minimum của brief map 1-1 với một flag và một attack test                                                         |
+| LLM           | Adapter `ConstraintJudge`, mặc định Gemini Flash free tier, mock trong test | Đổi provider không phải sửa service; free tier đủ cho 80 bài                                                          |
+| Log           | `pino` + request id                                                         | Structured, thay `console.log` đã bị cấm                                                                              |
+| Deploy        | 1 VPS + docker compose (app, postgres, runner, Caddy)                       | PaaS free thường không cho nested Docker; compose đủ cho quy mô lớp                                                   |
 
 ### 2.2 Bốn quyết định đáng bảo vệ trong oral
 
@@ -81,18 +81,18 @@ Mỗi dòng dẫn được một sự cố thật, đúng thứ rubric đòi:
 
 ### 2.3 Đã cân nhắc và loại
 
-| Phương án | Vì sao loại |
-| --- | --- |
-| Microservices / 3 service | 3 người, 5 tuần; thêm deploy, thêm chỗ chết, thêm mock |
-| TypeScript ngay bây giờ | Phải rename file, thêm runner, đổi glob test; chưa có code để hưởng lợi |
-| Prisma / TypeORM | Giấu đúng phần SQL mà queue (`SKIP LOCKED`) và idempotency (unique index) cần viết tay |
-| Redis + BullMQ | Thêm service, thêm secret, thêm chỗ chết; Postgres đã đủ cho 80 |
-| Jest / Vitest | Thêm config và transform; `node:test` đã chạy |
-| Judge0 self-host | Nặng, và khó chứng minh "không secret trong env" vì lớp đó nằm sau API của nó |
-| MongoDB | Dữ liệu quan hệ: class → lab → submission → verdict → appeal |
-| SQLite | Postgres đã có trong stack, và queue cần `SKIP LOCKED` |
-| `argon2` / `bcrypt` | Native dependency, dễ vỡ CI; `scrypt` của `node:crypto` là đủ |
-| pnpm | Đã chốt npm trong luật, README và lockfile |
+| Phương án                 | Vì sao loại                                                                            |
+| ------------------------- | -------------------------------------------------------------------------------------- |
+| Microservices / 3 service | 3 người, 5 tuần; thêm deploy, thêm chỗ chết, thêm mock                                 |
+| TypeScript ngay bây giờ   | Phải rename file, thêm runner, đổi glob test; chưa có code để hưởng lợi                |
+| Prisma / TypeORM          | Giấu đúng phần SQL mà queue (`SKIP LOCKED`) và idempotency (unique index) cần viết tay |
+| Redis + BullMQ            | Thêm service, thêm secret, thêm chỗ chết; Postgres đã đủ cho 80                        |
+| Jest / Vitest             | Thêm config và transform; `node:test` đã chạy                                          |
+| Judge0 self-host          | Nặng, và khó chứng minh "không secret trong env" vì lớp đó nằm sau API của nó          |
+| MongoDB                   | Dữ liệu quan hệ: class → lab → submission → verdict → appeal                           |
+| SQLite                    | Postgres đã có trong stack, và queue cần `SKIP LOCKED`                                 |
+| `argon2` / `bcrypt`       | Native dependency, dễ vỡ CI; `scrypt` của `node:crypto` là đủ                          |
+| pnpm                      | Đã chốt npm trong luật, README và lockfile                                             |
 
 ### 2.4 Cái giá phải trả
 
