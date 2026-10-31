@@ -45,14 +45,14 @@
 
 **Giai đoạn 4: Thiết lập CI & Branch Protection (Tiêu chí 4)** - Dương làm
 
-- [ ] Tạo file `.github/workflows/ci.yml` chạy tự động lệnh kiểm tra duy nhất (đã tạo ở Giai đoạn 3) mỗi khi có Pull Request.
+- [x] Tạo file `.github/workflows/ci.yml` chạy `npm ci` rồi `npm run check` mỗi khi có Pull Request.
 
-- [ ] Bật tính năng "Branch Protection" cho nhánh `main` trên GitHub Settings.
+- [x] Bật tính năng "Branch Protection" cho nhánh `main` trên GitHub Settings.
 
-- [ ] Đặt pipeline CI vừa tạo thành "Required status checks" để chặn tính năng Merge nếu CI báo đỏ (fail).
+- [ ] Đặt pipeline CI vừa tạo thành "Required status checks" để chặn tính năng Merge nếu CI báo đỏ (fail). Branch protection đã bật theo xác nhận; chưa xác nhận context `quality` do GitHub API từ chối quyền đọc.
 
-- [ ] Test CI: Tạo một nhánh mới, push một đoạn code vi phạm Lint/Format, tạo PR và chụp ảnh màn hình PR bị chặn lại bởi CI đỏ.
-- [ ] Sửa lỗi trên nhánh đó, commit để CI chuyển sang xanh và merge PR. Lưu lại các link PR này để nộp bài.
+- [ ] Test CI: Tạo một nhánh mới, push một đoạn code vi phạm Lint/Format, tạo PR và chụp ảnh màn hình PR bị chặn lại bởi CI đỏ. Đã có [PR #6](https://github.com/AWAD-2Vinh-1Duong/LeetKOB/pull/6) và [CI đỏ](https://github.com/AWAD-2Vinh-1Duong/LeetKOB/actions/runs/41222159341); chưa lưu ảnh chụp.
+- [ ] Sửa lỗi trên nhánh đó, commit để CI chuyển sang xanh và merge PR. Lưu lại các link PR này để nộp bài. Đã có [CI xanh](https://github.com/AWAD-2Vinh-1Duong/LeetKOB/actions/runs/41222245456); PR đang mở, chưa merge.
 
 **Giai đoạn 5: Hoàn thiện Hợp đồng Endpoint (Tiêu chí 5)**
 

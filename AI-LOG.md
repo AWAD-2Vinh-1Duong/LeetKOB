@@ -22,6 +22,16 @@ Rejected: <what you threw away, and why>
 
 ## 2026-10-31 — Cập nhật luật Agent và README (PA#2, Bình Dương)
 
+## 2026-10-31 — Thiết lập và kiểm chứng CI (PA#2)
+
+Tool: GitHub Copilot
+Asked for: Complete the CI and branch-protection tasks in Giai đoạn 4 and verify a deliberate red-to-green pull request.
+Kept: Added the pull-request workflow and verified PR #6 failed on the deliberate lint error, then passed after the fix.
+Changed:
+Rejected:
+
+## 2026-10-31 — Cập nhật luật Agent và README (PA#2, Bình Dương)
+
 Tool: GitHub Copilot
 Asked for: Update `AGENTS.md` from the PA#2 review and document Gemini 1.5 Flash free tier with a 1 USD/month cap in `README.md`.
 Kept: Chose the concrete stack from the review and applied its CI, eval, RFC 9457, and idempotency recommendations.
