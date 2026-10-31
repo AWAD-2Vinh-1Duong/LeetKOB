@@ -17,31 +17,31 @@
 
 - [ ] Bắt buộc các thành viên: Mỗi khi AI đề xuất code, phải ghi chép lại vào `AI-LOG.md` (bao gồm công cụ sử dụng, phần việc đã làm, và các đề xuất được chấp nhận (Changed) hoặc bị từ chối (Rejected)).
 
-**Giai đoạn 2: Quản lý Secret & Biến Môi Trường (Tiêu chí 2)**
+**Giai đoạn 2: Quản lý Secret & Biến Môi Trường (Tiêu chí 2)** - Quang Vinh
 
-- [ ] Cập nhật file `.gitignore` để chắc chắn bỏ qua các file `.env`.
+- [x] Cập nhật file `.gitignore` để chắc chắn bỏ qua các file `.env`.
 
-- [ ] Khởi tạo file `.env.example` liệt kê toàn bộ các biến môi trường cần thiết (ví dụ: Port, Database URL, API Key) nhưng **để trống giá trị**.
+- [x] Khởi tạo file `.env.example` liệt kê toàn bộ các biến môi trường cần thiết (ví dụ: Port, Database URL, API Key) nhưng **để trống giá trị**.
 
 - [ ] Thiết lập hạn mức chi tiêu (spending cap) cho Model API trên bảng điều khiển của nhà cung cấp.
 
-- [ ] Cập nhật `README.md`: Khai báo loại Model đang dùng và ghi rõ hạn mức chi tiêu đã cài đặt.
+- [ ] Cập nhật `README.md`: Khai báo loại Model đang dùng và ghi rõ hạn mức chi tiêu đã cài đặt. _(README đã có mục, còn chờ chốt model + số tiền cap)_
 
-- [ ] Kiểm tra lịch sử Git: Đảm bảo chưa từng có commit nào chứa mật khẩu hoặc API Key. (Nếu lỡ commit, hãy rotate key và ghi nhận cách xử lý vào `AI-LOG.md`).
+- [x] Kiểm tra lịch sử Git: Đảm bảo chưa từng có commit nào chứa mật khẩu hoặc API Key. (Nếu lỡ commit, hãy rotate key và ghi nhận cách xử lý vào `AI-LOG.md`).
 
-- [ ] Cập nhật file phân quyền (Permissions): Phân loại rõ các hành động AI được phép làm (Allowed), phải hỏi trước (Ask first), và tuyệt đối cấm (Never).
+- [x] Cập nhật file phân quyền (Permissions): Phân loại rõ các hành động AI được phép làm (Allowed), phải hỏi trước (Ask first), và tuyệt đối cấm (Never).
 
-**Giai đoạn 3: Cấu hình Công cụ Kiểm tra (Tiêu chí 3)**
+**Giai đoạn 3: Cấu hình Công cụ Kiểm tra (Tiêu chí 3)** - Quang Vinh
 
-- [ ] Cấu hình công cụ Lint (ví dụ: ESLint).
+- [x] Cấu hình công cụ Lint (ví dụ: ESLint).
 
-- [ ] Cấu hình công cụ Format (ví dụ: Prettier).
+- [x] Cấu hình công cụ Format (ví dụ: Prettier).
 
-- [ ] Cấu hình công cụ Type Check (nếu stack sử dụng TypeScript, C#...).
+- [x] Cấu hình công cụ Type Check (nếu stack sử dụng TypeScript, C#...).
 
-- [ ] Thiết lập **một lệnh duy nhất** (ví dụ: `npm run check`) trong `package.json` hoặc Makefile để chạy đồng thời cả Lint, Format, Type Check và Test.
+- [x] Thiết lập **một lệnh duy nhất** (ví dụ: `npm run check`) trong `package.json` hoặc Makefile để chạy đồng thời cả Lint, Format, Type Check và Test.
 
-- [ ] Cập nhật `README.md` hướng dẫn cách chạy lệnh kiểm tra này.
+- [x] Cập nhật `README.md` hướng dẫn cách chạy lệnh kiểm tra này.
 
 **Giai đoạn 4: Thiết lập CI & Branch Protection (Tiêu chí 4)** - Dương làm
 
