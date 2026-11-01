@@ -57,23 +57,23 @@
 
 **Giai đoạn 5: Hoàn thiện Hợp đồng Endpoint (Tiêu chí 5)**
 
-- [ ] Chọn **1 endpoint duy nhất** có mức độ rủi ro cao (Khuyến nghị: `POST /labs/{labId}/submissions` hoặc `GET /labs/{labId}/review-queue`).
+- [x] Chọn **1 endpoint duy nhất** có mức độ rủi ro cao (Khuyến nghị: `POST /labs/{labId}/submissions` hoặc `GET /labs/{labId}/review-queue`).
 
-- [ ] Khởi tạo file `docs/contract/<endpoint>.md`.
+- [x] Khởi tạo file `docs/contract/<endpoint>.md`.
 
-- [ ] Khai báo rõ ràng: **Ai có quyền gọi** (Role & Ownership).
+- [x] Khai báo rõ ràng: **Ai có quyền gọi** (Role & Ownership).
 
-- [ ] Xác định cấu trúc Request & Response kèm quy tắc xác thực cho từng trường.
+- [x] Xác định cấu trúc Request & Response kèm quy tắc xác thực cho từng trường.
 
-- [ ] Định nghĩa toàn bộ các lỗi có thể xảy ra theo chuẩn **RFC 9457 Problem Details**, kèm theo Status Code tương ứng.
+- [x] Định nghĩa toàn bộ các lỗi có thể xảy ra theo chuẩn **RFC 9457 Problem Details**, kèm theo Status Code tương ứng.
 
-- [ ] Bắt buộc: Cấu hình cơ chế Phân trang (Paging) nếu là API GET list, hoặc Idempotency nếu là API POST/Tạo mới tài nguyên.
+- [x] Bắt buộc: Cấu hình cơ chế Phân trang (Paging) nếu là API GET list, hoặc Idempotency nếu là API POST/Tạo mới tài nguyên.
 
 **Giai đoạn 6: Triển khai Contract Tests (Tiêu chí 6)**
 
-- [ ] Viết Contract Test trong thư mục `tests/contract/` bao phủ mọi loại lỗi, quy tắc sở hữu (ownership), và xử lý phân trang/idempotency đã định nghĩa trong file contract.
+- [x] Viết Contract Test trong thư mục `tests/contract/` bao phủ mọi loại lỗi, quy tắc sở hữu (ownership), và xử lý phân trang/idempotency đã định nghĩa trong file contract.
 
-- [ ] Cấu hình để Contract Test được chạy chung với bộ lệnh Test trong CI.
+- [x] Cấu hình để Contract Test được chạy chung với bộ lệnh Test trong CI.
 
 - [ ] Thực hiện bắt buộc: Cố tình viết sai code để vi phạm contract, push lên tạo PR để CI báo đỏ (deliberate break). Lưu lại link PR.
 
