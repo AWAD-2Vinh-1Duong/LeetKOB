@@ -53,6 +53,8 @@ export class InMemorySubmissionRepository {
    */
   async insertIfAbsent(submission) {
     const k = `${submission.studentId}\0${submission.labId}\0${submission.idempotencyKey}`;
+    const existing = this.byKey.get(k);
+    if (existing) return { submission: existing, created: false };
     this.byKey.set(k, submission);
     return { submission, created: true };
   }

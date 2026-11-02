@@ -38,7 +38,7 @@ export class SubmissionService {
       idempotencyKey,
     );
     // Replay before the deadline check: a retry of an accepted request must not turn into 409.
-    void existing; // deliberate contract break (gate/*): retries are no longer replayed
+    if (existing) return this.#replay(existing, fingerprint);
 
     const now = this.now();
     if (now >= lab.deadline) {
