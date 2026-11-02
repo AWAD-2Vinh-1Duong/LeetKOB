@@ -75,9 +75,9 @@
 
 - [x] Cấu hình để Contract Test được chạy chung với bộ lệnh Test trong CI.
 
-- [ ] Thực hiện bắt buộc: Cố tình viết sai code để vi phạm contract, push lên tạo PR để CI báo đỏ (deliberate break). Lưu lại link PR.
+- [x] Thực hiện bắt buộc: Cố tình viết sai code để vi phạm contract, push lên tạo PR để CI báo đỏ (deliberate break). Lưu lại link PR. Đã có [PR #8](https://github.com/AWAD-2Vinh-1Duong/LeetKOB/pull/8) và [CI đỏ](https://github.com/AWAD-2Vinh-1Duong/LeetKOB/actions/runs/41383050327).
 
-- [ ] Sửa lại logic code cho đúng, commit để CI xanh trở lại. Lưu lại link commit này.
+- [x] Sửa lại logic code cho đúng, commit để CI xanh trở lại. Lưu lại link commit này. Đã có [commit sửa](https://github.com/AWAD-2Vinh-1Duong/LeetKOB/pull/8/commits/d7d4c9211c4e34fa82f98f56db49aa58c70833fd) và [CI xanh](https://github.com/AWAD-2Vinh-1Duong/LeetKOB/actions/runs/41383117774).
 
 **Giai đoạn 7: Đóng gói & Nộp bài (Tiêu chí 7 & Quy định chung)** - Bình Dương l
 
