@@ -5,6 +5,7 @@
 - Link Pull request được quyền merged/đã merged (bao gồm commit bị từ chối, commit chỉnh sửa - màu xanh): https://github.com/AWAD-2Vinh-1Duong/LeetKOB/pull/6
 - CI run failed: https://github.com/AWAD-2Vinh-1Duong/LeetKOB/actions/runs/41222159341
 - CI run successed: https://github.com/AWAD-2Vinh-1Duong/LeetKOB/actions/runs/41223080718
+- CI run for tag `pa2` (success): https://github.com/AWAD-2Vinh-1Duong/LeetKOB/actions/runs/42381127856
 - Deliberate contract break (PR): https://github.com/AWAD-2Vinh-1Duong/LeetKOB/pull/8
   - Commit vi phạm contract (bỏ idempotency lookup): https://github.com/AWAD-2Vinh-1Duong/LeetKOB/pull/8/commits/fb6e601019dee79c7a768e11c19a6fb030114ba6
   - CI run đỏ (3 test idempotency fail): https://github.com/AWAD-2Vinh-1Duong/LeetKOB/actions/runs/41383050327
