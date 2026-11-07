@@ -2,6 +2,22 @@
 
 Khi ghi AI Log thì phải ghi ở trên cùng.
 
+## 2026-11-07 — Cập nhật mô tả Free tier trong README
+
+Tool: GitHub Copilot
+Asked for: Sửa README để mô tả đúng việc chỉ sử dụng Gemini Free tier và chưa bật billing/spending cap.
+Kept: Ghi rõ khoản trả trước 800.000 VNĐ theo thông tin nhóm cung cấp, trạng thái billing chưa bật, và quota Free tier.
+Changed:
+Rejected:
+
+## 2026-11-07 — Cập nhật self-assessment theo xác nhận của nhóm
+
+Tool: GitHub Copilot
+Asked for: Cập nhật điểm và minh chứng self-assessment theo giải thích của nhóm về branch protection, Free tier và tag pa2.
+Kept: Ghi nhận run 41223080718 là xanh theo xác nhận của nhóm; ghi rõ Free tier được giữ để tránh khoản trả trước 800.000 VNĐ.
+Changed:
+Rejected:
+
 ---
 
 ## Template for each Entry Log
@@ -22,27 +38,37 @@ Rejected: <what you threw away, and why>
 
 ## 2026-10-31 — Sửa lỗi định dạng tài liệu CI - Dương
 
+## 2026-11-07 — Hoàn thiện self-assessment PA#2
+
+Tool: GitHub Copilot
+Asked for: Điền báo cáo self-assessment PA#2 theo rubric, dùng minh chứng có thật và đánh dấu phần chưa xác minh.
+Kept: Dùng điểm và liên kết dựa trên nội dung hiện có trong repository; để placeholder cho minh chứng còn thiếu hoặc mâu thuẫn.
+Changed: No
+Rejected: No
+
+## 2026-10-31 — Sửa lỗi định dạng tài liệu CI - Dương
+
 Tool: GitHub Copilot
 Asked for: Fix the Prettier failures reported for `docs/tasks/PA#2/checklist.md` and `PA2.md` in the CI run.
 Kept: Ran Prettier on the two reported files and confirmed the full `npm run check` passes.
-Changed:
-Rejected:
+Changed: No
+Rejected: No
 
 ## 2026-10-31 — Thiết lập và kiểm chứng CI (PA#2 - Dương)
 
 Tool: GitHub Copilot
 Asked for: Complete the CI and branch-protection tasks in Giai đoạn 4 and verify a deliberate red-to-green pull request.
 Kept: Added the pull-request workflow and verified PR #6 failed on the deliberate lint error, then passed after the fix.
-Changed:
-Rejected:
+Changed: No
+Rejected: No
 
 ## 2026-10-31 — Cập nhật luật Agent và README (PA#2, Bình Dương)
 
 Tool: GitHub Copilot
 Asked for: Update `AGENTS.md` from the PA#2 review and document Gemini 1.5 Flash free tier with a 1 USD/month cap in `README.md`.
 Kept: Chose the concrete stack from the review and applied its CI, eval, RFC 9457, and idempotency recommendations.
-Changed:
-Rejected:
+Changed: No
+Rejected: No
 
 ## 2026-10-31 — Review AGENTS.md and choose the tech stack (PA#2, Thế Vinh)
 

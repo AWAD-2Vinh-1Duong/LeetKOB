@@ -102,11 +102,11 @@ Tuân thủ Tiêu chí 2 về quản lý chi phí và an toàn bảo mật:
 
   Kết quả ngày 2026-10-31: `11 commits scanned … no leaks found`.
 
-- **Model Provider & Model được chọn**: Google Gemini — **Gemini 1.5 Flash (free tier)**.
+- **Model Provider & Model được chọn**: Google Gemini — **Gemini 1.5 Flash (Free tier)**.
 
-- **Hạn mức chi tiêu (Spending Cap)**: **1 USD/tháng**. Mục đích: không tràn ngân sách khi chạy đánh giá hàng loạt.
+- **Billing và spending cap**: Nhóm hiện chỉ sử dụng quota Free tier và chưa bật billing. Theo giao diện Google AI Studio mà nhóm đang dùng, cần trả trước 800.000 VNĐ mới có thể thiết lập billing; nhóm không bật billing để tránh khoản trả trước này. Vì vậy, hiện chưa có spending cap dạng số được cấu hình ở phía provider; không xem `$1/tháng` là cap đã thiết lập. Việc sử dụng vẫn chịu quota Free tier của provider, và nhóm không chủ ý sử dụng mức dịch vụ trả phí. Nếu bật billing trong tương lai, cần cấu hình và xác minh cap trước khi dùng paid tier.
 
-- **Ước tính chi phí một bài Lab**: dự kiến không vượt quá $0.05 USD / 80 bài nộp (Tính theo đơn giá $0.075/1M input tokens của Gemini 1.5 Flash. Hiện tại đang sử dụng gói Free Tier nên chi phí thực tế là $0).
+- **Chi phí hiện tại**: Nhóm chỉ dùng Free tier; không đưa ước tính giá paid-tier vào chi phí hiện tại. Các giới hạn sử dụng vẫn theo quota và chính sách Free tier của provider.
 
 - **Cô lập Sandbox**: Toàn bộ tiến trình chạy mã nguồn sinh viên trong sandbox hoàn toàn **không có quyền truy cập Internet** và **không nhận bất kỳ API secret nào** trong biến môi trường cũng như hệ thống tập tin.
 
