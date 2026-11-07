@@ -2,47 +2,45 @@
 
 Khi ghi AI Log thì phải ghi ở trên cùng.
 
+## 2026-11-07 — Bật CI cho tag pa2
+
+Tool: GitHub Copilot
+Asked for: Cấu hình workflow hiện tại để quality job cũng chạy khi tag pa2 được push.
+Kept: Giữ trigger pull request và quality job hiện có; thêm trigger push cho tag pa2.
+Changed: No
+Rejected: No
+
 ## 2026-11-07 — Cập nhật mô tả Free tier trong README
 
 Tool: GitHub Copilot
 Asked for: Sửa README để mô tả đúng việc chỉ sử dụng Gemini Free tier và chưa bật billing/spending cap.
 Kept: Ghi rõ khoản trả trước 800.000 VNĐ theo thông tin nhóm cung cấp, trạng thái billing chưa bật, và quota Free tier.
-Changed:
-Rejected:
+Changed: No
+Rejected: No
 
 ## 2026-11-07 — Cập nhật self-assessment theo xác nhận của nhóm
 
 Tool: GitHub Copilot
 Asked for: Cập nhật điểm và minh chứng self-assessment theo giải thích của nhóm về branch protection, Free tier và tag pa2.
 Kept: Ghi nhận run 41223080718 là xanh theo xác nhận của nhóm; ghi rõ Free tier được giữ để tránh khoản trả trước 800.000 VNĐ.
-Changed:
-Rejected:
+Changed: No
+Rejected: No
 
 ---
-
-## Template for each Entry Log
-
-```md
-## <YYYY-MM-DD> — <what you were working on>
-
-Tool: <Claude Code / Copilot / Cursor / something else / none>
-Asked for: <the task you gave it, in one sentence>
-Kept: <what you took as it came>
-Changed: <what you rewrote, and why>
-Rejected: <what you threw away, and why>
-```
-
-`Changed` and `Rejected` are the two lines we read most closely: what the assistant got wrong, and which check caught it. "Nothing went wrong" is a fine entry if it says what you ran.
-
----
-
-## 2026-10-31 — Sửa lỗi định dạng tài liệu CI - Dương
 
 ## 2026-11-07 — Hoàn thiện self-assessment PA#2
 
 Tool: GitHub Copilot
 Asked for: Điền báo cáo self-assessment PA#2 theo rubric, dùng minh chứng có thật và đánh dấu phần chưa xác minh.
 Kept: Dùng điểm và liên kết dựa trên nội dung hiện có trong repository; để placeholder cho minh chứng còn thiếu hoặc mâu thuẫn.
+Changed: No
+Rejected: No
+
+## 2026-11-01 — Contract và contract tests cho POST /labs/{labId}/submissions (PA#2, Thế Vinh)
+
+Tool: Claude Code (Claude Opus 5.5)
+Asked for: Write the contract for `POST /labs/{labId}/submissions`, contract tests that assert the RFC 9457 body, the minimal code to pass them, and a deliberate break on a `gate/*` branch.
+Kept: The contract (role, enrollment ownership with 404, idempotency scope per student and lab, 9 problem types, order of checks), 31 tests in `tests/contract/`, and the in-memory repository behind constructor DI, marked `shortcut:` until PA#3.
 Changed: No
 Rejected: No
 
