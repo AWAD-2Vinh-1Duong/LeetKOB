@@ -104,7 +104,7 @@ Tuân thủ Tiêu chí 2 về quản lý chi phí và an toàn bảo mật:
 
   [`.gitleaksignore`](.gitleaksignore) bỏ qua đúng một báo động giả: `Idempotency-Key` ví dụ (một UUID) trong request mẫu của [contract](docs/contract/post-labs-submissions.md), không phải secret. Mọi phát hiện khác vẫn làm lệnh trên báo lỗi.
 
-- **Model Provider & Model được chọn**: Google Gemini — **Gemini 1.5 Flash (Free tier)**.
+- **Model Provider & Model được chọn**: Google Gemini — **Gemini 3.6 Flash** (`gemini-3.6-flash`, Free tier), cấu hình qua biến `LLM_MODEL`. Ban đầu nhóm ghi Gemini 1.5 Flash, nhưng model này đã bị Google tắt từ tháng 9/2025 nên được thay thế.
 
 - **Billing và spending cap**: Nhóm hiện chỉ sử dụng quota Free tier và chưa bật billing. Theo giao diện Google AI Studio mà nhóm đang dùng, cần trả trước 800.000 VNĐ mới có thể thiết lập billing; nhóm không bật billing để tránh khoản trả trước này. Vì vậy, hiện chưa có spending cap dạng số được cấu hình ở phía provider; không xem `$1/tháng` là cap đã thiết lập. Việc sử dụng vẫn chịu quota Free tier của provider, và nhóm không chủ ý sử dụng mức dịch vụ trả phí. Nếu bật billing trong tương lai, cần cấu hình và xác minh cap trước khi dùng paid tier.
 

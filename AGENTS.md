@@ -16,7 +16,7 @@ You are an AI programming assistant working on the LeeTKOB grading harness and p
 - **Lint / Format:** ESLint 10 flat config and Prettier 3.
 - **Authentication:** JWT with `jose`; password hashing with `scrypt` from `node:crypto`.
 - **Sandbox:** Custom Docker runner with the security baselines in section 4.
-- **LLM:** `ConstraintJudge` adapter using Gemini 1.5 Flash free tier; automated tests must use stubs or recorded fixtures.
+- **LLM:** `ConstraintJudge` adapter using Gemini 3.6 Flash (`gemini-3.6-flash`) on the free tier, model ID set by `LLM_MODEL`; automated tests must use stubs or recorded fixtures.
 - **Logging:** `pino` with request IDs; no `console.log` in `src/`.
 - **Package Manager:** npm.
 - _Enforcement:_ Do not introduce another language or package manager. Ask for explicit confirmation before adding, updating, or removing runtime dependencies or dev tooling not already present in `package.json`.
