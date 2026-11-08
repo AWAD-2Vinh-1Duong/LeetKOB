@@ -100,7 +100,9 @@ Tuân thủ Tiêu chí 2 về quản lý chi phí và an toàn bảo mật:
   gitleaks detect --source . --log-opts="--all"
   ```
 
-  Kết quả ngày 2026-10-31: `11 commits scanned … no leaks found`.
+  Kết quả ngày 2026-11-08 (gitleaks 8.18.4): `47 commits scanned … no leaks found`.
+
+  [`.gitleaksignore`](.gitleaksignore) bỏ qua đúng một báo động giả: `Idempotency-Key` ví dụ (một UUID) trong request mẫu của [contract](docs/contract/post-labs-submissions.md), không phải secret. Mọi phát hiện khác vẫn làm lệnh trên báo lỗi.
 
 - **Model Provider & Model được chọn**: Google Gemini — **Gemini 1.5 Flash (Free tier)**.
 
