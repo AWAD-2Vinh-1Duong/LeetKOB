@@ -358,3 +358,27 @@ describe('body rules', () => {
     assertProblem(res, 413, 'payload-too-large', 'Request body is too large');
   });
 });
+
+describe('500 internal-error', () => {
+  test('an unexpected failure gives 500 internal-error without leaking details', async () => {
+    const leaked = 'connect ECONNREFUSED postgres://app:hunter2@db:5432';
+    class FailingLabRepository extends InMemoryLabRepository {
+      /** @returns {Promise<import('../../src/repositories/in-memory.js').Lab | undefined>} */
+      async findForStudent() {
+        throw new Error(leaked);
+      }
+    }
+    const app = createApp({
+      jwtSecret: SECRET,
+      labRepository: new FailingLabRepository({ labs: [], enrollments: [] }),
+      submissionRepository: new InMemorySubmissionRepository(),
+      now: () => START,
+    });
+    const res = await submit(app);
+    assertProblem(res, 500, 'internal-error', 'Internal server error');
+    const body = JSON.stringify(res.body);
+    assert.ok(!body.includes('hunter2'), 'no secret in the body');
+    assert.ok(!body.includes(leaked), 'no raw error message in the body');
+    assert.ok(!/\bat .+:\d+:\d+/.test(body), 'no stack trace in the body');
+  });
+});

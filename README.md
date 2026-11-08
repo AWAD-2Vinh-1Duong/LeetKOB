@@ -100,13 +100,15 @@ Tuân thủ Tiêu chí 2 về quản lý chi phí và an toàn bảo mật:
   gitleaks detect --source . --log-opts="--all"
   ```
 
-  Kết quả ngày 2026-10-31: `11 commits scanned … no leaks found`.
+  Kết quả ngày 2026-11-08 (gitleaks 8.18.4): `47 commits scanned … no leaks found`.
 
-- **Model Provider & Model được chọn**: Google Gemini — **Gemini 1.5 Flash (free tier)**.
+  [`.gitleaksignore`](.gitleaksignore) bỏ qua đúng một báo động giả: `Idempotency-Key` ví dụ (một UUID) trong request mẫu của [contract](docs/contract/post-labs-submissions.md), không phải secret. Mọi phát hiện khác vẫn làm lệnh trên báo lỗi.
 
-- **Hạn mức chi tiêu (Spending Cap)**: **1 USD/tháng**. Mục đích: không tràn ngân sách khi chạy đánh giá hàng loạt.
+- **Model Provider & Model được chọn**: Google Gemini — **Gemini 3.6 Flash** (`gemini-3.6-flash`, Free tier), cấu hình qua biến `LLM_MODEL`. Ban đầu nhóm ghi Gemini 1.5 Flash, nhưng model này đã bị Google tắt từ tháng 9/2025 nên được thay thế.
 
-- **Ước tính chi phí một bài Lab**: dự kiến không vượt quá $0.05 USD / 80 bài nộp (Tính theo đơn giá $0.075/1M input tokens của Gemini 1.5 Flash. Hiện tại đang sử dụng gói Free Tier nên chi phí thực tế là $0).
+- **Spending cap: 0 USD (cứng, do provider áp)**: API key thuộc project `For-Github-CodeSpace` trên Google AI Studio, **không gắn billing account** ([ảnh dashboard](docs/tasks/PA2/assets/provider-dashboard.png): _Billing Tier: Free tier — Set up billing_). Không có billing thì Google không thể tính tiền: request vượt quota Free tier bị trả về `429 RESOURCE_EXHAUSTED` thay vì phát sinh phí. Nhóm không bật billing vì AI Studio yêu cầu trả trước 800.000 VNĐ. Nếu sau này bật billing, phải đặt budget/cap dạng số trên provider và cập nhật mục này **trước** khi dùng paid tier.
+
+- **Chi phí một lab (80 bài nộp)**: **0 USD** trên Free tier. Giới hạn thực tế là quota Free tier; ngoài ra app sẽ chặn thêm bằng biến `LLM_COST_CAP_PER_LAB_USD` trong adapter `ConstraintJudge` (từ PA#3).
 
 - **Cô lập Sandbox**: Toàn bộ tiến trình chạy mã nguồn sinh viên trong sandbox hoàn toàn **không có quyền truy cập Internet** và **không nhận bất kỳ API secret nào** trong biến môi trường cũng như hệ thống tập tin.
 

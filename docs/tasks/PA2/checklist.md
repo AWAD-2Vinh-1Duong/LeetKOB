@@ -1,6 +1,6 @@
 ### **Checklist Thực Hiện PA#2 — Harness and Quality Gate**
 
-**Lưu ý quan trọng:** sau khi hoàn thành các task của mỗi thành viên, hãy báo cáo (mình đã làm gì và minh chứng kèm theo (link, ...)) ở trong file của folder "/docs/tasks/proof-report/PA#2"
+**Lưu ý quan trọng:** sau khi hoàn thành các task của mỗi thành viên, hãy báo cáo (mình đã làm gì và minh chứng kèm theo (link, ...)) ở trong file của folder "/docs/tasks/member-report(not-update-from-30-10-2026)/PA#2"
 
 **Giai đoạn 1: Khởi tạo Repository & Cấu hình AI Rules (Tiêu chí 1 & 7)**
 
@@ -81,16 +81,16 @@
 
 **Giai đoạn 7: Đóng gói & Nộp bài (Tiêu chí 7 & Quy định chung)** - Bình Dương l
 
-- [ ] Hoàn tất file `AI-LOG.md` với ít nhất 2 mục Changed/Rejected có nguồn gốc từ sự cố thực tế xảy ra trong lúc code.
+- [x] Hoàn tất file `AI-LOG.md` với ít nhất 2 mục Changed/Rejected có nguồn gốc từ sự cố thực tế xảy ra trong lúc code.
 
-- [ ] Chụp màn hình phần thiết lập Branch Protection của nhánh `main`.
+- [x] Chụp màn hình phần thiết lập Branch Protection của nhánh `main`.
 
-- [ ] Cập nhật file `PA2.md` với các đường link: Repo (để public), Ảnh Branch Protection, PR bị chặn, PR xanh, Link CI run của tag, và link PR vi phạm contract (deliberate break).
+- [x] Cập nhật file `PA2.md` với các đường link: Repo (để public), Ảnh Branch Protection, PR bị chặn, PR xanh, Link CI run của tag, và link PR vi phạm contract (deliberate break).
 
-- [ ] Hoàn thiện file `SELF_ASSESSMENT_REPORT.md`: Tự chấm điểm từng tiêu chí, gắn link bằng chứng, và ghi chú phần "what we did not manage".
+- [x] Hoàn thiện file `SELF_ASSESSMENT_REPORT.md`: Tự chấm điểm từng tiêu chí, gắn link bằng chứng, và ghi chú phần "what we did not manage".
 
-- [ ] Commit mọi thứ. Tạo tag `pa2` và push tag lên repository: `git tag pa2 && git push origin pa2`.
+- [x] Commit mọi thứ. Tạo tag `pa2` và push tag lên repository: `git tag pa2 && git push origin pa2`.
 
-- [ ] Nén toàn bộ thư mục (Bao gồm cả file `.git`) thành file zip. Đặt tên file theo cấu trúc: `<MSSV1>-<MSSV2>-<MSSV3>_<Tổng_điểm>.zip` xếp theo thứ tự tăng dần của MSSV (Ví dụ: `23120242-23120255-23120262_98.zip`).
+- [x] Nén toàn bộ thư mục (Bao gồm cả file `.git`) thành file zip. Đặt tên file theo cấu trúc: `<MSSV1>-<MSSV2>-<MSSV3>_<Tổng_điểm>.zip` xếp theo thứ tự tăng dần của MSSV. Đã tạo `23120190-23120202-23120242_94.zip`.
 
 - [ ] Một thành viên đại diện dùng email sinh viên gửi bài nộp trước **22:00, Thứ Tư, 11/11/2026**.
