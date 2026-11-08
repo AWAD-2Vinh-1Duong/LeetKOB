@@ -2,6 +2,14 @@
 
 Khi ghi AI Log thì phải ghi ở trên cùng.
 
+## 2026-11-08 — Kiểm tra bài nộp PA#2 và sửa minh chứng (Quang Vinh)
+
+Tool: Claude Code (Claude Opus 5.5)
+Asked for: Audit the PA#2 submission folder against the rubric, then fix every problem found.
+Kept: Corrected `PA2.md` links (the commit and run that turned PR #6 green; the tag-run list instead of a run on the tag's earlier commit), `.gitleaksignore` for one false positive, the missing 2026-10-31 AI-LOG entry and the `2026-29-10` date fixes.
+Changed: The audit found that `main` required no status check, although `SELF_ASSESSMENT_REPORT.md` said the team confirmed it did: the API returned `"contexts": []` and our own screenshot read "No required checks". We added `quality` as a required check and replaced the claim with the new screenshot. The model was changed from Gemini 1.5 Flash, shut down by Google in September 2025, to Gemini 3.6 Flash.
+Rejected: An API key pasted into the chat to test which models it can call. Tier 3 of `AGENTS.md` forbids putting a secret in a chat or a command, so the assistant gave a command that reads the key from `.env` instead, and the key is to be rotated.
+
 ## 2026-11-07 — Bật CI cho tag pa2
 
 Tool: GitHub Copilot
@@ -76,6 +84,14 @@ Kept: The three permission tiers, the completed sandbox never line and npm as th
 Changed: Wrote the review as a separate file instead of editing AGENTS.md, which is Quang Vinh's deliverable. In that file, replaced the "Example Stack / Microservices / 3-tier / ???" placeholder with a concrete stack, and chose JavaScript + checkJs over TypeScript because package.json, tsconfig.json and the test glob are already wired for it.
 Rejected: Rejected rewriting AGENTS.md directly. Rejected treating the 0-byte ci.yml as a gate: an empty workflow always passes, the exact case rubric 7 warns about. Rejected Redis, Prisma, Jest and Judge0 — reasons in the stack table.
 
+## 2026-10-31 — CLAUDE.md, secrets và công cụ kiểm tra (PA#2, Quang Vinh)
+
+Tool: Claude Code (Claude Opus 5.5)
+Asked for: Write `CLAUDE.md`, then complete Giai đoạn 2 (`.env.example`, permission tiers, secret scan) and Giai đoạn 3 (lint, format, type check and one `npm run check` command).
+Kept: `CLAUDE.md` importing `@AGENTS.md`; ESLint 10, Prettier 3, `tsc --noEmit` with `checkJs` and `node --test` chained in `npm run check`; `.env.example` with every value empty; a gitleaks scan of the whole history.
+Changed: The first `CLAUDE.md` the assistant wrote failed `prettier --check`; it was reformatted and "Format before committing" became a rule in `CLAUDE.md`. `README.md` said a spending cap "Đã thiết lập" although none existed; that line was changed to a TODO.
+Rejected: `npm audit fix --force`, which would have downgraded ESLint 10 to 4 to silence a dev-only `minimatch` advisory. Rejected treating `npm test` as a gate while `tests/` was empty: `node --test` exits 0 when it finds no test files, so the step could not fail until contract tests existed.
+
 ## 2026-10-30 — Thiết lập CI chặn merge
 
 Tool: GitHub Copilot
@@ -84,7 +100,7 @@ Kept: Dùng `npm run check` làm lệnh kiểm tra duy nhất trong workflow the
 Changed: Đổi các lệnh trong `AGENTS.md` và `README.md` sang npm; thêm workflow `.github/workflows/ci.yml`; tạo nhánh `gate/ci-test` và thêm đoạn mã cố ý vi phạm lint/format vào `src/app.js`.
 Rejected: Không thêm `package.json`, script kiểm tra hay cấu hình lint/format vì nằm ngoài phạm vi bước được yêu cầu. `npm run check` hiện không chạy được do repository chưa có `package.json`; chưa có PR hoặc ảnh CI vì chưa commit/push.
 
-## 2026-29-10 - Adjust the AGENTS.md (PA#2, Bình Dương)
+## 2026-10-29 - Adjust the AGENTS.md (PA#2, Bình Dương)
 
 Tool: Gemini 4 Argon - Medium
 Asked for: Adjusting the content of the AGENTS.md which is generated before (in session 3, including 4 parts: Stack, Commands, Conventions, và Never)
@@ -92,7 +108,7 @@ Kept: Kept all the content, excluding the "stack" which is need to be further re
 Changed: Adjust the "stack" to "example stack"
 Rejected: Didn't reject any content
 
-## 2026-29-10 - Tạo file quản lý công việc (PA#2, Bình Dương)
+## 2026-10-29 - Tạo file quản lý công việc (PA#2, Bình Dương)
 
 Tool: Gemini 3.1 Pro - Medium
 Asked for: Based on the Rubric and Requirement file, create a checklist.md includes all the tasks which are needed to completed for PA#2
@@ -100,7 +116,7 @@ Kept: Keeping the content of checklist which is generated
 Changed: adjust some task status from "not done" ([ ]) to "done ([x])
 Rejected: Didn't reject any content
 
-## 2026-29-10 - Tạo cấu trúc file (PA#2, Bình Dương)
+## 2026-10-29 - Tạo cấu trúc file (PA#2, Bình Dương)
 
 Tool: MAI Code 1.1 FLASH (Auto copilot)
 Asked for: Setting up the file structure for the repository (includes AI's rules files, /src, /docs, /tests, ...)
