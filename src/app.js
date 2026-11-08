@@ -67,5 +67,3 @@ export function createApp({
 
   return app;
 }
-
-const deliberateRequiredCheckFailure={proof:"quality must block this merge"}
