@@ -106,9 +106,9 @@ Tuân thủ Tiêu chí 2 về quản lý chi phí và an toàn bảo mật:
 
 - **Model Provider & Model được chọn**: Google Gemini — **Gemini 3.6 Flash** (`gemini-3.6-flash`, Free tier), cấu hình qua biến `LLM_MODEL`. Ban đầu nhóm ghi Gemini 1.5 Flash, nhưng model này đã bị Google tắt từ tháng 9/2025 nên được thay thế.
 
-- **Billing và spending cap**: Nhóm hiện chỉ sử dụng quota Free tier và chưa bật billing. Theo giao diện Google AI Studio mà nhóm đang dùng, cần trả trước 800.000 VNĐ mới có thể thiết lập billing; nhóm không bật billing để tránh khoản trả trước này. Vì vậy, hiện chưa có spending cap dạng số được cấu hình ở phía provider; không xem `$1/tháng` là cap đã thiết lập. Việc sử dụng vẫn chịu quota Free tier của provider, và nhóm không chủ ý sử dụng mức dịch vụ trả phí. Nếu bật billing trong tương lai, cần cấu hình và xác minh cap trước khi dùng paid tier.
+- **Spending cap: 0 USD (cứng, do provider áp)**: API key thuộc project `For-Github-CodeSpace` trên Google AI Studio, **không gắn billing account** ([ảnh dashboard](docs/tasks/PA2/assets/provider-dashboard.png): _Billing Tier: Free tier — Set up billing_). Không có billing thì Google không thể tính tiền: request vượt quota Free tier bị trả về `429 RESOURCE_EXHAUSTED` thay vì phát sinh phí. Nhóm không bật billing vì AI Studio yêu cầu trả trước 800.000 VNĐ. Nếu sau này bật billing, phải đặt budget/cap dạng số trên provider và cập nhật mục này **trước** khi dùng paid tier.
 
-- **Chi phí hiện tại**: Nhóm chỉ dùng Free tier; không đưa ước tính giá paid-tier vào chi phí hiện tại. Các giới hạn sử dụng vẫn theo quota và chính sách Free tier của provider.
+- **Chi phí một lab (80 bài nộp)**: **0 USD** trên Free tier. Giới hạn thực tế là quota Free tier; ngoài ra app sẽ chặn thêm bằng biến `LLM_COST_CAP_PER_LAB_USD` trong adapter `ConstraintJudge` (từ PA#3).
 
 - **Cô lập Sandbox**: Toàn bộ tiến trình chạy mã nguồn sinh viên trong sandbox hoàn toàn **không có quyền truy cập Internet** và **không nhận bất kỳ API secret nào** trong biến môi trường cũng như hệ thống tập tin.
 
