@@ -3,7 +3,13 @@
 - Public Repository link: https://github.com/AWAD-2Vinh-1Duong/LeetKOB
 - Branch protection: ![branch-protection](docs/tasks/PA2/assets/branch-protection.png)
 - Required status check `quality` (bắt buộc CI xanh mới được merge vào `main`): ![required-status-check](docs/tasks/PA2/assets/required-status-check.png)
-- Pull request bị CI đỏ chặn rồi chuyển xanh: https://github.com/AWAD-2Vinh-1Duong/LeetKOB/pull/6
+- Pull request bị check bắt buộc `quality` chặn rồi chuyển xanh (sau khi bật required check): https://github.com/AWAD-2Vinh-1Duong/LeetKOB/pull/10
+  - Commit cố tình vi phạm lint: https://github.com/AWAD-2Vinh-1Duong/LeetKOB/pull/10/commits/89240bbab73f687b5b211216b7121fe1d27d9f5c
+  - CI run đỏ: https://github.com/AWAD-2Vinh-1Duong/LeetKOB/actions/runs/42460328414
+  - Merge bị chặn (`quality` hiện **Required**, nút Merge bị khoá): ![required-check-blocks-merge](docs/tasks/PA2/assets/required-check-blocks-merge.png)
+  - Commit làm PR xanh trở lại: https://github.com/AWAD-2Vinh-1Duong/LeetKOB/pull/10/commits/5fe2fb214e69f2bd626994e01d87f2732c9c4fc2
+  - CI run xanh: https://github.com/AWAD-2Vinh-1Duong/LeetKOB/actions/runs/42460493989
+- Pull request đầu tiên bị CI đỏ rồi chuyển xanh (31/10, trước khi `quality` thành check bắt buộc): https://github.com/AWAD-2Vinh-1Duong/LeetKOB/pull/6
   - Commit cố tình vi phạm lint: https://github.com/AWAD-2Vinh-1Duong/LeetKOB/pull/6/commits/8f8f01a2608d067000f38ec0b44cf0e054e994ab
   - CI run đỏ: https://github.com/AWAD-2Vinh-1Duong/LeetKOB/actions/runs/41222159341
   - Commit làm PR xanh trở lại: https://github.com/AWAD-2Vinh-1Duong/LeetKOB/pull/6/commits/e04ff6f349e07bf7cfe1b6658e7caabfc289cc1e
