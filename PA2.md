@@ -2,10 +2,13 @@
 
 - Public Repository link: https://github.com/AWAD-2Vinh-1Duong/LeetKOB
 - Branch protection: ![branch-protection](docs/tasks/PA2/assets/branch-protection.png)
-- Link Pull request được quyền merged/đã merged (bao gồm commit bị từ chối, commit chỉnh sửa - màu xanh): https://github.com/AWAD-2Vinh-1Duong/LeetKOB/pull/6
-- CI run failed: https://github.com/AWAD-2Vinh-1Duong/LeetKOB/actions/runs/41222159341
-- CI run successed: https://github.com/AWAD-2Vinh-1Duong/LeetKOB/actions/runs/41223080718
-- CI run for tag `pa2` (success): https://github.com/AWAD-2Vinh-1Duong/LeetKOB/actions/runs/42381127856
+- Required status check `quality` (bắt buộc CI xanh mới được merge vào `main`): ![required-status-check](docs/tasks/PA2/assets/required-status-check.png)
+- Pull request bị CI đỏ chặn rồi chuyển xanh: https://github.com/AWAD-2Vinh-1Duong/LeetKOB/pull/6
+  - Commit cố tình vi phạm lint: https://github.com/AWAD-2Vinh-1Duong/LeetKOB/pull/6/commits/8f8f01a2608d067000f38ec0b44cf0e054e994ab
+  - CI run đỏ: https://github.com/AWAD-2Vinh-1Duong/LeetKOB/actions/runs/41222159341
+  - Commit làm PR xanh trở lại: https://github.com/AWAD-2Vinh-1Duong/LeetKOB/pull/6/commits/e04ff6f349e07bf7cfe1b6658e7caabfc289cc1e
+  - CI run xanh: https://github.com/AWAD-2Vinh-1Duong/LeetKOB/actions/runs/41222245456
+- CI run cho tag `pa2`: https://github.com/AWAD-2Vinh-1Duong/LeetKOB/actions?query=branch%3Apa2 (run trên cùng là run của commit đang gắn tag; file này nằm trong chính commit đó nên không thể ghi sẵn số run)
 - Deliberate contract break (PR): https://github.com/AWAD-2Vinh-1Duong/LeetKOB/pull/8
   - Commit vi phạm contract (bỏ idempotency lookup): https://github.com/AWAD-2Vinh-1Duong/LeetKOB/pull/8/commits/fb6e601019dee79c7a768e11c19a6fb030114ba6
   - CI run đỏ (3 test idempotency fail): https://github.com/AWAD-2Vinh-1Duong/LeetKOB/actions/runs/41383050327
