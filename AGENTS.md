@@ -6,18 +6,20 @@ You are an AI programming assistant working on the LeeTKOB grading harness and p
 
 ## 1. Stack
 
+Items marked _(PA#3)_ are decided but not installed yet; until then PA#2 uses in-memory repositories behind the same interfaces.
+
 - **Runtime & Language:** Node.js 22 LTS, ESM, JavaScript with JSDoc and strict `checkJs`.
 - **HTTP:** Express 5.
 - **Architecture:** One process with controllers → services → repositories; inject dependencies through constructors.
-- **Database:** PostgreSQL 16 via `pg`, using SQL directly; manage schema changes with `node-pg-migrate`.
-- **Queue:** PostgreSQL table; claim jobs with `FOR UPDATE SKIP LOCKED`.
+- **Database:** _(PA#3)_ PostgreSQL 16 via `pg`, using SQL directly; manage schema changes with `node-pg-migrate`.
+- **Queue:** _(PA#3)_ PostgreSQL table; claim jobs with `FOR UPDATE SKIP LOCKED`.
 - **Validation:** `zod`.
 - **Tests:** `node:test` and `supertest`.
 - **Lint / Format:** ESLint 10 flat config and Prettier 3.
 - **Authentication:** JWT with `jose`; password hashing with `scrypt` from `node:crypto`.
-- **Sandbox:** Custom Docker runner with the security baselines in section 4.
-- **LLM:** `ConstraintJudge` adapter using Gemini 3.6 Flash (`gemini-3.6-flash`) on the free tier, model ID set by `LLM_MODEL`; automated tests must use stubs or recorded fixtures.
-- **Logging:** `pino` with request IDs; no `console.log` in `src/`.
+- **Sandbox:** _(PA#3)_ Custom Docker runner with the security baselines in section 4.
+- **LLM:** _(PA#3)_ `ConstraintJudge` adapter using Gemini 3.6 Flash (`gemini-3.6-flash`) on the free tier, model ID set by `LLM_MODEL`; automated tests must use stubs or recorded fixtures.
+- **Logging:** _(PA#3)_ `pino` with request IDs; no `console.log` in `src/`.
 - **Package Manager:** npm.
 - _Enforcement:_ Do not introduce another language or package manager. Ask for explicit confirmation before adding, updating, or removing runtime dependencies or dev tooling not already present in `package.json`.
 
@@ -32,8 +34,8 @@ Run these commands to verify code changes. CI and local development use the exac
 - Format check: `npm run format:check`
 - Type checking: `npm run typecheck`
 - Run contract & unit tests: `npm test`
-- Start local dev server: `npm run dev`
-- Run database migrations: `npm run db:migrate`
+
+Planned for PA#3, not in `package.json` yet (do not run): `npm run dev` (local dev server), `npm run db:migrate` (database migrations).
 
 ---
 
@@ -76,7 +78,7 @@ You may execute these read-only or easily reversible actions autonomously:
 - Read files, `grep`, and search codebase.
 - Run `npm run check`, `npm run lint`, `npm run format:check`, `npm run typecheck`, `npm test`.
 - Check git status (`git status`, `git diff`).
-- Start the local dev server.
+- Start the local dev server (`npm run dev`, once it exists in PA#3).
 
 ### Tier 2: Ask First (Requires explicit user confirmation)
 
