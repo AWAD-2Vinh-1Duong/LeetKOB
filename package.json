@@ -8,6 +8,8 @@
     "node": ">=22"
   },
   "scripts": {
+    "dev": "node --watch src/app.js",
+    "db:migrate": "node-pg-migrate up",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",

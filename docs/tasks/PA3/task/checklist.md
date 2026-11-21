@@ -45,7 +45,7 @@
   - **Chi tiết:** Tạo nhánh tích hợp `feat/pa3-prototype` từ `main` và các nhánh con đúng prefix quy định (`feat/*` / `test/*`): `feat/pa3-db-queue-sandbox`, `feat/pa3-lab-submissions`, `feat/pa3-hard-rules`, `feat/pa3-llm-guardrails`, `feat/pa3-cli-eval`. Cả 3 thành viên kiểm tra `git config user.name` và `user.email` chính chủ để phục vụ vấn đáp PA#6.
   - **Tiêu chí xong:** Nhánh đẩy lên remote; rule bảo vệ nhánh `main` (chặn merge khi `quality` đỏ) hoạt động bình thường.
 
-- [ ] **T02** — **Cập nhật `AGENTS.md` (PA#3 rules), `.env.example` & `package.json` scripts**
+- [x] **T02** — **Cập nhật `AGENTS.md` (PA#3 rules), `.env.example` & `package.json` scripts**
   - **Phụ trách:** `@Dương`
   - **Phụ thuộc:** `T01`
   - **Chi tiết:** Bổ sung mục `Never` trong `AGENTS.md` cho PA#3 (cấm mount `/var/run/docker.sock` hoặc `--privileged`, cấm truyền `LLM_API_KEY` vào sandbox, cấm đọc back-memory thiếu trong test 1GiB, cấm sửa `dev set`). Cập nhật `.env.example` (để trống giá trị) cho `DATABASE_URL`, `LLM_MODEL=gemini-3.6-flash`, `LLM_API_KEY`, `SANDBOX_*`. Thêm `npm run dev` và `npm run db:migrate` vào `package.json` theo đúng mục 2 của `AGENTS.md`.

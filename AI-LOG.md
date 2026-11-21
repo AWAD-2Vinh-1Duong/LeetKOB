@@ -2,6 +2,14 @@
 
 Khi ghi AI Log thì phải ghi ở trên cùng.
 
+## 2026-11-21 — Cập nhật AGENTS.md, .env.example và scripts cho PA#3 (Bình Dương)
+
+Tool: Antigravity Agent
+Asked for: Thực hiện Task T02 trong checklist: Cập nhật `AGENTS.md` bổ sung các quy tắc Never của PA#3 theo rubric Catching your assistant, cập nhật `.env.example`, thêm `npm run dev` và `npm run db:migrate` vào `package.json`.
+Kept: Danh sách cấm (Never) đặc thù PA#3: cấm mount docker socket, cấm `--privileged`, cấm truyền secret (`LLM_API_KEY`) vào sandbox container, cấm test cấp phát bộ nhớ mà không đọc lại (tránh tối ưu hóa compiler), cấm sửa dev set/eval script, cấm hardcode ID dev set trong rules/prompts, cấm bypass TA review queue. Cập nhật `.env.example` đầy đủ biến và giữ trống giá trị. Thêm script `dev` và `db:migrate` vào `package.json`.
+Changed: Giữ `MODEL_OFF=` trong `.env.example` để hỗ trợ switch đánh giá chuẩn theo yêu cầu Tiêu chí 6 rubric. Cập nhật mục Stack và Commands của `AGENTS.md` phản ánh trạng thái kích hoạt của PA#3.
+Rejected: Không truyền bất kỳ giá trị secret thật nào vào file mẫu; không gán giá trị mặc định cho `.env.example`.
+
 ## 2026-11-21 — Thiết lập không gian nộp bài PA#3 (Bình Dương)
 
 Tool: Antigravity Agent
