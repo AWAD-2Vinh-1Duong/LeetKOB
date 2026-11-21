@@ -1,0 +1,129 @@
+================================================================================
+PA#3 PRE-SUBMISSION VERIFICATION CHECKLIST (submission-note.txt)
+Course: CSC13114 — Advanced Web Application Development (Class CQ2023/3)
+Project: LeeTKOB — Milestone PA#3: Prototype with the LLM Feature Running
+Team: AWAD-2Vinh-1Duong (The Vinh: 23120190, Quang Vinh: 23120202, Duong: 23120242)
+Target Deadline: Wednesday, November 25, 2026, 22:00 (GMT+7)
+================================================================================
+
+This checklist serves as the authoritative verification protocol for both AI 
+Coding Agents and human teammates prior to finalizing git tag `pa3` and creating 
+the final Classroom `.zip` delivery.
+
+--------------------------------------------------------------------------------
+1. ROOT FILE SYNCHRONIZATION RULE (CRITICAL)
+--------------------------------------------------------------------------------
+[ ] SYNC TO ROOT BEFORE TAGGING & PACKAGING:
+    While drafting occurs inside `docs/tasks/PA3/submission/`, the official PA#3 
+    rubric mandates that the final submission files MUST exist at the REPOSITORY 
+    ROOT:
+    - Root `PA3.md` must be synced from `docs/tasks/PA3/submission/PA3.md`.
+    - Root `SELF_ASSESSMENT_REPORT.md` must be synced from 
+      `docs/tasks/PA3/submission/SELF_ASSESSMENT_REPORT.md`.
+[ ] AI-LOG.md INTEGRITY:
+    - `AI-LOG.md` remains a SINGLE authoritative file at the repository root.
+    - Every agent/human action is recorded with the NEWEST entry placed at the 
+      very TOP of the file.
+
+--------------------------------------------------------------------------------
+2. SYLLABUS ZERO-TOLERANCE RULE (CRITERIA 4, 5, 6 = 0 PTS IF VIOLATED)
+--------------------------------------------------------------------------------
+[ ] HUMAN GATE (NO AUTO-DEDUCTION):
+    - Model verdicts MUST NEVER automatically alter a student's mark or publish 
+      deductions directly to students without explicit TA approval.
+    - All model evaluations land exclusively in the TA's Review Queue.
+    - If a "Publish" endpoint/button exists, it MUST return an error if any 
+      verdicts remain unreviewed in the queue.
+[ ] GUARDRAILS MANDATORY (SCHEMA & TIMEOUT):
+    - Every model output MUST pass schema validation (e.g., Zod / JSON Schema).
+    - If the model returns malformed JSON, Markdown wrappers, unexpected fields, 
+      or times out, it MUST automatically fall back to verdict `unsure`.
+    - Both guardrails MUST be verified with automated tests using a fake model 
+      and no network connection (`no network`).
+
+--------------------------------------------------------------------------------
+3. DEV-SET INTEGRITY & ANTI-CHEATING AUDIT (SHA-256)
+--------------------------------------------------------------------------------
+[ ] OFFICIAL DEV-SET UNTOUCHED:
+    - Verify SHA-256 hash of `eval.mjs` starts with: `c836edd8713521bb`
+    - Verify SHA-256 hash of `labels.jsonl` starts with: `262cda7b0ef5612e`
+    - Ensure zero modifications to any `.cpp` reference files in `dev set`.
+[ ] NO HARDCODING OF PROBLEM IDENTIFIERS:
+    - Grep all prompts and hard-rule code to verify NO dev-set problem IDs 
+      (such as `sort-merge/s05`) or problem-specific strings are hardcoded.
+
+--------------------------------------------------------------------------------
+4. SANDBOX 9 MINIMUMS (`M1`–`M9`) & CI VERIFICATION
+--------------------------------------------------------------------------------
+[ ] 9 ATTACK SUBMISSIONS IN REPO & PASSING ON CI TAG `pa3`:
+    - `M1`: Network isolation (`--network none`)
+    - `M2`: CPU time limit enforcement
+    - `M3`: Wall-clock timeout that kills the container (not just the process)
+    - `M4`: Memory + swap limit; test code reads back memory so `-O2` cannot optimize it away
+    - `M5`: Process limit (`pids-limit`)
+    - `M6`: Output size limit
+    - `M7`: Execution as non-root user (`geteuid() != 0`, no `/root` write)
+    - `M8`: No host mounts and no `/var/run/docker.sock`
+    - `M9`: No secrets (`LLM_API_KEY` absent from env, files, and include paths)
+[ ] QUEUE WORKER EXACTLY-ONCE (Q1 RULE):
+    - Stop worker -> submit C++ code -> restart worker -> verified that only 
+      ONE verdict set is generated and stored.
+
+--------------------------------------------------------------------------------
+5. MODEL CONFIGURATION, README & COST ARITHMETIC
+--------------------------------------------------------------------------------
+[ ] MODEL & SPENDING CAP:
+    - Selected Model: Google Gemini `gemini-3.6-flash` (Google AI Studio Free Tier).
+    - Hard Cap: $0.00 USD (no billing account attached to project; HTTP 429 on quota exhaustion).
+[ ] COST ARITHMETIC DOCUMENTED:
+    - Both `README.md` and `AI-LOG.md` contain explicit arithmetic showing the 
+      token calculation and cost estimation for 1 lab of 80 submissions.
+
+--------------------------------------------------------------------------------
+6. CLI CHECKER & FIRST EVAL
+--------------------------------------------------------------------------------
+[ ] CHECKER COMMAND & DOCKERFILE:
+    - Dockerfile builds cleanly: `docker build -t leetkob-checker -f Dockerfile .`
+    - Runs in container with `MODEL_OFF=1` and `--network none`.
+    - Exit code on dev set is 0 or 1 (NEVER 2).
+    - Model-off run achieves EXACTLY 0 wrongful deductions on dev set.
+[ ] COMMITTED DEV-SET RUN ARTIFACTS:
+    - Real-model run outputs committed under `docs/tasks/PA3/submission/dev-run/`:
+      * `predictions.jsonl`
+      * `eval-report.txt`
+      * `call-log.jsonl` (contains provider request IDs, model, tokens, latency, cost)
+[ ] CUSTOM EVAL CASES:
+    - At least 5 custom cases committed in standard dev-set layout.
+    - Must include at least 1 `trap` case and at least 1 `injection` case.
+
+--------------------------------------------------------------------------------
+7. PRE-ZIP REPOSITORY HYGIENE & QUALITY CHECKS
+--------------------------------------------------------------------------------
+[ ] RUN ONE-COMMAND QUALITY GATE:
+    - Run: `npm run check` (ensuring `lint`, `format:check`, `typecheck`, and `test` pass 100% green).
+[ ] SECRET LEAK SCAN:
+    - Run: `gitleaks detect --source . --log-opts="--all"` (must report 0 leaks).
+[ ] GIT TAG CREATION:
+    - Commit all final artifacts.
+    - Run: `git tag pa3 && git push origin pa3`
+    - Ensure repository is PUBLIC and GitHub Actions CI workflow on tag `pa3` is 100% green.
+
+--------------------------------------------------------------------------------
+8. FINAL PACKAGING & CLASSROOM SUBMISSION
+--------------------------------------------------------------------------------
+[ ] PUBLIC DEPLOYMENT ACCESSIBLE:
+    - Deployment URL is live and holds 5 synthetic test accounts (1 Admin, 2 TAs, 2 Students).
+    - MUST remain online until PA#4 grades are published for peer red-teaming.
+[ ] SCREEN RECORDING VERIFIED:
+    - Link in `PA3.md` works without login (YouTube unlisted / Google Drive public).
+    - Duration <= 5 minutes demonstrating all 6 required flow steps.
+[ ] ZIP FILE PACKAGING:
+    - Archive command: MUST include hidden `.git` directory!
+    - Ensure `.env` is NOT included in the archive.
+    - Naming convention: `<MSSV1>-<MSSV2>-<MSSV3>_<TongDiemTuCham>.zip`
+      Example: `23120190-23120202-23120242_100.zip` (ascending order, ending with 23120242).
+    - The number `<TongDiemTuCham>` MUST exactly match the Total in `SELF_ASSESSMENT_REPORT.md`.
+[ ] TURN IN:
+    - Upload zip file to Google Classroom before Wednesday, Nov 25, 2026, 22:00 (GMT+7).
+    - Submitting account: `<StudentID>@student.hcmus.edu.vn` (Dương: `23120242@student.hcmus.edu.vn`).
+================================================================================

@@ -2,6 +2,14 @@
 
 Khi ghi AI Log thì phải ghi ở trên cùng.
 
+## 2026-11-21 — Thiết lập không gian nộp bài PA#3 (Bình Dương)
+
+Tool: Antigravity Agent
+Asked for: Thiết lập không gian làm việc `docs/tasks/PA3/submission/` với các mẫu sẵn sàng điền (`PA3.md`, `SELF_ASSESSMENT_REPORT.md`, `dev-run/.gitkeep`), bảng kiểm tra trước khi nộp (`submission-note.txt`), và cập nhật `.prettierignore` để đảm bảo quy trình kiểm tra chất lượng đồng nhất.
+Kept: Cấu trúc 8 tiêu chí chấm điểm của PA#3 (tổng 100 điểm), 9 luật tối thiểu của sandbox (`M1`–`M9`), bảng 5 tài khoản test giả lập, các lệnh CLI checker với cờ `MODEL_OFF=1`, thư mục lưu trữ kết quả chạy dev set, và bảng kiểm tra plain-text nhấn mạnh quy tắc điểm liệt (Syllabus rule) và cơ chế Human Gate.
+Changed: Lưu các bản mẫu trực tiếp trong `docs/tasks/PA3/submission/` kèm quy tắc đồng bộ bắt buộc ra thư mục gốc (`PA3.md` và `SELF_ASSESSMENT_REPORT.md`) trước khi gắn tag `pa3` và nén file `.zip`. Thêm `docs/tasks/PA3/submission/dev-run/**` và `submission-note.txt` vào `.prettierignore` để tránh lỗi định dạng dữ liệu raw/plain text.
+Rejected: Tuyệt đối không lưu API key hay tài khoản thật vào bất kỳ file template nào; không điền sẵn điểm số tự chấm mà dùng các placeholder `<TODO: ...>` để nhóm tự đánh giá trung thực khi hoàn thiện từng tiêu chí.
+
 ## 2026-11-08 — Kiểm tra bài nộp PA#2 và sửa minh chứng (Quang Vinh)
 
 Tool: Claude Code (Claude Opus 5.5)

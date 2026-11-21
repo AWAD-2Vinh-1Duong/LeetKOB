@@ -17,3 +17,10 @@
     - LeetKOB/PA3-SELF_ASSESSMENT_REPORT.md
     - LeetKOB/PA3.md
 - Coppying the - LeetKOB/PA2-SELF_ASSESSMENT_REPORT.md and LeetKOB/PA2.md located in root folder for submission (these files will be deleted after PA#2 is marked)
+
+4. Set up PA#3 submission workspace & verification checklist - **20:27 - Assistant & Binh Duong**
+- Created `docs/tasks/PA3/submission/PA3.md` draft template with all 5 mandatory rubric sections (Public deployment & 5 test accounts, CI run on tag `pa3`, CLI checker commands with `MODEL_OFF=1`, committed dev-set run paths & cost arithmetic, E2E video link & 6-step checklist).
+- Created `docs/tasks/PA3/submission/SELF_ASSESSMENT_REPORT.md` with 8 rubric criteria (100 pts), claim/evidence placeholders, and honesty adjustment rules.
+- Created `docs/tasks/PA3/submission/dev-run/.gitkeep` for real-model dev-set run artifacts.
+- Created `docs/tasks/PA3/submission/submission-note.txt` covering root sync rules, syllabus zero-tolerance guardrails, SHA-256 checks, 9 sandbox baselines, and turn-in procedure.
+- Updated `.prettierignore` to ignore raw eval outputs in `dev-run/**` and plain-text submission notes.
