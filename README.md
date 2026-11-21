@@ -1,37 +1,3 @@
-# Repository structure:
-
-```Plaintext
-LeeTKOB/
-├── .github/
-│   └── copilot-instructions.md      # là file chứa các quy tắc cụ thể nếu sử dụng Copilot làm Coding Agent
-│   └── workflows/
-│       └── ci.yml                   # (Tiêu chí 3, 4) Pipeline CI chặn merge, chạy 1 lệnh duy nhất cho lint/format/test.
-├── docs/
-│   └── contract/
-│       └── post-labs-submissions.md # (Tiêu chí 5) Hợp đồng chi tiết cho 1 endpoint (chọn POST nộp bài hoặc GET review-queue).
-├── src/                             # Mã nguồn hệ thống
-│   ├── controllers/                 # Lớp Routing & Controllers (nhận HTTP request, trả RFC 9457 Problem Details)
-│   ├── services/                    # Lớp Business Logic (xử lý logic bài nộp, gọi Sandbox, xử lý Idempotency)
-│   ├── repositories/                # Lớp Data Access (tương tác với database, Dependency Injection)
-│   ├── middlewares/                 # Xử lý phân quyền (Tiêu chí 5 - Who may call it)
-│   └── app.js                       # Điểm khởi chạy ứng dụng (Setup DI container)
-├── tests/
-│   └── contract/                    # (Tiêu chí 6) Chứa các contract tests "có thể cắn" (bắt chặt lỗi, ownership, idempotency).
-├── .env.example                     # (Tiêu chí 2) Liệt kê mọi biến môi trường, tuyệt đối bỏ trống giá trị.
-├── .gitignore                       # Đảm bảo bỏ qua file .env để không lọt secret vào lịch sử git
-├── AI-LOG.md                        # (Tiêu chí 7) Ghi chú các công cụ AI đã dùng và các quyết định Changed/Rejected thực tế
-├── AGENTS.md                        # (Tiêu chí 1, 2) Quy tắc chung cho mọi Coding Agent: stack, commands, conventions, never + phân quyền 3 tầng
-├── CLAUDE.md                        # Quy tắc riêng cho Claude Code (import AGENTS.md bằng @AGENTS.md)
-├── PA2.md                           # File nộp bài gốc chứa link repo public, screenshot protect branch, PR, CI run
-├── eslint.config.js                 # (Tiêu chí 3) Cấu hình ESLint
-├── .prettierrc.json                 # (Tiêu chí 3) Cấu hình Prettier (.prettierignore: bỏ qua tài liệu đề bài)
-├── tsconfig.json                    # (Tiêu chí 3) Type check JS bằng tsc --checkJs
-├── package.json                     # (Tiêu chí 3) Các script lint / format:check / typecheck / test / check
-├── README.md                        # Hướng dẫn setup, chạy các lệnh check đồng nhất, và ghi rõ hạn mức chi tiêu (spending cap) của API Key.
-└── SELF_ASSESSMENT_REPORT.md        # Bảng tự đánh giá điểm từng tiêu chí kèm minh chứng (commit, PR, link file)
-```
-
----
 
 # LeeTKOB — Grading Harness & Quality Gate
 
@@ -46,7 +12,7 @@ LeeTKOB là nền tảng hỗ trợ Trợ giảng (TA) chấm bài tập lập t
 ### Bước 1: Sao chép repository
 
 ```bash
-git clone <URL_REPOSITORY_PUBLIC>
+git clone https://github.com/AWAD-2Vinh-1Duong/LeetKOB
 cd LeeTKOB
 ```
 
@@ -106,7 +72,7 @@ Tuân thủ Tiêu chí 2 về quản lý chi phí và an toàn bảo mật:
 
 - **Model Provider & Model được chọn**: Google Gemini — **Gemini 3.6 Flash** (`gemini-3.6-flash`, Free tier), cấu hình qua biến `LLM_MODEL`. Ban đầu nhóm ghi Gemini 1.5 Flash, nhưng model này đã bị Google tắt từ tháng 9/2025 nên được thay thế.
 
-- **Spending cap: 0 USD (cứng, do provider áp)**: API key thuộc project `For-Github-CodeSpace` trên Google AI Studio, **không gắn billing account** ([ảnh dashboard](docs/tasks/PA2/assets/provider-dashboard.png): _Billing Tier: Free tier — Set up billing_). Không có billing thì Google không thể tính tiền: request vượt quota Free tier bị trả về `429 RESOURCE_EXHAUSTED` thay vì phát sinh phí. Nhóm không bật billing vì AI Studio yêu cầu trả trước 800.000 VNĐ. Nếu sau này bật billing, phải đặt budget/cap dạng số trên provider và cập nhật mục này **trước** khi dùng paid tier.
+- **Spending cap: 0 USD (cứng, do provider áp)**: API key thuộc project `For-Github-CodeSpace` trên Google AI Studio, **không gắn billing account** ([ảnh dashboard](docs/tasks/PA2/submission/assets/provider-dashboard.png): _Billing Tier: Free tier — Set up billing_). Không có billing thì Google không thể tính tiền: request vượt quota Free tier bị trả về `429 RESOURCE_EXHAUSTED` thay vì phát sinh phí. Nhóm không bật billing vì AI Studio yêu cầu trả trước 800.000 VNĐ. Nếu sau này bật billing, phải đặt budget/cap dạng số trên provider và cập nhật mục này **trước** khi dùng paid tier.
 
 - **Chi phí một lab (80 bài nộp)**: **0 USD** trên Free tier. Giới hạn thực tế là quota Free tier; ngoài ra app sẽ chặn thêm bằng biến `LLM_COST_CAP_PER_LAB_USD` trong adapter `ConstraintJudge` (từ PA#3).
 
@@ -114,7 +80,7 @@ Tuân thủ Tiêu chí 2 về quản lý chi phí và an toàn bảo mật:
 
 ## 4. Cấu trúc tài liệu & Chỉ dẫn dành cho AI Agents
 
-Dự án áp dụng quy chuẩn quản lý mã nguồn có sự hỗ trợ của AI, được phân tách minh bạch thành các tài liệu tại thư mục gốc:
+Dự án áp dụng quy chuẩn quản lý mã nguồn có sự hỗ trợ của AI, được phân tách minh bạch thành các tài liệu tại thư mục gốc và thư mục `docs/`:
 
 - `AGENTS.md`: Chứa các quy tắc nền tảng chung gồm 5 mục: Stack, Commands, Conventions, Never, và Permission Boundaries. **Mọi Coding Agent bắt buộc phải đọc file này trước tiên.**
 
@@ -124,8 +90,60 @@ Dự án áp dụng quy chuẩn quản lý mã nguồn có sự hỗ trợ của
 
 - `docs/contract/post-labs-submissions.md`: Bản đặc tả chi tiết hợp đồng của endpoint được chọn, tuân thủ tiêu chuẩn RFC 9457 Problem Details và quy tắc Idempotency.
 
+- `docs/tasks/`: Thư mục quản lý toàn bộ tài liệu cho các bài tập thực hành (PA):
+  - `PA-template/`: Bản mẫu chuẩn hóa phân chia 3 thư mục con: `context/` (nhật ký làm việc hàng ngày), `task/` (đề bài, rubric, checklist), và `submission/` (kết quả nộp bài).
+  - `PA2/`: Lưu trữ toàn bộ tài liệu PA#2 (bao gồm `docs/tasks/PA2/submission/PA2.md`, `SELF_ASSESSMENT_REPORT.md` và các ảnh chụp minh chứng).
+  - `PA3/`: Tài liệu, checklist và nhật ký ngữ cảnh triển khai cho PA#3 (Prototype với LLM Feature Running).
+
 - `AI-LOG.md`: Nhật ký ghi lại các quyết định chấp thuận, chỉnh sửa (Changed) hoặc bác bỏ (Rejected) đề xuất của AI trong quá trình thiết lập harness và quality gate.
 
-- `PA2.md`: Tài liệu tổng hợp các đường dẫn minh chứng cho checkpoint PA#2 (link PR bị chặn, commit sửa xanh, link CI run của tag `pa2`, và deliberate contract break).
 
-- `SELF_ASSESSMENT_REPORT.md`: Báo cáo tự chấm điểm chi tiết theo rubric 100 điểm của PA#2.
+# Repository structure:
+
+```Plaintext
+LeeTKOB/
+├── .github/
+│   ├── copilot-instructions.md      # Quy tắc cụ thể nếu sử dụng Copilot làm Coding Agent
+│   └── workflows/
+│       └── ci.yml                   # (Tiêu chí 3, 4) Pipeline CI chặn merge, chạy 1 lệnh duy nhất cho lint/format/typecheck/test
+├── docs/
+│   ├── LeeTKOB — class project brief.md # Đề bài & tài liệu tổng quan dự án môn học
+│   ├── SELF_ASSESSMENT_REPORT template.md # Bản mẫu báo cáo tự đánh giá
+│   ├── contract/
+│   │   └── post-labs-submissions.md # (Tiêu chí 5) Hợp đồng chi tiết endpoint POST /labs/:labId/submissions (RFC 9457 & Idempotency)
+│   └── tasks/                       # Quản lý tài liệu theo từng kỳ Practical Assignment (PA)
+│       ├── PA-template/             # Template mẫu cho các kỳ PA (context, task, submission)
+│       ├── PA2/                     # Tài liệu & kết quả bàn giao PA#2 (Harness & Quality Gate)
+│       │   ├── context/             # Ghi nhận ngữ cảnh làm việc của các thành viên (QuangVinh.md, TheVinh.md)
+│       │   ├── submission/          # File nộp bài (PA2.md, SELF_ASSESSMENT_REPORT.md, assets/)
+│       │   └── task/                # Đề bài, rubric và checklist của PA#2
+│       └── PA3/                     # Tài liệu đang triển khai cho PA#3 (Prototype with LLM Feature Running)
+│           ├── context/             # Nhật ký ngữ cảnh (context-dd-mm.md) theo quy định AGENTS.md
+│           ├── submission/          # Bản mẫu báo cáo tự đánh giá PA#3
+│           └── task/                # Rubric và checklist thực thi PA#3
+├── src/                             # Mã nguồn hệ thống
+│   ├── controllers/                 # Lớp Routing & Controllers (nhận HTTP request, trả RFC 9457 Problem Details)
+│   ├── middlewares/                 # Xử lý phân quyền & authentication (Tiêu chí 5 - Who may call it)
+│   ├── repositories/                # Lớp Data Access (In-memory storage, Dependency Injection)
+│   ├── services/                    # Lớp Business Logic (xử lý logic bài nộp, gọi Sandbox, xử lý Idempotency)
+│   ├── app.js                       # Điểm khởi chạy ứng dụng (Setup Express & DI container)
+│   └── problems.js                  # Định nghĩa các loại RFC 9457 Problem Details
+├── tests/
+│   └── contract/                    # (Tiêu chí 6) Chứa các contract tests kiểm thử endpoint (bắt chặt lỗi, ownership, idempotency)
+│       └── post-labs-submissions.test.js
+├── .env.example                     # (Tiêu chí 2) Liệt kê mọi biến môi trường, tuyệt đối bỏ trống giá trị
+├── .gitignore                       # Đảm bảo bỏ qua file .env, node_modules để không lọt secret vào Git
+├── .gitleaksignore                  # Bỏ qua false positive cho công cụ quét secret gitleaks
+├── .prettierignore                  # Bỏ qua các file tài liệu khi chạy Prettier format
+├── .prettierrc.json                 # (Tiêu chí 3) Cấu hình Prettier (.prettierignore: bỏ qua tài liệu đề bài)
+├── AGENTS.md                        # (Tiêu chí 1, 2) Quy tắc chung cho mọi Coding Agent: stack, commands, conventions, never + phân quyền 3 tầng
+├── AI-LOG.md                        # (Tiêu chí 7) Ghi chú các công cụ AI đã dùng và các quyết định Changed/Rejected thực tế
+├── CLAUDE.md                        # Quy tắc riêng cho Claude Code (import AGENTS.md bằng @AGENTS.md)
+├── eslint.config.js                 # (Tiêu chí 3) Cấu hình ESLint (flat config)
+├── package.json                     # (Tiêu chí 3) Khai báo scripts (lint / format:check / typecheck / test / check)
+├── package-lock.json                # Khóa chính xác phiên bản các package phụ thuộc
+├── README.md                        # Hướng dẫn setup, chạy các lệnh check đồng nhất và cấu trúc dự án
+└── tsconfig.json                    # (Tiêu chí 3) Type check JS bằng tsc --checkJs
+```
+
+---
