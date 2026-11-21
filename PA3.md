@@ -6,18 +6,18 @@
 
 ## 1. Public Deployment & Test Accounts
 
-- **Public URL:** `<https://your-deployment-url>` *(kept running until PA#4 marks are out)*
+- **Public URL:** `<https://your-deployment-url>` _(kept running until PA#4 marks are out)_
 - **API Spending Cap:** `$0 USD` (Google AI Studio Free tier — `gemini-3.6-flash`, no billing account attached)
 
 > **Note:** All accounts below contain synthetic test data only.
 
-| Role | Class | Email / Username | Password |
-| :--- | :--- | :--- | :--- |
-| **Admin** | All | `<admin@leetkob.local>` | `<test-password>` |
-| **TA 1** | `<Class A (e.g. CQ2023-3A)>` | `<ta1@leetkob.local>` | `<test-password>` |
-| **TA 2** | `<Class B (e.g. CQ2023-3B)>` | `<ta2@leetkob.local>` | `<test-password>` |
-| **Student 1** | `<Class A>` | `<student1@leetkob.local>` | `<test-password>` |
-| **Student 2** | `<Class A>` | `<student2@leetkob.local>` | `<test-password>` |
+| Role          | Class                        | Email / Username           | Password          |
+| :------------ | :--------------------------- | :------------------------- | :---------------- |
+| **Admin**     | All                          | `<admin@leetkob.local>`    | `<test-password>` |
+| **TA 1**      | `<Class A (e.g. CQ2023-3A)>` | `<ta1@leetkob.local>`      | `<test-password>` |
+| **TA 2**      | `<Class B (e.g. CQ2023-3B)>` | `<ta2@leetkob.local>`      | `<test-password>` |
+| **Student 1** | `<Class A>`                  | `<student1@leetkob.local>` | `<test-password>` |
+| **Student 2** | `<Class A>`                  | `<student2@leetkob.local>` | `<test-password>` |
 
 ## 2. CI Run for `pa3` Tag (Including Sandbox Attack Tests)
 
@@ -29,3 +29,4 @@
 - **Build Checker Docker Image:**
   ```bash
   docker build -f Dockerfile.checker -t leetkob-checker:pa3 .
+  ```

@@ -2,6 +2,14 @@
 
 Khi ghi AI Log thì phải ghi ở trên cùng.
 
+## 2026-11-21 — Sửa lỗi Prettier format cho toàn bộ tài liệu PA#3 (Bình Dương)
+
+Tool: Antigravity Agent
+Asked for: Sửa lỗi Prettier (`npm run format:check`) báo đỏ trên CI workflow cho 11 file Markdown và tài liệu.
+Kept: Cập nhật `.prettierignore` để bỏ qua các file tài liệu rubric đề bài môn học từ Classroom theo đúng quy định. Chạy `npm run format` định dạng lại toàn bộ 11 file và xác minh `npm run check` xanh 100%.
+Changed: No
+Rejected: No
+
 ## 2026-11-21 — Cập nhật AGENTS.md, .env.example và scripts cho PA#3 (Bình Dương)
 
 Tool: Antigravity Agent

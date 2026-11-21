@@ -1,4 +1,3 @@
-
 # LeeTKOB — Grading Harness & Quality Gate
 
 LeeTKOB là nền tảng hỗ trợ Trợ giảng (TA) chấm bài tập lập trình C++ tự động kết hợp kiểm tra ràng buộc ngữ nghĩa (semantic constraints) trước khi công bố điểm. Dự án tập trung vào việc ngăn ngừa các vi phạm quy chế bài nộp (ví dụ: dùng thư viện cấm, sai giải thuật bắt buộc) mà các bài kiểm tra chức năng thông thường không bắt được.
@@ -96,7 +95,6 @@ Dự án áp dụng quy chuẩn quản lý mã nguồn có sự hỗ trợ của
   - `PA3/`: Tài liệu, checklist và nhật ký ngữ cảnh triển khai cho PA#3 (Prototype với LLM Feature Running).
 
 - `AI-LOG.md`: Nhật ký ghi lại các quyết định chấp thuận, chỉnh sửa (Changed) hoặc bác bỏ (Rejected) đề xuất của AI trong quá trình thiết lập harness và quality gate.
-
 
 # Repository structure:
 

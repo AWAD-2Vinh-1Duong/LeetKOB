@@ -24,14 +24,14 @@
 
 ## Tổng quan phân chia giai đoạn (21/11 – 25/11/2026)
 
-| Giai đoạn | Mục tiêu chính | Tiêu chí Rubric | Phụ trách |
-| :--- | :--- | :--- | :--- |
-| **GĐ 1** | Nhánh Git, Rules File PA#3, PostgreSQL Migrations & Dev-set | Criterion 6, 7 | Dương, Thế Vinh |
-| **GĐ 2** | Queue (`FOR UPDATE SKIP LOCKED`) & Sandbox 9 luật + Attack CI | Criterion 2 (20đ) | Dương |
-| **GĐ 3** | Auth/RBAC, Tạo Lab, Nộp bài (RFC 9457) & Hard Rules AST | Criterion 1, 3 (30đ) | Quang Vinh |
-| **GĐ 4** | LLM (`gemini-3.6-flash`), Guardrails (`zod`/Timeout) & Review Queue | Criterion 4, 5 (30đ) | Thế Vinh, Quang Vinh |
-| **GĐ 5** | CLI Checker (`MODEL_OFF=1`), Dockerfile & Chạy Eval thực tế | Criterion 4, 6 (20đ) | Thế Vinh |
-| **GĐ 6** | Public Deploy, Video ≤ 5p, Tài liệu (`PA3.md`, `AI-LOG.md`) & Nộp bài | Criterion 1, 7, 8 & Handoff | Cả nhóm (Dương chốt) |
+| Giai đoạn | Mục tiêu chính                                                        | Tiêu chí Rubric             | Phụ trách            |
+| :-------- | :-------------------------------------------------------------------- | :-------------------------- | :------------------- |
+| **GĐ 1**  | Nhánh Git, Rules File PA#3, PostgreSQL Migrations & Dev-set           | Criterion 6, 7              | Dương, Thế Vinh      |
+| **GĐ 2**  | Queue (`FOR UPDATE SKIP LOCKED`) & Sandbox 9 luật + Attack CI         | Criterion 2 (20đ)           | Dương                |
+| **GĐ 3**  | Auth/RBAC, Tạo Lab, Nộp bài (RFC 9457) & Hard Rules AST               | Criterion 1, 3 (30đ)        | Quang Vinh           |
+| **GĐ 4**  | LLM (`gemini-3.6-flash`), Guardrails (`zod`/Timeout) & Review Queue   | Criterion 4, 5 (30đ)        | Thế Vinh, Quang Vinh |
+| **GĐ 5**  | CLI Checker (`MODEL_OFF=1`), Dockerfile & Chạy Eval thực tế           | Criterion 4, 6 (20đ)        | Thế Vinh             |
+| **GĐ 6**  | Public Deploy, Video ≤ 5p, Tài liệu (`PA3.md`, `AI-LOG.md`) & Nộp bài | Criterion 1, 7, 8 & Handoff | Cả nhóm (Dương chốt) |
 
 ---
 
@@ -70,7 +70,7 @@
 - [ ] **T05** — **Xây dựng Job Queue trên PostgreSQL & Worker tách biệt (Luật `Q1`)**
   - **Phụ trách:** `@Dương`
   - **Phụ thuộc:** `T03`
-  - **Chi tiết:** Khi `POST /labs/{labId}/submissions` trả về `202 Accepted` (`status: "queued"`), ghi đồng thời 1 job vào bảng `judge_jobs`. Xây dựng tiến trình Worker độc lập (không chạy chung HTTP request handler) kéo job bằng câu lệnh SQL `FOR UPDATE SKIP LOCKED`. Đảm bảo tính idempotent khi lưu verdict để thỏa luật `Q1`: *dừng worker → nộp bài → bật worker → bài chỉ được chấm đúng 1 lần (1 bộ verdict duy nhất)*.
+  - **Chi tiết:** Khi `POST /labs/{labId}/submissions` trả về `202 Accepted` (`status: "queued"`), ghi đồng thời 1 job vào bảng `judge_jobs`. Xây dựng tiến trình Worker độc lập (không chạy chung HTTP request handler) kéo job bằng câu lệnh SQL `FOR UPDATE SKIP LOCKED`. Đảm bảo tính idempotent khi lưu verdict để thỏa luật `Q1`: _dừng worker → nộp bài → bật worker → bài chỉ được chấm đúng 1 lần (1 bộ verdict duy nhất)_.
   - **Tiêu chí xong:** Có test `node:test` chứng minh dừng/bật worker không tạo duplicate verdict; commit `feat(sandbox): add postgres job queue and isolated worker`.
 
 - [ ] **T06** — **Viết trước 9 bài nộp C++ tấn công (Attack Submissions) cho Sandbox (`M1`–`M9`)**
@@ -145,7 +145,7 @@
   - **Phụ trách:** `@Thế Vinh`
   - **Phụ thuộc:** `T01`
   - **Chi tiết:** Viết unit test bằng `node:test` dùng **stub/fake model và không kết nối mạng**:
-    1. **Schema check (`zod`):** Model trả về JSON lỗi, JSON bọc trong markdown ```` ```json ````, văn bản thừa bên ngoài, verdict lạ ngoài `{pass, violation, unsure}`, thiếu/trùng constraint → hệ thống ép verdict thành **`unsure`**.
+    1. **Schema check (`zod`):** Model trả về JSON lỗi, JSON bọc trong markdown ` ```json `, văn bản thừa bên ngoài, verdict lạ ngoài `{pass, violation, unsure}`, thiếu/trùng constraint → hệ thống ép verdict thành **`unsure`**.
     2. **Timeout check:** Model treo quá thời gian quy định (`AbortSignal.timeout`) → ngắt request, worker không bị crash, ép verdict thành **`unsure`**.
   - **Tiêu chí xong:** Commit `test(rules): add fake-model tests for schema and timeout guardrails` **trước** khi viết code guardrail.
 
@@ -227,7 +227,7 @@
 - [ ] **T25** — **Viết `SELF_ASSESSMENT_REPORT.md` & Rà soát tính trung thực**
   - **Phụ trách:** `@Dương` (cùng `@Quang Vinh`, `@Thế Vinh` đối chiếu từng tiêu chí)
   - **Phụ thuộc:** `T24`
-  - **Chi tiết:** Tạo `SELF_ASSESSMENT_REPORT.md` (theo template của môn học), lập bảng chấm điểm 8 tiêu chí Rubric PA#3 (tổng 100 điểm) kèm **bằng chứng cụ thể** (file, commit hash, PR, link CI run) và mục *What we did not manage*. Đảm bảo chênh lệch với điểm thật nằm trong khoảng `±10` để không bị trừ điểm Honesty adjustment.
+  - **Chi tiết:** Tạo `SELF_ASSESSMENT_REPORT.md` (theo template của môn học), lập bảng chấm điểm 8 tiêu chí Rubric PA#3 (tổng 100 điểm) kèm **bằng chứng cụ thể** (file, commit hash, PR, link CI run) và mục _What we did not manage_. Đảm bảo chênh lệch với điểm thật nằm trong khoảng `±10` để không bị trừ điểm Honesty adjustment.
   - **Tiêu chí xong:** Tổng điểm khớp chính xác với con số trong tên file `.zip`.
 
 - [ ] **T26** — **Đóng gói `.zip` (có `.git`) & Nộp bài lên Classroom trước 22:00 ngày 25/11/2026**
@@ -236,12 +236,11 @@
   - **Chi tiết:** Chạy `gitleaks detect --source . --log-opts="--all"` kiểm tra lần cuối đảm bảo 0 secret lọt vào Git. Nén toàn bộ thư mục repository **bắt buộc có thư mục ẩn `.git`** (loại bỏ `.env` và `node_modules` nặng nếu cần, nhưng phải giữ nguyên toàn bộ file tracked và `.git`). Đặt tên file đúng chuẩn MSSV tăng dần:
     `23120190-23120202-23120242_<TongDiemTuCham>.zip` (ví dụ: `23120xxx-23120yyy-23120242_92.zip`).
     Giải nén thử sang thư mục khác kiểm tra `git status` và `git log -1 pa3`, sau đó upload lên Google Classroom trước 21:30.
-  - **Tiêu chí xong:** Xác nhận trạng thái *Turned in* trên Classroom.
-
-
+  - **Tiêu chí xong:** Xác nhận trạng thái _Turned in_ trên Classroom.
 
 # Task Dependencies
-  Dưới đây là sơ đồ và bảng phân tích **Task Dependencies (Sự phụ thuộc & Chặn chéo)** cho 6 giai đoạn (`T01` → `T26`) trong `checklist.md` của PA#3 để cả 3 thành viên nhìn vào là biết ngay việc nào làm song song được, việc nào đang bị chặn:
+
+Dưới đây là sơ đồ và bảng phân tích **Task Dependencies (Sự phụ thuộc & Chặn chéo)** cho 6 giai đoạn (`T01` → `T26`) trong `checklist.md` của PA#3 để cả 3 thành viên nhìn vào là biết ngay việc nào làm song song được, việc nào đang bị chặn:
 
 ---
 
@@ -266,82 +265,53 @@
 
 ### 2. Ma trận chi tiết từng Giai đoạn & Điểm nghẽn (Bottlenecks)
 
-* **Giai đoạn 1: Khởi tạo Git, PostgreSQL & Dev-set (`T01` – `T04`)**
-* **Bị chặn bởi:** Không (Điểm xuất phát).
-* **Chặn ai:** Chặn toàn bộ phần code tích hợp ở **GĐ 2, GĐ 3, GĐ 4, GĐ 5**.
-* **Nút thắt cổ chai (Critical Path):** `T01` (tạo nhánh) → `T02` (cập nhật `AGENTS.md` & scripts) → `T03` (PostgreSQL migrations). `T03` phải xong thì Dương (`T05`) và Quang Vinh (`T08`) mới có bảng DB thật để nối code. Riêng `T04` (nạp `dev set` chuẩn SHA-256) chỉ cần `T01` xong là Thế Vinh làm độc lập được ngay.
+- **Giai đoạn 1: Khởi tạo Git, PostgreSQL & Dev-set (`T01` – `T04`)**
+- **Bị chặn bởi:** Không (Điểm xuất phát).
+- **Chặn ai:** Chặn toàn bộ phần code tích hợp ở **GĐ 2, GĐ 3, GĐ 4, GĐ 5**.
+- **Nút thắt cổ chai (Critical Path):** `T01` (tạo nhánh) → `T02` (cập nhật `AGENTS.md` & scripts) → `T03` (PostgreSQL migrations). `T03` phải xong thì Dương (`T05`) và Quang Vinh (`T08`) mới có bảng DB thật để nối code. Riêng `T04` (nạp `dev set` chuẩn SHA-256) chỉ cần `T01` xong là Thế Vinh làm độc lập được ngay.
 
+- **Giai đoạn 2: Queue (`FOR UPDATE SKIP LOCKED`) & Sandbox 9 luật (`T05` – `T07`)** — _Phụ trách: Dương_
+- **Bị chặn bởi:** `T03` (cần bảng `judge_jobs` trong PostgreSQL để làm `T05`).
+- **Có thể làm song song ngay từ đầu:** `T06` (viết trước 9 bài C++ attack `M1`–`M9`) không cần đợi DB, chỉ cần `T01` xong là viết và commit trước được ngay.
 
+- **Chặn ai:**
+- `T05` (Queue) chặn `T09` của Quang Vinh (nộp bài đẩy job vào queue).
+- `T07` (Sandbox hoàn chỉnh + CI xanh) chặn `T20` (Public Deploy) và `T23` (`AI-LOG.md`).
 
+- **Giai đoạn 3: Auth/RBAC, Tạo Lab/Nộp bài & Hard Rules (`T08` – `T11`)** — _Phụ trách: Quang Vinh_
+- **Bị chặn bởi:** `T03` (cần bảng `users`, `classes`, `labs`, `submissions` cho `T08`) và `T05` (cần Queue để nối luồng nộp bài ở `T09`).
+- **Có thể làm song song ngay từ đầu:** `T10` (viết unit test cho Hard Rules + các ca bẫy `trap`) chỉ cần `T01` xong là viết trước được ngay, không phải đợi DB hay Queue.
 
-* **Giai đoạn 2: Queue (`FOR UPDATE SKIP LOCKED`) & Sandbox 9 luật (`T05` – `T07`)** — *Phụ trách: Dương*
-* **Bị chặn bởi:** `T03` (cần bảng `judge_jobs` trong PostgreSQL để làm `T05`).
-* **Có thể làm song song ngay từ đầu:** `T06` (viết trước 9 bài C++ attack `M1`–`M9`) không cần đợi DB, chỉ cần `T01` xong là viết và commit trước được ngay.
+- **Chặn ai:** `T11` (Hard Rules AST chạy trước) là **nút chặn trực tiếp** của cả **GĐ 4** (`T13` gọi LLM cho các constraint còn lại, `T16` đẩy verdict vào Review Queue) và **GĐ 5** (`T18` CLI Checker dùng chung engine Hard Rules).
 
+- **Giai đoạn 4: LLM (`gemini-3.6-flash`), Guardrails & Review Queue (`T12` – `T16`)** — _Phụ trách: Thế Vinh & Quang Vinh_
+- **Bị chặn bởi:** `T11` (Hard rules phải quyết định xong ban-list thì pipeline mới chuyển phần semantic constraint sang LLM ở `T13`).
 
-* **Chặn ai:**
-* `T05` (Queue) chặn `T09` của Quang Vinh (nộp bài đẩy job vào queue).
-* `T07` (Sandbox hoàn chỉnh + CI xanh) chặn `T20` (Public Deploy) và `T23` (`AI-LOG.md`).
+- **Có thể làm song song ngay từ đầu:** Thế Vinh có thể làm trước `T12` (bộ xóa comment & danh tính sinh viên) và `T14` (test fake-model cho `zod` Schema & Timeout) ngay sau `T01` mà không cần đợi Quang Vinh xong `T11`.
 
+- **Chặn ai:**
+- `T15` (Guardrails Schema & Timeout) chặn `T16` (Review Queue) và `T18` (CLI Checker).
+- `T16` (Review Queue & khóa cổng Publish) chặn `T20` (Public Deploy).
 
+- **Giai đoạn 5: CLI Checker (`MODEL_OFF=1`), Dockerfile & Chạy Eval (`T17` – `T19`)** — _Phụ trách: Thế Vinh_
+- **Bị chặn bởi:** `T04` (dev set), `T11` (Hard Rules) và `T15` (LLM + Guardrails).
+- **Có thể làm song song sớm:** `T17` (tự tạo ≥ 5 custom eval cases có `trap` và `injection`) chỉ cần `T04` xong là viết trước được ngay.
 
+- **Chặn ai:** `T19` (chạy eval thật trên `dev set`, commit kết quả và tính chi phí 80 bài) chặn `T22` (viết `PA3.md` & `README.md`) và `T23` (`AI-LOG.md`) ở **GĐ 6**.
 
-* **Giai đoạn 3: Auth/RBAC, Tạo Lab/Nộp bài & Hard Rules (`T08` – `T11`)** — *Phụ trách: Quang Vinh*
-* **Bị chặn bởi:** `T03` (cần bảng `users`, `classes`, `labs`, `submissions` cho `T08`) và `T05` (cần Queue để nối luồng nộp bài ở `T09`).
-* **Có thể làm song song ngay từ đầu:** `T10` (viết unit test cho Hard Rules + các ca bẫy `trap`) chỉ cần `T01` xong là viết trước được ngay, không phải đợi DB hay Queue.
+- **Giai đoạn 6: Public Deploy, Video ≤ 5p, Tài liệu & Nộp bài (`T20` – `T26`)** — _Phụ trách: Cả nhóm (Dương chốt)_
+- **Bị chặn bởi:** Toàn bộ các GĐ 2, 3, 4, 5 (`T07`, `T09`, `T16`, `T19`).
+- **Chuỗi phụ thuộc nội bộ bắt buộc đi tuần tự (không đảo ngược được):**
 
-
-* **Chặn ai:** `T11` (Hard Rules AST chạy trước) là **nút chặn trực tiếp** của cả **GĐ 4** (`T13` gọi LLM cho các constraint còn lại, `T16` đẩy verdict vào Review Queue) và **GĐ 5** (`T18` CLI Checker dùng chung engine Hard Rules).
-
-
-* **Giai đoạn 4: LLM (`gemini-3.6-flash`), Guardrails & Review Queue (`T12` – `T16`)** — *Phụ trách: Thế Vinh & Quang Vinh*
-* **Bị chặn bởi:** `T11` (Hard rules phải quyết định xong ban-list thì pipeline mới chuyển phần semantic constraint sang LLM ở `T13`).
-
-
-* **Có thể làm song song ngay từ đầu:** Thế Vinh có thể làm trước `T12` (bộ xóa comment & danh tính sinh viên) và `T14` (test fake-model cho `zod` Schema & Timeout) ngay sau `T01` mà không cần đợi Quang Vinh xong `T11`.
-
-
-* **Chặn ai:**
-* `T15` (Guardrails Schema & Timeout) chặn `T16` (Review Queue) và `T18` (CLI Checker).
-* `T16` (Review Queue & khóa cổng Publish) chặn `T20` (Public Deploy).
-
-
-
-
-
-
-* **Giai đoạn 5: CLI Checker (`MODEL_OFF=1`), Dockerfile & Chạy Eval (`T17` – `T19`)** — *Phụ trách: Thế Vinh*
-* **Bị chặn bởi:** `T04` (dev set), `T11` (Hard Rules) và `T15` (LLM + Guardrails).
-* **Có thể làm song song sớm:** `T17` (tự tạo ≥ 5 custom eval cases có `trap` và `injection`) chỉ cần `T04` xong là viết trước được ngay.
-
-
-* **Chặn ai:** `T19` (chạy eval thật trên `dev set`, commit kết quả và tính chi phí 80 bài) chặn `T22` (viết `PA3.md` & `README.md`) và `T23` (`AI-LOG.md`) ở **GĐ 6**.
-
-
-
-
-* **Giai đoạn 6: Public Deploy, Video ≤ 5p, Tài liệu & Nộp bài (`T20` – `T26`)** — *Phụ trách: Cả nhóm (Dương chốt)*
-* **Bị chặn bởi:** Toàn bộ các GĐ 2, 3, 4, 5 (`T07`, `T09`, `T16`, `T19`).
-* **Chuỗi phụ thuộc nội bộ bắt buộc đi tuần tự (không đảo ngược được):**
 1. `T20` (Deploy public + tạo 5 tài khoản test) → mở khóa cho `T21` (Quay video demo ≤ 5 phút trên URL public).
-
 
 2. `T19` + `T20` + `T21` xong → mới đủ link và số liệu để viết `T22` (`PA3.md`, `README.md`) và `T23` (`AI-LOG.md`).
 
-
 3. `T22` + `T23` commit xong → mới gắn tag `pa3` và chạy CI kiểm tra ở `T24`.
-
 
 4. `T24` có link CI xanh trên tag `pa3` → mới điền đủ bằng chứng vào `T25` (`SELF_ASSESSMENT_REPORT.md`).
 
-
 5. `T24` + `T25` chốt xong con số tổng điểm → mới nén `.zip` (có `.git`) và nộp Classroom ở `T26`.
-
-
-
-
-
-
 
 ---
 
@@ -349,6 +319,6 @@
 
 Ngay sau khi Dương push nhánh ở **`T01`** (mất ~15 phút), cả 3 người tách ra chạy song song ngay lập tức:
 
-* **Dương:** Làm `T02` → `T03` (DB/Migrations) + viết sẵn `T06` (9 file C++ attack).
-* **Quang Vinh:** Viết sẵn `T10` (bộ test Hard Rules + các ca bẫy `trap`) trước khi `T03` xong.
-* **Thế Vinh:** Làm `T04` (nạp `dev set`), `T17` (viết 5 custom eval cases), `T12` (hàm xóa comment/danh tính) và `T14` (test fake-model cho Schema & Timeout).
+- **Dương:** Làm `T02` → `T03` (DB/Migrations) + viết sẵn `T06` (9 file C++ attack).
+- **Quang Vinh:** Viết sẵn `T10` (bộ test Hard Rules + các ca bẫy `trap`) trước khi `T03` xong.
+- **Thế Vinh:** Làm `T04` (nạp `dev set`), `T17` (viết 5 custom eval cases), `T12` (hàm xóa comment/danh tính) và `T14` (test fake-model cho Schema & Timeout).

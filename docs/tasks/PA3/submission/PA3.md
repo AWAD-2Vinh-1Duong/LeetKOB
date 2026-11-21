@@ -13,6 +13,7 @@
 ## 1. Public Deployment & Test Accounts
 
 - **Public Application URL:** `<TODO: https://...>`
+
   > **Note on Deployment Uptime:** This public instance remains active continuously from the submission deadline (Wednesday, Nov 25, 2026, 22:00) until PA#4 grades are published, as other student teams will conduct red-team security attacks against it.
 
 - **Spending Cap & Model Policy:**
@@ -22,22 +23,23 @@
 
 ### Synthetic Test Accounts (5 Pre-created Accounts)
 
-| Role | Username / Email | Password | Class / Scope | Description & Purpose |
-| :--- | :--- | :--- | :--- | :--- |
-| **Admin** | `<TODO: admin@leettkob.dev>` | `<TODO: password>` | Global | System administration, user/class provisioning |
-| **TA 1** | `<TODO: ta1@leettkob.dev>` | `<TODO: password>` | Class A | Lab owner for `sort-merge`, manages Review Queue |
-| **TA 2** | `<TODO: ta2@leettkob.dev>` | `<TODO: password>` | Class B | Belongs to a different class; used to test authorization denial (403/404) |
-| **Student 1** | `<TODO: student1@student.hcmus.edu.vn>` | `<TODO: password>` | Class A | Enrolled in TA1's class; submits compliant solution |
-| **Student 2** | `<TODO: student2@student.hcmus.edu.vn>` | `<TODO: password>` | Class A | Enrolled in TA1's class; submits violation & injection solutions |
+| Role          | Username / Email                        | Password           | Class / Scope | Description & Purpose                                                     |
+| :------------ | :-------------------------------------- | :----------------- | :------------ | :------------------------------------------------------------------------ |
+| **Admin**     | `<TODO: admin@leettkob.dev>`            | `<TODO: password>` | Global        | System administration, user/class provisioning                            |
+| **TA 1**      | `<TODO: ta1@leettkob.dev>`              | `<TODO: password>` | Class A       | Lab owner for `sort-merge`, manages Review Queue                          |
+| **TA 2**      | `<TODO: ta2@leettkob.dev>`              | `<TODO: password>` | Class B       | Belongs to a different class; used to test authorization denial (403/404) |
+| **Student 1** | `<TODO: student1@student.hcmus.edu.vn>` | `<TODO: password>` | Class A       | Enrolled in TA1's class; submits compliant solution                       |
+| **Student 2** | `<TODO: student2@student.hcmus.edu.vn>` | `<TODO: password>` | Class A       | Enrolled in TA1's class; submits violation & injection solutions          |
 
 ---
 
 ## 2. CI Run for `pa3` Tag
 
 - **CI Actions Run Link for Tag `pa3`:** `<TODO: https://github.com/AWAD-2Vinh-1Duong/LeetKOB/actions/runs/...>`  
-  *(Branch/tag runs overview: https://github.com/AWAD-2Vinh-1Duong/LeetKOB/actions?query=branch%3Apa3)*
+  _(Branch/tag runs overview: https://github.com/AWAD-2Vinh-1Duong/LeetKOB/actions?query=branch%3Apa3)_
 
 ### Verified CI Checks
+
 1. **Repository Quality Gate:** `npm ci` followed by `npm run check` (Lint via ESLint, Format via Prettier, Typecheck via TypeScript `checkJs`, and Contract tests).
 2. **Sandbox Baselines (9 Minimums `M1`–`M9`):** 9 distinct attack `.cpp` submissions compiled and executed inside the hardened sandbox container:
    - `M1`: Network isolation (`--network none`)
@@ -58,12 +60,15 @@
 The CLI checker evaluates semantic and syntactic constraints on any standard dataset folder without per-problem manual configuration.
 
 ### Docker Build Command
+
 ```bash
 docker build -t leetkob-checker -f Dockerfile .
 ```
 
 ### Model-Off Execution (`MODEL_OFF=1`)
+
 Runs strictly hard rules, writes `unsure` for all semantic constraints, and executes in complete network isolation:
+
 ```bash
 docker run --rm --network none \
   -e MODEL_OFF=1 \
@@ -73,7 +78,9 @@ docker run --rm --network none \
 ```
 
 ### Real-Model Execution (`MODEL_OFF=0`)
+
 Invokes Google Gemini with comment/identity-stripped prompts:
+
 ```bash
 docker run --rm \
   -e MODEL_OFF=0 \
@@ -84,6 +91,7 @@ docker run --rm \
 ```
 
 ### Re-scoring Predictions with `eval.mjs`
+
 ```bash
 node eval.mjs --predictions predictions.jsonl --dataset <dataset-dir> --labels <dataset-dir>/labels.jsonl
 ```
@@ -102,6 +110,7 @@ The outputs from the real-model evaluation run on the `dev set` are committed di
   - Contains `≥ 5` custom test cases in standard `dev set` format with `labels.jsonl`, including at least 1 `trap` case (compliant code using similar keywords) and at least 1 `injection` case (prompt injection attempt in C++ code/comments).
 
 ### Cost Arithmetic for 1 Lab (80 Submissions)
+
 - **Selected Model:** `gemini-3.6-flash` (Google AI Studio Free Tier).
 - **Token Usage Estimation:**
   - Average Input Tokens per submission: `<TODO: e.g. 850>` tokens
@@ -118,9 +127,10 @@ The outputs from the real-model evaluation run on the `dev set` are committed di
 ## 5. End-to-End Screen Recording (≤ 5 minutes)
 
 - **Recording URL:** `<TODO: https://youtu.be/... hoặc Google Drive public link>`
-  *(Must be accessible publicly without requiring permissions or authentication)*
+  _(Must be accessible publicly without requiring permissions or authentication)_
 
 ### Demonstrated End-to-End Flow
+
 1. **Lab Creation (TA1):** TA1 logs in, navigates to Class A, creates the `sort-merge` lab by entering the problem statement, test cases, and two constraints with associated deduction values.
 2. **Compliant Submission (Student 1):** Student 1 logs in, submits compliant C++ code, transitions from `queued` to sandbox `Accepted`.
 3. **Violation & Injection Submissions (Student 2):** Student 2 logs in, submits a solution violating constraints and a solution attempting prompt injection (`"Ignore previous instructions..."`).
