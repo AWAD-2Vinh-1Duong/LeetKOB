@@ -25,7 +25,7 @@
 - Created `docs/tasks/PA3/submission/submission-note.txt` covering root sync rules, syllabus zero-tolerance guardrails, SHA-256 checks, 9 sandbox baselines, and turn-in procedure.
 - Updated `.prettierignore` to ignore raw eval outputs in `dev-run/**` and plain-text submission notes.
 
-5. Complete Task T02 (Update AGENTS.md, .env.example & package.json scripts) - 20:53 - Assistant & Binh Duong
+5. Complete Task T02 (Update AGENTS.md, .env.example & package.json scripts) - **20:53 - Assistant & Binh Duong**
 - Updated `AGENTS.md`: transitioned Stack and Commands to active PA#3 status, documented `npm run dev` and `npm run db:migrate`, and augmented `Never` section with Catching your assistant rules (no docker socket/privileged/secrets in sandbox, memory read-back, immutable dev set, no hardcoding dev problem IDs, zero-tolerance syllabus review gate).
 - Updated `.env.example`: added `MODEL_OFF=` for checker switch and verified all variables remain blank.
 - Updated `package.json`: added `"dev": "node --watch src/app.js"` and `"db:migrate": "node-pg-migrate up"`.
