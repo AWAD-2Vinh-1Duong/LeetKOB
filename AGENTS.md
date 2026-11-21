@@ -1,6 +1,7 @@
 # AGENTS.md — LeeTKOB rules for coding agents
 
 Read this before touching the LeeTKOB grading harness. Tool-specific files (`CLAUDE.md`, `.github/copilot-instructions.md`) only add to it.
+- Each change must be reported in each file `context-dd-mm` in `LeetKOB/docs/tasks/PA-<number>/context` based on the PA number which you are working on.
 
 ## 1. Stack
 
