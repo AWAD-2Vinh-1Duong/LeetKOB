@@ -1,15 +1,23 @@
+import { randomUUID } from 'node:crypto';
 import express from 'express';
+import pino from 'pino';
 import { createAuthMiddleware } from './middlewares/auth.js';
 import { SubmissionsController } from './controllers/submissions-controller.js';
 import { SubmissionService } from './services/submission-service.js';
 import { ProblemError, sendProblem } from './problems.js';
+import {
+  PostgresLabRepository,
+  PostgresSubmissionRepository,
+} from './repositories/postgres.js';
 
 /**
  * Wires the app. Repositories and the clock are injected so tests run without a database.
  * @param {{
  *   jwtSecret: string,
- *   labRepository: import('./repositories/in-memory.js').InMemoryLabRepository,
- *   submissionRepository: import('./repositories/in-memory.js').InMemorySubmissionRepository,
+ *   labRepository?: import('./repositories/in-memory.js').InMemoryLabRepository | import('./repositories/postgres.js').PostgresLabRepository,
+ *   submissionRepository?: import('./repositories/in-memory.js').InMemorySubmissionRepository | import('./repositories/postgres.js').PostgresSubmissionRepository,
+ *   pool?: import('pg').Pool,
+ *   logger?: import('pino').Logger,
  *   now?: () => Date,
  * }} deps
  */
@@ -17,8 +25,22 @@ export function createApp({
   jwtSecret,
   labRepository,
   submissionRepository,
+  pool,
+  logger = pino({ level: process.env.LOG_LEVEL || 'silent' }),
   now = () => new Date(),
 }) {
+  if (pool) {
+    labRepository = labRepository ?? new PostgresLabRepository({ pool });
+    submissionRepository =
+      submissionRepository ?? new PostgresSubmissionRepository({ pool });
+  }
+
+  if (!labRepository || !submissionRepository) {
+    throw new Error(
+      'labRepository and submissionRepository must be provided or pool specified',
+    );
+  }
+
   const submissions = new SubmissionsController({
     submissionService: new SubmissionService({
       labRepository,
@@ -29,6 +51,16 @@ export function createApp({
 
   const app = express();
   app.disable('x-powered-by');
+
+  app.use((req, res, next) => {
+    const rawId = req.headers['x-request-id'] || randomUUID();
+    const reqId = Array.isArray(rawId) ? rawId[0] : rawId;
+    /** @type {any} */ (req).id = reqId;
+    /** @type {any} */ (req).log = logger.child({ reqId });
+    res.setHeader('x-request-id', reqId);
+    next();
+  });
+
   app.post(
     '/labs/:labId/submissions',
     createAuthMiddleware({ secret: jwtSecret }),
@@ -56,7 +88,8 @@ export function createApp({
         }),
       );
     }
-    // shortcut: no pino logger yet, unexpected errors are swallowed; wire pino with request ids before PA#3.
+    const reqId = /** @type {any} */ (req)?.id;
+    logger.error({ err, reqId }, 'Unhandled error');
     sendProblem(
       req,
       res,

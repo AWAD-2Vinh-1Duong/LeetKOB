@@ -1,13 +1,13 @@
 import { createHash, randomUUID } from 'node:crypto';
 import { ProblemError } from '../problems.js';
 
-/** @typedef {import('../repositories/in-memory.js').Submission} Submission */
+/** @typedef {import('../repositories/in-memory.js').Submission | import('../repositories/postgres.js').Submission} Submission */
 
 export class SubmissionService {
   /**
    * @param {{
-   *   labRepository: import('../repositories/in-memory.js').InMemoryLabRepository,
-   *   submissionRepository: import('../repositories/in-memory.js').InMemorySubmissionRepository,
+   *   labRepository: import('../repositories/in-memory.js').InMemoryLabRepository | import('../repositories/postgres.js').PostgresLabRepository,
+   *   submissionRepository: import('../repositories/in-memory.js').InMemorySubmissionRepository | import('../repositories/postgres.js').PostgresSubmissionRepository,
    *   now: () => Date,
    * }} deps
    */
@@ -54,6 +54,7 @@ export class SubmissionService {
         labId,
         studentId,
         language,
+        source,
         status: 'queued',
         createdAt: now.toISOString(),
         idempotencyKey,

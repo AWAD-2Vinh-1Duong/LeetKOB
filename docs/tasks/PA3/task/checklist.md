@@ -51,7 +51,7 @@
   - **Chi tiết:** Bổ sung mục `Never` trong `AGENTS.md` cho PA#3 (cấm mount `/var/run/docker.sock` hoặc `--privileged`, cấm truyền `LLM_API_KEY` vào sandbox, cấm đọc back-memory thiếu trong test 1GiB, cấm sửa `dev set`). Cập nhật `.env.example` (để trống giá trị) cho `DATABASE_URL`, `LLM_MODEL=gemini-3.6-flash`, `LLM_API_KEY`, `SANDBOX_*`. Thêm `npm run dev` và `npm run db:migrate` vào `package.json` theo đúng mục 2 của `AGENTS.md`.
   - **Tiêu chí xong:** Commit `chore(rules): update AGENTS.md and scripts for PA3`, `npm run check` xanh.
 
-- [ ] **T03** — **Thiết lập PostgreSQL 16, `node-pg-migrate` & thay thế In-Memory Repositories**
+- [x] **T03** — **Thiết lập PostgreSQL 16, `node-pg-migrate` & thay thế In-Memory Repositories**
   - **Phụ trách:** `@Dương`
   - **Phụ thuộc:** `T02`
   - **Chi tiết:** Viết SQL migrations bằng `node-pg-migrate` cho các bảng: `users`, `classes`, `class_enrollments`, `labs` (kèm `statement`, `tests`, `constraints` + `deduction`), `submissions` (có unique index `(student_id, lab_id, idempotency_key)` đúng như contract `post-labs-submissions.md` mục 5), `judge_jobs`, `verdicts`, `llm_call_logs`. Cài đặt PostgreSQL repositories giữ nguyên interface của PA#2 và tích hợp `pino` logger.

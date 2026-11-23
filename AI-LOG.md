@@ -2,6 +2,14 @@
 
 Khi ghi AI Log thì phải ghi ở trên cùng.
 
+## 2026-11-24 — Cài đặt PostgreSQL 16, node-pg-migrate và PostgreSQL Repositories (Bình Dương)
+
+Tool: Antigravity Agent
+Asked for: Thực hiện Task T03 trong checklist: Cài đặt các bảng cơ sở dữ liệu qua `node-pg-migrate`, cài đặt PostgreSQL repositories cho `labs` và `submissions`, tích hợp `pino` logger với `request-id`, và đảm bảo toàn bộ contract tests pass trên PostgreSQL.
+Kept: Migration SQL `migrations/1795453690243_init-schema.sql` tạo đủ 8 bảng (`users`, `classes`, `class_enrollments`, `labs`, `submissions`, `judge_jobs`, `verdicts`, `llm_call_logs`) kèm index và unique index `(student_id, lab_id, idempotency_key)`. Tạo `src/db.js` và `src/repositories/postgres.js` với `PostgresLabRepository` và `PostgresSubmissionRepository` chuẩn interface. Tích hợp `pino` logger vào `src/app.js` tự động gắn `req.id` và child logger. Viết test `tests/contract/post-labs-submissions-postgres.test.js` kiểm tra toàn bộ contract trên PostgreSQL thực tế.
+Changed: Cấu hình test contract postgres tự động skip khi không có biến `DATABASE_URL` để đảm bảo lệnh `npm run check` trên môi trường CI (chưa bật container DB) vẫn xanh 100%, đồng thời chạy đầy đủ 43 tests khi có `DATABASE_URL`.
+Rejected: Không dùng ORM nặng (Prisma, TypeORM) theo đúng quy tắc kiến trúc `AGENTS.md` (chỉ dùng `pg` và plain SQL).
+
 ## 2026-11-21 — Sửa lỗi Prettier format cho toàn bộ tài liệu PA#3 (Bình Dương)
 
 Tool: Antigravity Agent
