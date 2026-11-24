@@ -7,3 +7,13 @@
 - Created `tests/contract/post-labs-submissions-postgres.test.js` covering 100% of the submission contract scenarios on real PostgreSQL (43 tests total passing).
 - Updated `docs/tasks/PA3/task/checklist.md` to mark `T03` complete.
 - Created detailed verification report at `/home/harry/Documents/Course/advanced-web/final-project/personal/pa3/T03-report.md`.
+
+3. Complete Task T08 (login with scrypt and JWT, class access) - Quang Vinh with Claude Code
+
+- Contract first: `docs/contract/auth-and-lab-access.md` (login, who sees a lab, review queue access). Tests before code: `tests/auth/` (passwords, in-memory contract tests, PostgreSQL tests that skip without `DATABASE_URL`). Two later test-only commits fixed my own mistakes: a missing `tsc` type on the seeded roles, and a no-echo test whose password was the word "wrong", which the error message also contains. Neither loosened an assertion.
+- Added `POST /auth/login` (zod body, salted `scrypt` hash, HS256 token with `sub`, `role`, `exp`, same 401 `invalid-credentials` for unknown email and wrong password, decoy hash so both take similar time), `GET /labs/:labId` and `GET /labs/:labId/review-queue`.
+- A TA of another class and a student of another class get `404 lab-not-found`, identical to a missing lab. An enrolled student on the review queue gets `403 staff-only`. The queue itself returns `{ items: [] }`; its content is T16.
+- New migration `migrations/1795540000000_class-staff.sql` (`class_staff`), asked and approved before writing. Applied to a throwaway `postgres:16` container: 79 tests pass there, 62 pass without a database.
+- `npm test` now runs with `--test-concurrency=1` because the PostgreSQL test files truncate the same tables.
+- Checked that the tests bite: with the TA check in `findForUser` removed, 3 tests fail.
+- Not done: CI has no PostgreSQL service, so the PostgreSQL tests are skipped there. Users still have to be created by a seed or script; a registration or admin endpoint is not part of T08.
