@@ -6,7 +6,7 @@
 - **Nhóm thực hiện (3 thành viên):**
   - **Dương** (Nguyễn Văn Bình Dương — MSSV: `23120242`): Lead Kiến trúc, PostgreSQL & Migrations, Queue (`FOR UPDATE SKIP LOCKED`), Docker Sandbox (9 minimums + CI attacks), Public Deployment.
   - **Quang Vinh**: Auth/RBAC (`jose` + `scrypt`), Endpoints quản lý Lab & Nộp bài (khớp RFC 9457), Bộ luật cứng (Hard Rules AST), Review Queue & Human Gate.
-  - **Thế Vinh**: `ConstraintJudge` adapter (`gemini-3.6-flash`), Tiền xử lý code, Guardrails (`zod` Schema & Timeout), CLI Checker (`MODEL_OFF=1`), Dockerfile & Dev-set Eval.
+  - **Thế Vinh**: `ConstraintJudge` adapter (`ag/gemini-3.8-flash`), Tiền xử lý code, Guardrails (`zod` Schema & Timeout), CLI Checker (`MODEL_OFF=1`), Dockerfile & Dev-set Eval.
 
 ---
 
@@ -24,14 +24,14 @@
 
 ## Tổng quan phân chia giai đoạn (21/11 – 25/11/2026)
 
-| Giai đoạn | Mục tiêu chính                                                        | Tiêu chí Rubric             | Phụ trách            |
-| :-------- | :-------------------------------------------------------------------- | :-------------------------- | :------------------- |
-| **GĐ 1**  | Nhánh Git, Rules File PA#3, PostgreSQL Migrations & Dev-set           | Criterion 6, 7              | Dương, Thế Vinh      |
-| **GĐ 2**  | Queue (`FOR UPDATE SKIP LOCKED`) & Sandbox 9 luật + Attack CI         | Criterion 2 (20đ)           | Dương                |
-| **GĐ 3**  | Auth/RBAC, Tạo Lab, Nộp bài (RFC 9457) & Hard Rules AST               | Criterion 1, 3 (30đ)        | Quang Vinh           |
-| **GĐ 4**  | LLM (`gemini-3.6-flash`), Guardrails (`zod`/Timeout) & Review Queue   | Criterion 4, 5 (30đ)        | Thế Vinh, Quang Vinh |
-| **GĐ 5**  | CLI Checker (`MODEL_OFF=1`), Dockerfile & Chạy Eval thực tế           | Criterion 4, 6 (20đ)        | Thế Vinh             |
-| **GĐ 6**  | Public Deploy, Video ≤ 5p, Tài liệu (`PA3.md`, `AI-LOG.md`) & Nộp bài | Criterion 1, 7, 8 & Handoff | Cả nhóm (Dương chốt) |
+| Giai đoạn | Mục tiêu chính                                                         | Tiêu chí Rubric             | Phụ trách            |
+| :-------- | :--------------------------------------------------------------------- | :-------------------------- | :------------------- |
+| **GĐ 1**  | Nhánh Git, Rules File PA#3, PostgreSQL Migrations & Dev-set            | Criterion 6, 7              | Dương, Thế Vinh      |
+| **GĐ 2**  | Queue (`FOR UPDATE SKIP LOCKED`) & Sandbox 9 luật + Attack CI          | Criterion 2 (20đ)           | Dương                |
+| **GĐ 3**  | Auth/RBAC, Tạo Lab, Nộp bài (RFC 9457) & Hard Rules AST                | Criterion 1, 3 (30đ)        | Quang Vinh           |
+| **GĐ 4**  | LLM (`ag/gemini-3.8-flash`), Guardrails (`zod`/Timeout) & Review Queue | Criterion 4, 5 (30đ)        | Thế Vinh, Quang Vinh |
+| **GĐ 5**  | CLI Checker (`MODEL_OFF=1`), Dockerfile & Chạy Eval thực tế            | Criterion 4, 6 (20đ)        | Thế Vinh             |
+| **GĐ 6**  | Public Deploy, Video ≤ 5p, Tài liệu (`PA3.md`, `AI-LOG.md`) & Nộp bài  | Criterion 1, 7, 8 & Handoff | Cả nhóm (Dương chốt) |
 
 ---
 
@@ -48,7 +48,7 @@
 - [x] **T02** — **Cập nhật `AGENTS.md` (PA#3 rules), `.env.example` & `package.json` scripts**
   - **Phụ trách:** `@Dương`
   - **Phụ thuộc:** `T01`
-  - **Chi tiết:** Bổ sung mục `Never` trong `AGENTS.md` cho PA#3 (cấm mount `/var/run/docker.sock` hoặc `--privileged`, cấm truyền `LLM_API_KEY` vào sandbox, cấm đọc back-memory thiếu trong test 1GiB, cấm sửa `dev set`). Cập nhật `.env.example` (để trống giá trị) cho `DATABASE_URL`, `LLM_MODEL=gemini-3.6-flash`, `LLM_API_KEY`, `SANDBOX_*`. Thêm `npm run dev` và `npm run db:migrate` vào `package.json` theo đúng mục 2 của `AGENTS.md`.
+  - **Chi tiết:** Bổ sung mục `Never` trong `AGENTS.md` cho PA#3 (cấm mount `/var/run/docker.sock` hoặc `--privileged`, cấm truyền `LLM_API_KEY` vào sandbox, cấm đọc back-memory thiếu trong test 1GiB, cấm sửa `dev set`). Cập nhật `.env.example` (để trống giá trị) cho `DATABASE_URL`, `LLM_MODEL=ag/gemini-3.8-flash`, `LLM_API_KEY`, `SANDBOX_*`. Thêm `npm run dev` và `npm run db:migrate` vào `package.json` theo đúng mục 2 của `AGENTS.md`.
   - **Tiêu chí xong:** Commit `chore(rules): update AGENTS.md and scripts for PA3`, `npm run check` xanh.
 
 - [x] **T03** — **Thiết lập PostgreSQL 16, `node-pg-migrate` & thay thế In-Memory Repositories**
@@ -127,7 +127,7 @@
 
 ---
 
-### Giai đoạn 4: LLM (`gemini-3.6-flash`), Guardrails & Review Queue (Ngày 23/11 – 24/11)
+### Giai đoạn 4: LLM (`ag/gemini-3.8-flash`), Guardrails & Review Queue (Ngày 23/11 – 24/11)
 
 - [x] **T12** — **Xây dựng bộ tiền xử lý Code (Xóa comment & danh tính sinh viên)**
   - **Phụ trách:** `@Thế Vinh`
@@ -135,11 +135,11 @@
   - **Chi tiết:** Trước khi gửi code cho LLM, tự động xóa toàn bộ comment (`//`, `/* ... */`) và thông tin định danh sinh viên (tên, MSSV, email). Payload gửi model chỉ chứa: `statement`, danh sách `constraints` chưa được hard rule xử lý, và `source` đã làm sạch.
   - **Tiêu chí xong:** Có unit test xác nhận prompt đầu ra sạch comment và danh tính.
 
-- [ ] **T13** — **Tích hợp `ConstraintJudge` adapter (`gemini-3.6-flash`) & Call Log**
+- [x] **T13** — **Tích hợp `ConstraintJudge` adapter (`ag/gemini-3.8-flash`) & Call Log**
   - **Phụ trách:** `@Thế Vinh`
   - **Phụ thuộc:** `T11`, `T12`
-  - **Chi tiết:** Gọi Google Gemini API (`LLM_MODEL=gemini-3.6-flash`, gói Free tier) qua biến `LLM_API_KEY` để chấm các ràng buộc ngữ nghĩa. Model trả về `pass | violation | unsure` kèm `evidence` (`line`, `text`), **không để model quyết định `deduction`**. Lưu Call Log vào DB/file gồm: `provider request_id`, `model`, `input_tokens`, `output_tokens`, `latency_ms`, `cost_usd` (`0` trên Free tier) và prompt đã gửi.
-  - **Tiêu chí xong:** Chạy thử với key thật, call log ghi nhận được `request_id` từ Google AI Studio.
+  - **Chi tiết:** Gọi Google Gemini API (`LLM_MODEL=ag/gemini-3.8-flash`, gói Free tier) qua biến `LLM_API_KEY` để chấm các ràng buộc ngữ nghĩa. Model trả về `pass | violation | unsure` kèm `evidence` (`line`, `text`), **không để model quyết định `deduction`**. Lưu Call Log vào DB/file gồm: `provider request_id`, `model`, `input_tokens`, `output_tokens`, `latency_ms`, `cost_usd` (`0` trên Free tier) và prompt đã gửi.
+  - **Tiêu chí xong:** Chạy thử với key thật, call log ghi nhận được request id do 9router trả về.
 
 - [x] **T14** — **Viết test trước cho 2 Guardrails đầu tiên (`zod` Schema & Timeout)**
   - **Phụ trách:** `@Thế Vinh`
@@ -177,10 +177,10 @@
   - **Chi tiết:** Viết lệnh CLI nhận đường dẫn thư mục dataset (chỉ đọc `statement.md`, `constraints.json` và các file `.cpp` — không cấu hình tay từng bài) và xuất ra `predictions.jsonl`. Hỗ trợ **`MODEL_OFF=1`**: chỉ chạy hard rules, mọi semantic constraint ghi `unsure`, và **không mở bất kỳ kết nối mạng nào**. Tạo `Dockerfile` build image cho CLI checker.
   - **Tiêu chí xong:** Chạy `docker run --network none -e MODEL_OFF=1 ...` trên `dev set` thành công; chấm bằng `eval.mjs` trả exit code `0` hoặc `1` (không bao giờ `2`) và đạt **0 wrongful deductions**.
 
-- [ ] **T19** — **Chạy Eval thật trên `dev set` & Commit kết quả kèm phép tính chi phí**
+- [x] **T19** — **Chạy Eval thật trên `dev set` & Commit kết quả kèm phép tính chi phí**
   - **Phụ trách:** `@Thế Vinh`
   - **Phụ thuộc:** `T17`, `T18`
-  - **Chi tiết:** Chạy CLI checker với model thật `gemini-3.6-flash` (`MODEL_OFF=0`) trên toàn bộ `dev set` (chạy thủ công trên máy, không gọi model thật trong CI theo luật mục 4 `AGENTS.md`). Lưu thư mục kết quả gồm: `predictions.jsonl`, báo cáo output từ `eval.mjs`, và `call-log.jsonl` (đầy đủ `request_id`, tokens, latency, cost). Tính chi phí trung bình cho **1 lab 80 sinh viên** kèm công thức số học (nêu rõ `$0` trên Free tier + ước tính tương đương theo token nếu bật billing).
+  - **Chi tiết:** Chạy CLI checker với model thật `ag/gemini-3.8-flash` (`MODEL_OFF=0`) trên toàn bộ `dev set` (chạy thủ công trên máy, không gọi model thật trong CI theo luật mục 4 `AGENTS.md`). Lưu thư mục kết quả gồm: `predictions.jsonl`, báo cáo output từ `eval.mjs`, và `call-log.jsonl` (đầy đủ `request_id`, tokens, latency, cost). Tính chi phí trung bình cho **1 lab 80 sinh viên** kèm công thức số học (nêu rõ `$0` trên Free tier + ước tính tương đương theo token nếu bật billing).
   - **Tiêu chí xong:** Commit thư mục kết quả dev-set run lên repo; cập nhật chi tiết vào `README.md` và `AI-LOG.md`.
 
 ---
@@ -190,7 +190,7 @@
 - [ ] **T20** — **Deploy Public & Tạo 5 tài khoản Test**
   - **Phụ trách:** `@Dương`
   - **Phụ thuộc:** `T07`, `T09`, `T16`
-  - **Chi tiết:** Triển khai toàn bộ Web/API, PostgreSQL, Worker và Docker Sandbox lên server public (giữ chạy liên tục từ 25/11 cho đến khi có điểm PA#4 để đội red-team tấn công). Tạo sẵn 5 tài khoản test (chỉ dùng dữ liệu giả): `1 Admin`, `2 TA ở 2 lớp khác nhau` (TA1 lớp A, TA2 lớp B), và `2 Student thuộc lớp của TA1`. Xác nhận API key `gemini-3.6-flash` thuộc project Free tier không gắn billing ($0 cap).
+  - **Chi tiết:** Triển khai toàn bộ Web/API, PostgreSQL, Worker và Docker Sandbox lên server public (giữ chạy liên tục từ 25/11 cho đến khi có điểm PA#4 để đội red-team tấn công). Tạo sẵn 5 tài khoản test (chỉ dùng dữ liệu giả): `1 Admin`, `2 TA ở 2 lớp khác nhau` (TA1 lớp A, TA2 lớp B), và `2 Student thuộc lớp của TA1`. Xác nhận API key `ag/gemini-3.8-flash` thuộc project Free tier không gắn billing ($0 cap).
   - **Tiêu chí xong:** Truy cập được từ Internet qua URL public; `npm run check` trên repo vẫn xanh 100%.
 
 - [ ] **T21** — **Diễn tập End-to-End & Quay Video Screen Recording (≤ 5 phút)**
@@ -207,7 +207,7 @@
   - **Phụ trách:** `@Dương` (phối hợp `@Thế Vinh`, `@Quang Vinh`)
   - **Phụ thuộc:** `T19`, `T20`, `T21`
   - **Chi tiết:**
-    - Cập nhật `README.md`: bổ sung lệnh build & chạy CLI checker (`MODEL_OFF=1`), tên model `gemini-3.6-flash` và phép tính chi phí cho 1 lab 80 SV.
+    - Cập nhật `README.md`: bổ sung lệnh build & chạy CLI checker (`MODEL_OFF=1`), tên model `ag/gemini-3.8-flash` và phép tính chi phí cho 1 lab 80 SV.
     - Tạo `PA3.md` tại thư mục gốc gồm 5 mục bắt buộc: (1) URL public & 5 tài khoản test; (2) Link CI run cho tag `pa3` có chạy sandbox attack tests; (3) Lệnh CLI checker, lệnh `docker build` và cách bật `MODEL_OFF=1`; (4) Đường dẫn thư mục kết quả `dev set` run đã commit; (5) Link video recording ≤ 5 phút.
     - Kiểm tra nhật ký `docs/tasks/PA3/context/context-dd-mm.md` đã ghi nhận đầy đủ các thay đổi.
   - **Tiêu chí xong:** Commit `docs(docs): add PA3.md and update README with checker commands`.
@@ -284,7 +284,7 @@ Dưới đây là sơ đồ và bảng phân tích **Task Dependencies (Sự ph�
 
 - **Chặn ai:** `T11` (Hard Rules AST chạy trước) là **nút chặn trực tiếp** của cả **GĐ 4** (`T13` gọi LLM cho các constraint còn lại, `T16` đẩy verdict vào Review Queue) và **GĐ 5** (`T18` CLI Checker dùng chung engine Hard Rules).
 
-- **Giai đoạn 4: LLM (`gemini-3.6-flash`), Guardrails & Review Queue (`T12` – `T16`)** — _Phụ trách: Thế Vinh & Quang Vinh_
+- **Giai đoạn 4: LLM (`ag/gemini-3.8-flash`), Guardrails & Review Queue (`T12` – `T16`)** — _Phụ trách: Thế Vinh & Quang Vinh_
 - **Bị chặn bởi:** `T11` (Hard rules phải quyết định xong ban-list thì pipeline mới chuyển phần semantic constraint sang LLM ở `T13`).
 
 - **Có thể làm song song ngay từ đầu:** Thế Vinh có thể làm trước `T12` (bộ xóa comment & danh tính sinh viên) và `T14` (test fake-model cho `zod` Schema & Timeout) ngay sau `T01` mà không cần đợi Quang Vinh xong `T11`.
