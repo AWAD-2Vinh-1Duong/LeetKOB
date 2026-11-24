@@ -35,3 +35,14 @@
 - Checked that the tests bite: removing the "TA teaches the class" check and the "student owns the submission" check makes 3 tests fail. Both changes were restored.
 - Verified on a throwaway `postgres:16` container: 153 tests pass there, and `npm run check` is green without a database.
 - Not done: the student does not yet see a test result (`Accepted`, `Wrong Answer`, `TLE`); it needs the queue, worker and sandbox (T05 to T07). `status` stays `queued` until then. Lab creation does not use an `Idempotency-Key`; the contract does not require it for this endpoint.
+
+5. Refactor the app into feature folders with a DI container - Quang Vinh with Claude Code
+
+- Moved from layer folders (`controllers/`, `services/`, `repositories/`, `middlewares/`) to `src/auth`, `src/labs`, `src/submissions`, `src/shared`, each holding `<feature>.routes.js`, `.controller.js`, `.service.js` and one repository interface plus a PostgreSQL and an in-memory implementation. Files were moved with `git mv` first (commit `0996d35`), so history follows them.
+- `src/container.js` is now the only place that builds repositories, services and controllers and chooses PostgreSQL or in-memory. `src/app.js` only builds Express: request context, routers, error handler. Routes moved to `*.routes.js` next to each controller.
+- Logic left the controllers: `AuthService` (login, token), `LabService.getVisible` and `openReviewQueue`. `parseBody` in `shared/validation.js` replaced three copies of the zod error mapping. `assertStaff` in `auth/roles.js` holds the "students may not" rule.
+- `npm run dev` pointed at `src/app.js`, which only exports a function, so it never started a server. Added `src/server.js` and `src/config.js` (reads `JWT_SECRET`, `DATABASE_URL`, `PORT`, `LOG_LEVEL`; refuses a short secret) and pointed `dev` at it. `tests/config.test.js` came first.
+- ESLint now enforces the layers (`no-restricted-imports`): only the container imports a concrete repository, controllers never touch repositories, services never import `express` or `pg`, routes never import services. Checked with five deliberate violations, each one failed lint; they were reverted.
+- Rules for the next people: `docs/architecture.md`, summarised in section 6 of `AGENTS.md`.
+- The only changes to existing tests were import paths (repository files, `shared/db.js`); no assertion was touched. 139 tests pass without a database, 160 on a throwaway PostgreSQL 16.
+- Not done: `ci.yml` still has no PostgreSQL service and still runs only for pull requests into `main`.
