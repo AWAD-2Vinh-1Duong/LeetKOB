@@ -3,11 +3,14 @@ import express from 'express';
 import pino from 'pino';
 import { createAuthMiddleware } from './middlewares/auth.js';
 import { SubmissionsController } from './controllers/submissions-controller.js';
+import { AuthController } from './controllers/auth-controller.js';
+import { LabsController } from './controllers/labs-controller.js';
 import { SubmissionService } from './services/submission-service.js';
 import { ProblemError, sendProblem } from './problems.js';
 import {
   PostgresLabRepository,
   PostgresSubmissionRepository,
+  PostgresUserRepository,
 } from './repositories/postgres.js';
 
 /**
@@ -16,6 +19,7 @@ import {
  *   jwtSecret: string,
  *   labRepository?: import('./repositories/in-memory.js').InMemoryLabRepository | import('./repositories/postgres.js').PostgresLabRepository,
  *   submissionRepository?: import('./repositories/in-memory.js').InMemorySubmissionRepository | import('./repositories/postgres.js').PostgresSubmissionRepository,
+ *   userRepository?: import('./repositories/in-memory.js').InMemoryUserRepository | import('./repositories/postgres.js').PostgresUserRepository,
  *   pool?: import('pg').Pool,
  *   logger?: import('pino').Logger,
  *   now?: () => Date,
@@ -25,6 +29,7 @@ export function createApp({
   jwtSecret,
   labRepository,
   submissionRepository,
+  userRepository,
   pool,
   logger = pino({ level: process.env.LOG_LEVEL || 'silent' }),
   now = () => new Date(),
@@ -33,6 +38,7 @@ export function createApp({
     labRepository = labRepository ?? new PostgresLabRepository({ pool });
     submissionRepository =
       submissionRepository ?? new PostgresSubmissionRepository({ pool });
+    userRepository = userRepository ?? new PostgresUserRepository({ pool });
   }
 
   if (!labRepository || !submissionRepository) {
@@ -49,6 +55,9 @@ export function createApp({
     }),
   });
 
+  const labs = new LabsController({ labRepository });
+  const requireAuth = createAuthMiddleware({ secret: jwtSecret });
+
   const app = express();
   app.disable('x-powered-by');
 
@@ -61,9 +70,21 @@ export function createApp({
     next();
   });
 
+  if (userRepository) {
+    const auth = new AuthController({ userRepository, jwtSecret, now });
+    app.post(
+      '/auth/login',
+      express.json({ limit: '4kb', strict: false }),
+      auth.login,
+    );
+  }
+
+  app.get('/labs/:labId', requireAuth, labs.get);
+  app.get('/labs/:labId/review-queue', requireAuth, labs.reviewQueue);
+
   app.post(
     '/labs/:labId/submissions',
-    createAuthMiddleware({ secret: jwtSecret }),
+    requireAuth,
     express.json({ limit: '256kb', strict: false }),
     submissions.create,
   );
