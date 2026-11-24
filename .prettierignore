@@ -7,6 +7,9 @@ docs/tasks/PA2/task/PA#2 rubric — Harness and quality gate.md
 docs/tasks/PA2/task/PA#2-requirement.md
 docs/tasks/PA3/PA#3 rubric — Prototype with the LLM feature running.md
 
+# Official dev set from fithcmus/awad-leetkob-eval: byte-for-byte, SHA-256 checked.
+eval/dev-set/**
+
 # PA3 submission artifacts & raw eval outputs
 docs/tasks/PA3/submission/dev-run/**
 docs/tasks/PA3/submission/submission-note.txt

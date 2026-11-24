@@ -57,7 +57,7 @@
   - **Chi tiết:** Viết SQL migrations bằng `node-pg-migrate` cho các bảng: `users`, `classes`, `class_enrollments`, `labs` (kèm `statement`, `tests`, `constraints` + `deduction`), `submissions` (có unique index `(student_id, lab_id, idempotency_key)` đúng như contract `post-labs-submissions.md` mục 5), `judge_jobs`, `verdicts`, `llm_call_logs`. Cài đặt PostgreSQL repositories giữ nguyên interface của PA#2 và tích hợp `pino` logger.
   - **Tiêu chí xong:** Chạy `npm run db:migrate` tạo bảng sạch sẽ; toàn bộ contract tests cũ của `POST /labs/{labId}/submissions` pass trên PostgreSQL.
 
-- [ ] **T04** — **Nạp nguyên bản `dev set` & xác minh mã băm SHA-256**
+- [x] **T04** — **Nạp nguyên bản `dev set` & xác minh mã băm SHA-256**
   - **Phụ trách:** `@Thế Vinh`
   - **Phụ thuộc:** `T01`
   - **Chi tiết:** Đưa thư mục `dev set` và `eval.mjs` của giảng viên vào repo. Kiểm tra SHA-256 đảm bảo `eval.mjs` bắt đầu bằng `c836edd8713521bb` và `labels.jsonl` bắt đầu bằng `262cda7b0ef5612e`.

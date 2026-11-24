@@ -63,3 +63,11 @@
 - The test diff holds only the new tests and import paths. Probe imports confirmed that the middleware lint block bites.
 - Filled `Changed` and `Rejected` in `AI-LOG.md` for the Codex entry. The Claude Code entry was then rewritten to cover the whole session in order: the architecture choice and why, the contract bug, the two prompts, the Prisma check, the review and pull request #16. The field lines were unindented, because Prettier had nested a `Rejected:` line into a bullet list.
 - Not done: lint does not stop a controller or service from importing `src/middlewares/`; `POST /labs` and `POST /auth/login` still use `express.json` directly; the Prisma switch waits for the `pa3` tag. CI runs only for pull requests into `main`, so the pull request into `dev` gets no `quality` check.
+
+8. Complete Task T04 (official dev set, SHA-256 check) - Thế Vinh with Claude Code
+
+- Copied the dev set from `github.com/fithcmus/awad-leetkob-eval` (commit `552c811`) into `eval/dev-set/` byte for byte: `eval.mjs`, `labels.jsonl`, `README.md`, 6 problems, 47 solutions (128 files). `diff -r` against the clone shows no difference.
+- SHA-256 checked: `eval.mjs` `c836edd8713521bb...`, `labels.jsonl` `262cda7b0ef5612e...`, both match `AGENTS.md`.
+- `eval/dev-set/**` added to `.prettierignore` and ESLint `ignores`, so no tool rewrites it.
+- `tests/grading/dev-set-integrity.test.js` pins both hashes, so CI goes red if anyone edits the labels or the scorer.
+- `npm run check` green: 98/98 tests.
