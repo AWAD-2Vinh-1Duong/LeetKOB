@@ -134,9 +134,12 @@ describe('auth and class access', () => {
     });
 
     test('the response never contains the password or its hash', async () => {
-      const res = await login({ email: 'ta-a@t.local', password: 'wrong' });
+      const res = await login({
+        email: 'ta-a@t.local',
+        password: 'hunter2-not-echoed',
+      });
       assert.ok(!JSON.stringify(res.body).includes('scrypt'));
-      assert.ok(!JSON.stringify(res.body).includes('wrong'));
+      assert.ok(!JSON.stringify(res.body).includes('hunter2-not-echoed'));
     });
 
     for (const [name, body] of /** @type {[string, unknown][]} */ ([
