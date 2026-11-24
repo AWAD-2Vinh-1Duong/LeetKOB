@@ -2,6 +2,14 @@
 
 Khi ghi AI Log thì phải ghi ở trên cùng.
 
+## 2026-11-24 — Submission check order and module layout (Quang Vinh)
+
+Tool: Codex
+Asked for: Fix the submission contract bug, move features into module layers, extract HTTP middleware, enforce layer boundaries with ESLint and update the architecture documentation.
+Kept: Two contract regressions for 403 precedence, the module and middleware layout, five middleware tests, and the lint boundary verified with a temporary lab service import. The suite increased from 139 to 146 passing tests with `DATABASE_URL` unset.
+Changed:
+Rejected:
+
 ## 2026-11-24 — Cài đặt PostgreSQL 16, node-pg-migrate và PostgreSQL Repositories (Bình Dương)
 
 Tool: Antigravity Agent

@@ -46,3 +46,12 @@
 - Rules for the next people: `docs/architecture.md`, summarised in section 6 of `AGENTS.md`.
 - The only changes to existing tests were import paths (repository files, `shared/db.js`); no assertion was touched. 139 tests pass without a database, 160 on a throwaway PostgreSQL 16.
 - Not done: `ci.yml` still has no PostgreSQL service and still runs only for pull requests into `main`.
+
+6. Fix submission check order and organise modules and middleware - Quang Vinh with Codex
+
+- Recorded the baseline on Node 22 with `DATABASE_URL` unset. All 139 tests passed.
+- Added two contract tests for staff submissions. Before the fix, the TA's malformed JSON returned 400 and the admin's oversized JSON returned 413. Moved the student role check before JSON parsing and verified that both requests now return the RFC 9457 `403 forbidden-role` response. The suite reached 141 passing tests.
+- Used `git mv` to put auth, labs and submissions under `src/modules/` with controller, service and repository folders, and grading under its service folder. Moved the grading test and the HTTP middleware files, updated imports and verified that all 141 test names were preserved.
+- Moved JWT verification to the auth token helper and the Idempotency-Key check to middleware. Kept lab visibility ahead of the staff check for the review queue. Added five middleware tests covering successful requests and RFC 9457 errors. All 146 tests passed.
+- Added an ESLint import restriction for middleware. A temporary import of the lab service triggered `no-restricted-imports`. Removed the import and verified that lint passed again.
+- Updated the layout, request flow and feature checklist in `docs/architecture.md`, the layout and dev command in `AGENTS.md`, and the source tree in `README.md`. Drafted the AI log entry.

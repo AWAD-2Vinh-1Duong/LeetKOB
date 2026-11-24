@@ -7,7 +7,7 @@ Read this before touching the LeeTKOB grading harness. Tool-specific files (`CLA
 ## 1. Stack
 
 - Node.js 22 LTS, ESM, JavaScript with JSDoc and strict `checkJs`; no other language, npm only.
-- Express 5 in one process, code grouped by feature (`src/auth`, `src/labs`, `src/submissions`, `src/shared`); layers and rules are in section 6 and `docs/architecture.md`.
+- Express 5 in one process, code grouped by feature under `src/modules/` with HTTP middleware in `src/middlewares/`; layers and rules are in section 6 and `docs/architecture.md`.
 - `zod` validation, JWT with `jose`, passwords hashed with `scrypt` from `node:crypto`.
 - Tests: `node:test` + `supertest`. Lint/format: ESLint 10 flat config + Prettier 3.
 - PostgreSQL 16 via `pg` and plain SQL, migrations with `node-pg-migrate`; job queue in a table claimed with `FOR UPDATE SKIP LOCKED`; `pino` logging with request IDs.
@@ -19,7 +19,7 @@ Local and CI run the same commands. `npm run check` runs all four in order.
 
 - `npm run lint` · `npm run format:check` · `npm run typecheck` · `npm test`
 - `npm run format` fixes formatting.
-- `npm run dev` starts the application in development mode (`node --watch src/app.js`).
+- `npm run dev` starts the application in development mode (`node --watch src/server.js`).
 - `npm run db:migrate` runs database migrations with `node-pg-migrate`.
 
 ## 3. Conventions
@@ -58,8 +58,8 @@ Tier 3 overrides Tiers 1 and 2.
 
 Full rules and the "add a feature" checklist: `docs/architecture.md`. ESLint enforces the layer rules; do not disable them.
 
-- A feature lives in `src/<feature>/` as `<feature>.routes.js`, `.controller.js`, `.service.js`, `.repository.js` (interface only), `.repository.postgres.js`, `.repository.memory.js`.
-- Routes map paths; a controller parses the body (zod, `parseBody`) and calls a service; a service holds the rules; a repository only stores data.
+- A feature lives in `src/modules/<module>/`. Put `<feature>.routes.js` and `<feature>.controller.js` in `controller/`, `<feature>.service.js` in `service/`, and the repository interface and implementations in `repository/`. HTTP middleware lives in `src/middlewares/`.
+- Routes map paths and middleware. Controllers validate the body with zod and `parseBody` and call services. Services hold business rules and checks that need data. Middleware handles HTTP checks that need no data. Repositories store and read data.
 - Only `src/container.js` builds repositories, services and controllers, and picks PostgreSQL or in-memory. Only it imports a concrete repository. A class never builds its collaborators or reads `process.env`.
-- Errors are `ProblemError` thrown from services; `shared/error-handler.js` turns them into RFC 9457. A response for "exists but not yours" is the same 404 as for "does not exist".
+- Throw `ProblemError` for known errors. `src/middlewares/error-handler.middleware.js` turns them into RFC 9457 responses. A response for "exists but not yours" is the same 404 as for "does not exist".
 - Start work by writing the contract in `docs/contract/` and the tests in `tests/<feature>/`, then the code.
