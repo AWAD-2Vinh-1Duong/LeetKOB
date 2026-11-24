@@ -14,6 +14,7 @@
 - Then `src/rules/cpp-tokens.js` (tokenizer that drops comments and literals and keeps line numbers) and `src/rules/hard-rules.js` (`parseBanList`, `checkBanList`, `decideConstraint`, `partitionConstraints`). No regex runs over student code. A decision carries no deduction and is marked `decidedBy: 'hard-rule'`.
 - All 34 tests passed without editing any test after the first commit.
 - Not done yet: wiring `partitionConstraints` into the worker so the model is skipped for decided constraints (needs T05 and T13), and running only for `Accepted` submissions (needs the sandbox).
+
 3. Complete Task T08 (login with scrypt and JWT, class access) - Quang Vinh with Claude Code
 
 - Contract first: `docs/contract/auth-and-lab-access.md` (login, who sees a lab, review queue access). Tests before code: `tests/auth/` (passwords, in-memory contract tests, PostgreSQL tests that skip without `DATABASE_URL`). Two later test-only commits fixed my own mistakes: a missing `tsc` type on the seeded roles, and a no-echo test whose password was the word "wrong", which the error message also contains. Neither loosened an assertion.
