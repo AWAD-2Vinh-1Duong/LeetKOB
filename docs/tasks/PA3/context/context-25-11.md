@@ -25,3 +25,10 @@
 - Checked that the trap bites: with the old hard rules from `dev` (before the T11 fix) the folder gives 1 wrongful deduction and the test fails.
 - Model-off numbers on the custom cases: wrongful 0, recall 25% (1/4), unsure 50%. Expected with the model off.
 - `npm run check` green: 208/208 tests. The branch is on top of `feat/pa3-cli-eval` because it needs the checker and the T11 fix.
+
+4. Switch the model to Gemini 3.8 Flash through 9router (start of T13) - Thế Vinh with Claude Code
+
+- The team calls Gemini through 9router, a router that runs on the machine and exposes an OpenAI-compatible endpoint (`http://127.0.0.1:20128/v1`). The key was created in the 9router dashboard and lives only in the local `.env`, filled in by Thế Vinh; the assistant never saw it. A probe script that prints only the key length listed the models; the one used is `ag/gemini-3.8-flash`.
+- Replaced `gemini-3.6-flash` with `ag/gemini-3.8-flash` in `AGENTS.md`, `README.md`, `.env.example` (new empty `LLM_BASE_URL`), `PA3.md`, the PA3 submission drafts and the PA3 checklist.
+- Left on purpose: the default `'gemini-3.6-flash'` in the applied migration `1795453690243_init-schema.sql` (applied migrations are never edited; the app writes the real model name into every call-log row) and the PA#2 reports (history of a submitted checkpoint).
+- Not done: the spending-cap lines still say "Google AI Studio Free tier, no billing, $0". They must be rewritten once the team confirms what the `ag/` provider behind 9router is and whether it can bill.
