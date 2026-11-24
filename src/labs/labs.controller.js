@@ -1,5 +1,6 @@
 import { z } from 'zod';
-import { ProblemError } from '../shared/problems.js';
+import { assertStaff } from '../auth/roles.js';
+import { parseBody } from '../shared/validation.js';
 
 const createSchema = z.strictObject({
   classId: z.string().min(1),
@@ -22,7 +23,7 @@ const createSchema = z.strictObject({
 
 /**
  * Staff see the whole lab; a student does not see the expected outputs.
- * @param {import('../repositories/in-memory.js').Lab} lab
+ * @param {import('./labs.repository.js').Lab} lab
  * @param {'admin' | 'ta' | 'student'} role
  */
 function labView(lab, role) {
@@ -40,73 +41,34 @@ function labView(lab, role) {
 }
 
 export class LabsController {
-  /**
-   * @param {{ labService: import('./labs.service.js').LabService, labRepository: { findForUser(labId: string, viewer: import('../repositories/in-memory.js').Viewer): Promise<import('../repositories/in-memory.js').Lab | undefined> } }} deps
-   */
-  constructor({ labService, labRepository }) {
+  /** @param {{ labService: import('./labs.service.js').LabService }} deps */
+  constructor({ labService }) {
     this.labService = labService;
-    this.labRepository = labRepository;
-  }
-
-  /**
-   * The lab, or 404 for a lab that is missing and for one the caller cannot see.
-   * @param {string} labId
-   * @param {import('../auth/auth.middleware.js').AuthUser} user
-   */
-  async #visibleLab(labId, user) {
-    const lab = await this.labRepository.findForUser(labId, user);
-    if (!lab) {
-      throw new ProblemError(
-        'lab-not-found',
-        `No lab "${labId}" is open to you.`,
-      );
-    }
-    return lab;
   }
 
   /** @type {import('express').RequestHandler<{ labId: string }>} */
   get = async (req, res) => {
-    const lab = await this.#visibleLab(req.params.labId, res.locals.user);
-    res.json(labView(lab, res.locals.user.role));
+    const user = res.locals.user;
+    const lab = await this.labService.getVisible(user, req.params.labId);
+    res.json(labView(lab, user.role));
   };
 
   /** @type {import('express').RequestHandler} */
   create = async (req, res) => {
-    /** @type {import('../auth/auth.middleware.js').AuthUser} */
     const user = res.locals.user;
-    if (user.role === 'student') {
-      throw new ProblemError('staff-only', 'Only TAs and admins create labs.');
-    }
-    const parsed = createSchema.safeParse(req.body);
-    if (!parsed.success) {
-      const errors = parsed.error.issues.map((i) => ({
-        path: i.path.join('.'),
-        message: i.message,
-      }));
-      throw new ProblemError(
-        'validation-error',
-        `${errors.length} field(s) invalid.`,
-        { errors },
-      );
-    }
+    assertStaff(user, 'Only TAs and admins create labs.');
+    const input = parseBody(createSchema, req.body);
     const lab = await this.labService.create(user, {
-      ...parsed.data,
-      deadline: new Date(parsed.data.deadline),
+      ...input,
+      deadline: new Date(input.deadline),
     });
     res.status(201).location(`/labs/${lab.id}`).json(labView(lab, user.role));
   };
 
   /** @type {import('express').RequestHandler<{ labId: string }>} */
   reviewQueue = async (req, res) => {
-    /** @type {import('../auth/auth.middleware.js').AuthUser} */
-    const user = res.locals.user;
-    await this.#visibleLab(req.params.labId, user);
-    if (user.role === 'student') {
-      throw new ProblemError(
-        'staff-only',
-        'Only TAs and admins open the review queue.',
-      );
-    }
-    res.json({ items: [] });
+    res.json(
+      await this.labService.openReviewQueue(res.locals.user, req.params.labId),
+    );
   };
 }

@@ -1,135 +1,37 @@
-import { randomUUID } from 'node:crypto';
 import express from 'express';
-import pino from 'pino';
-import { createAuthMiddleware } from './auth/auth.middleware.js';
-import { SubmissionsController } from './submissions/submissions.controller.js';
-import { AuthController } from './auth/auth.controller.js';
-import { LabsController } from './labs/labs.controller.js';
-import { LabService } from './labs/labs.service.js';
-import { SubmissionService } from './submissions/submissions.service.js';
-import { ProblemError, sendProblem } from './shared/problems.js';
-import {
-  PostgresLabRepository,
-  PostgresSubmissionRepository,
-  PostgresUserRepository,
-} from './repositories/postgres.js';
+import { createContainer } from './container.js';
+import { createAuthRouter } from './auth/auth.routes.js';
+import { createLabsRouter } from './labs/labs.routes.js';
+import { createSubmissionsRouter } from './submissions/submissions.routes.js';
+import { createRequestContext } from './shared/request-context.js';
+import { createErrorHandler } from './shared/error-handler.js';
 
 /**
- * Wires the app. Repositories and the clock are injected so tests run without a database.
- * @param {{
- *   jwtSecret: string,
- *   labRepository?: import('./repositories/in-memory.js').InMemoryLabRepository | import('./repositories/postgres.js').PostgresLabRepository,
- *   submissionRepository?: import('./repositories/in-memory.js').InMemorySubmissionRepository | import('./repositories/postgres.js').PostgresSubmissionRepository,
- *   userRepository?: import('./repositories/in-memory.js').InMemoryUserRepository | import('./repositories/postgres.js').PostgresUserRepository,
- *   pool?: import('pg').Pool,
- *   logger?: import('pino').Logger,
- *   now?: () => Date,
- * }} deps
+ * Builds the Express app. It only wires HTTP: request context, the routers, the error
+ * handler. Objects come from the container; routes live in each feature's `*.routes.js`.
+ * @param {Parameters<typeof createContainer>[0]} deps
  */
-export function createApp({
-  jwtSecret,
-  labRepository,
-  submissionRepository,
-  userRepository,
-  pool,
-  logger = pino({ level: process.env.LOG_LEVEL || 'silent' }),
-  now = () => new Date(),
-}) {
-  if (pool) {
-    labRepository = labRepository ?? new PostgresLabRepository({ pool });
-    submissionRepository =
-      submissionRepository ?? new PostgresSubmissionRepository({ pool });
-    userRepository = userRepository ?? new PostgresUserRepository({ pool });
-  }
-
-  if (!labRepository || !submissionRepository) {
-    throw new Error(
-      'labRepository and submissionRepository must be provided or pool specified',
-    );
-  }
-
-  const submissions = new SubmissionsController({
-    submissionService: new SubmissionService({
-      labRepository,
-      submissionRepository,
-      now,
-    }),
-  });
-
-  const labs = new LabsController({
-    labService: new LabService({ labRepository }),
-    labRepository,
-  });
-  const requireAuth = createAuthMiddleware({ secret: jwtSecret });
+export function createApp(deps) {
+  const { logger, requireAuth, controllers } = createContainer(deps);
 
   const app = express();
   app.disable('x-powered-by');
+  app.use(createRequestContext({ logger }));
 
-  app.use((req, res, next) => {
-    const rawId = req.headers['x-request-id'] || randomUUID();
-    const reqId = Array.isArray(rawId) ? rawId[0] : rawId;
-    /** @type {any} */ (req).id = reqId;
-    /** @type {any} */ (req).log = logger.child({ reqId });
-    res.setHeader('x-request-id', reqId);
-    next();
-  });
-
-  if (userRepository) {
-    const auth = new AuthController({ userRepository, jwtSecret, now });
-    app.post(
-      '/auth/login',
-      express.json({ limit: '4kb', strict: false }),
-      auth.login,
-    );
+  if (controllers.auth) {
+    app.use('/auth', createAuthRouter({ controller: controllers.auth }));
   }
-
-  app.post(
+  app.use(
     '/labs',
-    requireAuth,
-    express.json({ limit: '256kb', strict: false }),
-    labs.create,
+    createLabsRouter({ controller: controllers.labs, requireAuth }),
   );
-  app.get('/labs/:labId', requireAuth, labs.get);
-  app.get('/labs/:labId/review-queue', requireAuth, labs.reviewQueue);
-
-  app.get('/submissions/:id', requireAuth, submissions.get);
-
-  app.post(
-    '/labs/:labId/submissions',
-    requireAuth,
-    express.json({ limit: '256kb', strict: false }),
-    submissions.create,
+  app.use(
+    createSubmissionsRouter({
+      controller: controllers.submissions,
+      requireAuth,
+    }),
   );
 
-  /** @type {import('express').ErrorRequestHandler} */
-  // eslint-disable-next-line no-unused-vars -- Express spots error handlers by their 4 arguments
-  const onError = (err, req, res, _next) => {
-    if (err instanceof ProblemError) return sendProblem(req, res, err);
-    if (err?.type === 'entity.too.large') {
-      return sendProblem(
-        req,
-        res,
-        new ProblemError('payload-too-large', 'The body exceeds 256 KiB.'),
-      );
-    }
-    if (err?.type === 'entity.parse.failed') {
-      return sendProblem(
-        req,
-        res,
-        new ProblemError('validation-error', 'The body is not valid JSON.', {
-          errors: [{ path: '', message: 'Malformed JSON' }],
-        }),
-      );
-    }
-    const reqId = /** @type {any} */ (req)?.id;
-    logger.error({ err, reqId }, 'Unhandled error');
-    sendProblem(
-      req,
-      res,
-      new ProblemError('internal-error', 'Something went wrong.'),
-    );
-  };
-  app.use(onError);
-
+  app.use(createErrorHandler({ logger }));
   return app;
 }

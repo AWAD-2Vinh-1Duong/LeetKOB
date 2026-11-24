@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { ProblemError } from '../shared/problems.js';
+import { parseBody } from '../shared/validation.js';
 
 const IDEMPOTENCY_KEY = /^[\x21-\x7E]{1,255}$/;
 const MAX_SOURCE_BYTES = 65_536;
@@ -22,7 +23,6 @@ export class SubmissionsController {
 
   /** @type {import('express').RequestHandler<{ labId: string }>} */
   create = async (req, res) => {
-    /** @type {import('../auth/auth.middleware.js').AuthUser} */
     const user = res.locals.user;
     if (user.role !== 'student') {
       throw new ProblemError(
@@ -39,24 +39,13 @@ export class SubmissionsController {
       );
     }
 
-    const parsed = bodySchema.safeParse(req.body);
-    if (!parsed.success) {
-      const errors = parsed.error.issues.map((i) => ({
-        path: i.path.join('.'),
-        message: i.message,
-      }));
-      throw new ProblemError(
-        'validation-error',
-        `${errors.length} field(s) invalid.`,
-        { errors },
-      );
-    }
+    const body = parseBody(bodySchema, req.body);
 
     const { submission, replayed } = await this.submissionService.submit({
       studentId: user.id,
       labId: req.params.labId,
       idempotencyKey,
-      ...parsed.data,
+      ...body,
     });
 
     const { id, labId, studentId, language, status, createdAt } = submission;
@@ -67,7 +56,6 @@ export class SubmissionsController {
 
   /** @type {import('express').RequestHandler<{ id: string }>} */
   get = async (req, res) => {
-    /** @type {import('../auth/auth.middleware.js').AuthUser} */
     const user = res.locals.user;
     const submission = await this.submissionService.getVisible(
       user,

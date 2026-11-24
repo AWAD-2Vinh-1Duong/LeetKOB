@@ -4,11 +4,9 @@ import assert from 'node:assert/strict';
 import request from 'supertest';
 import { SignJWT, jwtVerify } from 'jose';
 import { createApp } from '../../src/app.js';
-import {
-  InMemoryLabRepository,
-  InMemorySubmissionRepository,
-  InMemoryUserRepository,
-} from '../../src/repositories/in-memory.js';
+import { InMemoryLabRepository } from '../../src/labs/labs.repository.memory.js';
+import { InMemorySubmissionRepository } from '../../src/submissions/submissions.repository.memory.js';
+import { InMemoryUserRepository } from '../../src/auth/users.repository.memory.js';
 import { hashPassword } from '../../src/auth/passwords.js';
 
 const SECRET = 'test-secret-not-a-real-one-0123456789';

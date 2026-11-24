@@ -4,10 +4,8 @@ import assert from 'node:assert/strict';
 import request from 'supertest';
 import { SignJWT } from 'jose';
 import { createApp } from '../../src/app.js';
-import {
-  InMemoryLabRepository,
-  InMemorySubmissionRepository,
-} from '../../src/repositories/in-memory.js';
+import { InMemoryLabRepository } from '../../src/labs/labs.repository.memory.js';
+import { InMemorySubmissionRepository } from '../../src/submissions/submissions.repository.memory.js';
 
 const SECRET = 'test-secret-not-a-real-one-0123456789';
 const PROBLEM_BASE = 'https://leettkob.dev/problems/';
