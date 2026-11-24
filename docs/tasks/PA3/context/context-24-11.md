@@ -71,3 +71,36 @@
 - `eval/dev-set/**` added to `.prettierignore` and ESLint `ignores`, so no tool rewrites it.
 - `tests/grading/dev-set-integrity.test.js` pins both hashes, so CI goes red if anyone edits the labels or the scorer.
 - `npm run check` green: 98/98 tests.
+
+9. Complete Task T14 (tests first for the schema and timeout guardrails) - Thế Vinh with Claude Code
+
+- Commit `69faaca`: `tests/grading/constraint-judge-guardrails.test.js`, 23 tests, written before any guardrail code. They import `ConstraintJudge` from `src/modules/grading/service/constraint-judge.js`, which does not exist yet, so they fail until T15.
+- Interface fixed by the tests: `new ConstraintJudge({ model, timeoutMs }).judge({ statement, constraints, source })` returns `{ verdicts }`, one per constraint, each `{ constraintId, verdict, evidence, decidedBy }`. `decidedBy` is `model` for an accepted answer and `guardrail` (plus a `reason`) for a forced `unsure`. The model is injected as `{ name, complete({ prompt, signal }) }`, so T13 plugs Gemini in behind it and tests use a fake.
+- Schema cases that make every constraint `unsure`: malformed JSON, JSON in a markdown fence, text around the JSON, empty reply, array instead of object, no `verdicts`, a verdict outside `pass | violation | unsure`, an extra `deduction` field, an extra top-level field, evidence that is not `{ line, text }`, a constraint that was not asked for, and a model error such as a 429.
+- Per-constraint cases: a missing constraint, a constraint answered twice, a violation without evidence and a violation citing a line the code does not have each become `unsure`; the other constraints keep the model's answer. Evidence text is taken from the original source line, not from the model.
+- Timeout cases: a model that never answers and one that honours the abort signal both end as `unsure` within the timeout, and the signal passed to the model is aborted. A reply in time is used.
+- No network: the suite replaces `globalThis.fetch` with a function that throws, and no verdict ever carries a deduction. No dev-set code or problem id appears in the tests.
+- Not done: the guardrail code (T15) and the real Gemini model (T13). `npm run check` is red on this branch until T15 lands, only because the module is missing.
+
+10. Complete Task T12 (strip comments and student identity before the model) - Thế Vinh with Claude Code
+
+- Tests first, commit `177fef1`: `tests/grading/sanitize.test.js`, 20 tests. Then `src/modules/grading/service/sanitize.js` with `stripComments`, `redactIdentity` and `buildJudgePayload`. No test was changed after its commit.
+- `stripComments` removes `//` and `/* */` comments, including a `//` comment continued with a backslash. A comment becomes one space plus the newlines it spanned, so every code line keeps its line number and the model's evidence lines map back to the original `.cpp` without a table. It keeps `//` and `/*` inside strings, character literals and multi-line raw strings, and does not mistake a digit separator (`1'000`) for a character literal. A prompt-injection comment is gone before the model sees it.
+- The existing tokenizer (`cpp-tokens.js`) drops comments but does not give their positions, so `sanitize.js` has its own small scanner with the same lexical rules instead of changing T11's file.
+- `redactIdentity` replaces the student's name (any case), id and email, and any email address, with `[redacted]`. It treats them as plain text, not as patterns, and leaves other numbers alone.
+- `buildJudgePayload` returns exactly `{ statement, constraints, source }`: only the semantic constraints (`partitionConstraints` from T11 leaves ban lists to the hard rules), each as `{ id, text }` without its deduction, and the cleaned code.
+- Checked that the tests bite: forgetting string literals (2 fail), dropping a comment's newlines (1 fail) and sending the deduction (1 fail). Each change was restored.
+- `npm run check`: lint and format pass, and typecheck has no error from T12; 168 tests pass. The one failure is the T14 guardrail test file, which waits for `constraint-judge.js` (T15).
+- Not done: string literals are kept as they are, so an injection written inside a string still reaches the model; the prompt in T13 must tell the model the code is data. A name folded into an identifier (`NguyenVanA`) is not redacted (marked `shortcut:` in the code).
+
+11. Complete Task T15 (schema and timeout guardrails) - Thế Vinh with Claude Code
+
+- Added `src/modules/grading/service/constraint-judge.js`: `ConstraintJudge({ model, timeoutMs }).judge({ statement, constraints, source, identity })`. The model is injected as `{ name, complete({ prompt, signal }) }`, so T13 adds a Gemini model and tests keep a fake one. No `process.env`, no `fetch` here.
+- Schema: the reply must be JSON only and match a strict `zod` schema (`verdicts[]` of `{ constraint, verdict, evidence[{ line, text }] }`, no other field). Malformed JSON, a markdown fence, text around the JSON, an extra field such as `deduction`, or a constraint that was not asked makes every constraint `unsure`. A missing or repeated constraint, or a violation without evidence on an existing code line, makes only that constraint `unsure`. Evidence text is taken from the original source line, never from the model.
+- Timeout: `Promise.race` between the model and a timer; on time-out the `AbortSignal` passed to the model is aborted and every constraint becomes `unsure`. A thrown model error (429, network) also becomes `unsure`; the worker never crashes.
+- Every forced `unsure` has `decidedBy: 'guardrail'` and a `reason` the TA can read; an accepted answer has `decidedBy: 'model'`. No verdict carries a deduction.
+- The judge sends the code through `stripComments` and `redactIdentity` (T12) and numbers each line in the prompt, which tells the model that the code is data and that instructions inside it are ignored. It also returns a call record (`model`, `prompt`, `response`, `outcome`, `latencyMs`, `requestId`, tokens, `costUsd`) for the T13 call log.
+- The 23 tests from T14 pass with no assertion changed. One test-only commit (`cf74279`) replaced the fake model's JSDoc type `Function` with `JudgeModel` because `tsc` rejected it.
+- Checked that the tests bite: plain `z.object` instead of strict (2 fail), no timeout race (3 timeout tests fail), no evidence check (2 fail), no check for unknown constraints (1 fail). Each change was restored.
+- `npm run check` green: 191/191 tests.
+- Not done: the real Gemini model and the call log rows (T13); wiring the judge into the worker (needs T05) and into the CLI (T18).

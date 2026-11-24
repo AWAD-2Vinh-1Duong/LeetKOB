@@ -129,7 +129,7 @@
 
 ### Giai đoạn 4: LLM (`gemini-3.6-flash`), Guardrails & Review Queue (Ngày 23/11 – 24/11)
 
-- [ ] **T12** — **Xây dựng bộ tiền xử lý Code (Xóa comment & danh tính sinh viên)**
+- [x] **T12** — **Xây dựng bộ tiền xử lý Code (Xóa comment & danh tính sinh viên)**
   - **Phụ trách:** `@Thế Vinh`
   - **Phụ thuộc:** `T01`
   - **Chi tiết:** Trước khi gửi code cho LLM, tự động xóa toàn bộ comment (`//`, `/* ... */`) và thông tin định danh sinh viên (tên, MSSV, email). Payload gửi model chỉ chứa: `statement`, danh sách `constraints` chưa được hard rule xử lý, và `source` đã làm sạch.
@@ -141,7 +141,7 @@
   - **Chi tiết:** Gọi Google Gemini API (`LLM_MODEL=gemini-3.6-flash`, gói Free tier) qua biến `LLM_API_KEY` để chấm các ràng buộc ngữ nghĩa. Model trả về `pass | violation | unsure` kèm `evidence` (`line`, `text`), **không để model quyết định `deduction`**. Lưu Call Log vào DB/file gồm: `provider request_id`, `model`, `input_tokens`, `output_tokens`, `latency_ms`, `cost_usd` (`0` trên Free tier) và prompt đã gửi.
   - **Tiêu chí xong:** Chạy thử với key thật, call log ghi nhận được `request_id` từ Google AI Studio.
 
-- [ ] **T14** — **Viết test trước cho 2 Guardrails đầu tiên (`zod` Schema & Timeout)**
+- [x] **T14** — **Viết test trước cho 2 Guardrails đầu tiên (`zod` Schema & Timeout)**
   - **Phụ trách:** `@Thế Vinh`
   - **Phụ thuộc:** `T01`
   - **Chi tiết:** Viết unit test bằng `node:test` dùng **stub/fake model và không kết nối mạng**:
@@ -149,7 +149,7 @@
     2. **Timeout check:** Model treo quá thời gian quy định (`AbortSignal.timeout`) → ngắt request, worker không bị crash, ép verdict thành **`unsure`**.
   - **Tiêu chí xong:** Commit `test(rules): add fake-model tests for schema and timeout guardrails` **trước** khi viết code guardrail.
 
-- [ ] **T15** — **Cài đặt Guardrail Schema & Timeout trên Worker**
+- [x] **T15** — **Cài đặt Guardrail Schema & Timeout trên Worker**
   - **Phụ trách:** `@Thế Vinh`
   - **Phụ thuộc:** `T13`, `T14`
   - **Chi tiết:** Tích hợp `zod` schema validator và HTTP timeout vào `ConstraintJudge` adapter. Mọi lỗi parse/schema hoặc timeout đều fallback an toàn về `unsure` kèm lý do để TA xem xét.
