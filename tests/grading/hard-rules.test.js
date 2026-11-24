@@ -149,6 +149,35 @@ describe('checkBanList: traps must not fire', () => {
     assert.equal(check(src, ['std::sort']).verdict, 'pass');
   });
 
+  test("the student's own sort in a namespace, with `using namespace std`", () => {
+    const src =
+      'using namespace std;\nnamespace mine {\n  void sort(int* a, int lo, int hi) {\n    if (hi - lo < 2) return;\n    sort(a, lo, (lo + hi) / 2);\n  }\n}\nint main() { int a[3]; mine::sort(a, 0, 3); }\n';
+    assert.equal(check(src, ['std::sort']).verdict, 'pass');
+  });
+
+  test("the student's own global function, with `using namespace std`", () => {
+    const src =
+      'using namespace std;\nlong long gcd(long long a, long long b) { return b ? gcd(b, a % b) : a; }\nint main() { return gcd(4, 6); }\n';
+    assert.equal(check(src, ['std::gcd']).verdict, 'pass');
+  });
+
+  test("the student's own function declared before use, with `using namespace std`", () => {
+    const src =
+      'using namespace std;\nvoid sort(int* a, int n);\nint main() { int a[3]; sort(a, 3); }\nvoid sort(int* a, int n) {}\n';
+    assert.equal(check(src, ['std::sort']).verdict, 'pass');
+  });
+
+  test('a qualified std::sort still counts next to an own sort', () => {
+    const src =
+      'using namespace std;\nvoid sort(int* a, int n) {}\nint main() {\n  vector<int> v;\n  std::sort(v.begin(), v.end());\n}\n';
+    const r = check(src, ['std::sort']);
+    assert.equal(r.verdict, 'violation');
+    assert.deepEqual(
+      r.evidence.map((e) => e.line),
+      [5],
+    );
+  });
+
   test('a member function named sort', () => {
     const src = 'int main() {\n  std::list<int> l;\n  l.sort();\n}\n';
     assert.equal(check(src, ['std::sort']).verdict, 'pass');

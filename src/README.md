@@ -8,7 +8,7 @@ Hệ thống được thiết kế theo mô hình **Modular Monolith (Kiến tr�
 
 ## 1. Triết lý kiến trúc & Nguyên lý cốt lõi
 
- Kiến trúc hiện tại trên nhánh `dev` tổ chức mã nguồn **theo từng miền nghiệp vụ (Feature Modules)**:
+Kiến trúc hiện tại trên nhánh `dev` tổ chức mã nguồn **theo từng miền nghiệp vụ (Feature Modules)**:
 
 1. **Feature-Based Modularization (Vertical Slices):**
    Mỗi tính năng/domain nghiệp vụ (`auth`, `labs`, `submissions`, `grading`) là một module độc lập đặt trong `src/modules/<module>/`. Bên trong mỗi module tự đóng gói các tầng:

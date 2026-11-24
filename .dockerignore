@@ -1,0 +1,9 @@
+.env
+.env.*
+.git
+node_modules
+tests
+eval
+docs
+migrations
+*.md
