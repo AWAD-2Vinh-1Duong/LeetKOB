@@ -42,7 +42,7 @@ const replying = (/** @type {string} */ text) => ({
 const ok = (/** @type {unknown} */ body) => replying(JSON.stringify(body));
 
 /**
- * @param {{ name: string, complete: Function }} model
+ * @param {import('../../src/modules/grading/service/constraint-judge.js').JudgeModel} model
  * @param {number} [timeoutMs]
  */
 const judge = (model, timeoutMs = 1000) =>
