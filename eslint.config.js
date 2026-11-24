@@ -47,12 +47,20 @@ export default [
     files: ['src/**/*.js'],
     ignores: [
       'src/container.js',
-      'src/**/*.repository.postgres.js',
+      'src/modules/*/repository/*.repository.postgres.js',
       'src/shared/db.js',
     ],
     rules: restrict(
       [MEMORY_REPO, POSTGRES_REPO],
       'Only src/container.js imports a concrete repository. Depend on the interface in <feature>.repository.js.',
+      ['pg'],
+    ),
+  },
+  {
+    files: ['src/middlewares/**/*.js'],
+    rules: restrict(
+      [SERVICE, ANY_REPO, CONTROLLER, ROUTES],
+      'Middleware handles HTTP checks that need no data.',
       ['pg'],
     ),
   },
