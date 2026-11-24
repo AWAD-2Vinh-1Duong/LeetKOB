@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { ProblemError } from '../problems.js';
+import { ProblemError } from '../shared/problems.js';
 
 /** @typedef {import('../repositories/in-memory.js').Lab} Lab */
 

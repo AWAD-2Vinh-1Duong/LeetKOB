@@ -1,13 +1,13 @@
 import { randomUUID } from 'node:crypto';
 import express from 'express';
 import pino from 'pino';
-import { createAuthMiddleware } from './middlewares/auth.js';
-import { SubmissionsController } from './controllers/submissions-controller.js';
-import { AuthController } from './controllers/auth-controller.js';
-import { LabsController } from './controllers/labs-controller.js';
-import { LabService } from './services/lab-service.js';
-import { SubmissionService } from './services/submission-service.js';
-import { ProblemError, sendProblem } from './problems.js';
+import { createAuthMiddleware } from './auth/auth.middleware.js';
+import { SubmissionsController } from './submissions/submissions.controller.js';
+import { AuthController } from './auth/auth.controller.js';
+import { LabsController } from './labs/labs.controller.js';
+import { LabService } from './labs/labs.service.js';
+import { SubmissionService } from './submissions/submissions.service.js';
+import { ProblemError, sendProblem } from './shared/problems.js';
 import {
   PostgresLabRepository,
   PostgresSubmissionRepository,

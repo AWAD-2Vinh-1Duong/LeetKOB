@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { ProblemError } from '../problems.js';
+import { ProblemError } from '../shared/problems.js';
 
 const createSchema = z.strictObject({
   classId: z.string().min(1),
@@ -41,7 +41,7 @@ function labView(lab, role) {
 
 export class LabsController {
   /**
-   * @param {{ labService: import('../services/lab-service.js').LabService, labRepository: { findForUser(labId: string, viewer: import('../repositories/in-memory.js').Viewer): Promise<import('../repositories/in-memory.js').Lab | undefined> } }} deps
+   * @param {{ labService: import('./labs.service.js').LabService, labRepository: { findForUser(labId: string, viewer: import('../repositories/in-memory.js').Viewer): Promise<import('../repositories/in-memory.js').Lab | undefined> } }} deps
    */
   constructor({ labService, labRepository }) {
     this.labService = labService;
@@ -51,7 +51,7 @@ export class LabsController {
   /**
    * The lab, or 404 for a lab that is missing and for one the caller cannot see.
    * @param {string} labId
-   * @param {import('../middlewares/auth.js').AuthUser} user
+   * @param {import('../auth/auth.middleware.js').AuthUser} user
    */
   async #visibleLab(labId, user) {
     const lab = await this.labRepository.findForUser(labId, user);
@@ -72,7 +72,7 @@ export class LabsController {
 
   /** @type {import('express').RequestHandler} */
   create = async (req, res) => {
-    /** @type {import('../middlewares/auth.js').AuthUser} */
+    /** @type {import('../auth/auth.middleware.js').AuthUser} */
     const user = res.locals.user;
     if (user.role === 'student') {
       throw new ProblemError('staff-only', 'Only TAs and admins create labs.');
@@ -98,7 +98,7 @@ export class LabsController {
 
   /** @type {import('express').RequestHandler<{ labId: string }>} */
   reviewQueue = async (req, res) => {
-    /** @type {import('../middlewares/auth.js').AuthUser} */
+    /** @type {import('../auth/auth.middleware.js').AuthUser} */
     const user = res.locals.user;
     await this.#visibleLab(req.params.labId, user);
     if (user.role === 'student') {

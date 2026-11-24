@@ -1,5 +1,5 @@
 import { jwtVerify } from 'jose';
-import { ProblemError } from '../problems.js';
+import { ProblemError } from '../shared/problems.js';
 
 const ROLES = new Set(['admin', 'ta', 'student']);
 

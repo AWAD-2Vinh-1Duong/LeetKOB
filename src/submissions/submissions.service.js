@@ -1,5 +1,5 @@
 import { createHash, randomUUID } from 'node:crypto';
-import { ProblemError } from '../problems.js';
+import { ProblemError } from '../shared/problems.js';
 
 /** @typedef {import('../repositories/in-memory.js').Submission | import('../repositories/postgres.js').Submission} Submission */
 

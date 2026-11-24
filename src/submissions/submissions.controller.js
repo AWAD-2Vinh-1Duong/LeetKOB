@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { ProblemError } from '../problems.js';
+import { ProblemError } from '../shared/problems.js';
 
 const IDEMPOTENCY_KEY = /^[\x21-\x7E]{1,255}$/;
 const MAX_SOURCE_BYTES = 65_536;
@@ -15,14 +15,14 @@ const bodySchema = z.strictObject({
 });
 
 export class SubmissionsController {
-  /** @param {{ submissionService: import('../services/submission-service.js').SubmissionService }} deps */
+  /** @param {{ submissionService: import('./submissions.service.js').SubmissionService }} deps */
   constructor({ submissionService }) {
     this.submissionService = submissionService;
   }
 
   /** @type {import('express').RequestHandler<{ labId: string }>} */
   create = async (req, res) => {
-    /** @type {import('../middlewares/auth.js').AuthUser} */
+    /** @type {import('../auth/auth.middleware.js').AuthUser} */
     const user = res.locals.user;
     if (user.role !== 'student') {
       throw new ProblemError(
@@ -67,7 +67,7 @@ export class SubmissionsController {
 
   /** @type {import('express').RequestHandler<{ id: string }>} */
   get = async (req, res) => {
-    /** @type {import('../middlewares/auth.js').AuthUser} */
+    /** @type {import('../auth/auth.middleware.js').AuthUser} */
     const user = res.locals.user;
     const submission = await this.submissionService.getVisible(
       user,

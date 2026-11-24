@@ -1,7 +1,7 @@
 import { z } from 'zod';
-import { ProblemError } from '../problems.js';
-import { hashPassword, verifyPassword } from '../auth/passwords.js';
-import { signToken, TOKEN_TTL_SECONDS } from '../auth/tokens.js';
+import { ProblemError } from '../shared/problems.js';
+import { hashPassword, verifyPassword } from './passwords.js';
+import { signToken, TOKEN_TTL_SECONDS } from './tokens.js';
 
 const bodySchema = z.strictObject({
   email: z.string().min(1),
