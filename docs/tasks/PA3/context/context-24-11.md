@@ -7,3 +7,10 @@
 - Created `tests/contract/post-labs-submissions-postgres.test.js` covering 100% of the submission contract scenarios on real PostgreSQL (43 tests total passing).
 - Updated `docs/tasks/PA3/task/checklist.md` to mark `T03` complete.
 - Created detailed verification report at `/home/harry/Documents/Course/advanced-web/final-project/personal/pa3/T03-report.md`.
+
+2. Complete Tasks T10 and T11 (hard rules, ban-list constraints) - Quang Vinh with Claude Code
+
+- Commit `c9004d5` first: `tests/rules/hard-rules.test.js`, 34 tests. They cover reading the constraint text, violations (qualified call, `using namespace std`, `using std::sort`, banned header, correct line numbers) and the traps that must not fire (line and block comments, string and raw string literals, own `sort` in a namespace or at global scope, `l.sort()` member call, `sort_heap`, `<algorithm>` used only for `std::swap`).
+- Then `src/rules/cpp-tokens.js` (tokenizer that drops comments and literals and keeps line numbers) and `src/rules/hard-rules.js` (`parseBanList`, `checkBanList`, `decideConstraint`, `partitionConstraints`). No regex runs over student code. A decision carries no deduction and is marked `decidedBy: 'hard-rule'`.
+- All 34 tests passed without editing any test after the first commit.
+- Not done yet: wiring `partitionConstraints` into the worker so the model is skipped for decided constraints (needs T05 and T13), and running only for `Accepted` submissions (needs the sandbox).

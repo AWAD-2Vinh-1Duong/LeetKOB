@@ -110,7 +110,7 @@
   - **Chi tiết:** Xây dựng UI/API cho phép TA tạo mới Lab trong lớp mình: nhập `statement`, bộ test cases (input/expected output), và danh sách `constraints` kèm `deduction`. Đảm bảo endpoint `POST /labs/{labId}/submissions` chạy mượt với PostgreSQL repository, sinh viên xem được trạng thái chuyển từ `queued` sang kết quả chấm test (`Accepted`, `Wrong Answer`, `TLE`...).
   - **Tiêu chí xong:** Tạo được lab `sort-merge` hoàn toàn qua UI/API (không seed tay vào DB).
 
-- [ ] **T10** — **Viết test trước cho Hard Rules (Bao gồm các ca bẫy - Traps)**
+- [x] **T10** — **Viết test trước cho Hard Rules (Bao gồm các ca bẫy - Traps)**
   - **Phụ trách:** `@Quang Vinh`
   - **Phụ thuộc:** `T01`
   - **Chi tiết:** Viết unit test bằng `node:test` kiểm tra:
@@ -119,7 +119,7 @@
     - Khi hard rule đã quyết định constraint nào thì **không gọi LLM** cho constraint đó (kiểm tra qua call log).
   - **Tiêu chí xong:** Commit `test(rules): add syntax-aware hard rule and trap tests` **trước** khi viết parser.
 
-- [ ] **T11** — **Cài đặt bộ phân tích cú pháp C++ (Syntax-Aware Hard Rules — Luật `D1`)**
+- [x] **T11** — **Cài đặt bộ phân tích cú pháp C++ (Syntax-Aware Hard Rules — Luật `D1`)**
   - **Phụ trách:** `@Quang Vinh`
   - **Phụ thuộc:** `T09`, `T10`
   - **Chi tiết:** Cài đặt bộ phân tích cú pháp C++ (dùng AST như `tree-sitter-cpp` hoặc tokenizer/parser chuẩn, **cấm dùng regex thô**). Chỉ kích hoạt pipeline kiểm tra ràng buộc đối với bài nộp đã đạt **`Accepted`** ở bước chấm test sandbox.
