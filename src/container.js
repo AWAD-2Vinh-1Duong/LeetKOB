@@ -45,7 +45,7 @@ export function createContainer({
 
   return {
     logger,
-    requireAuth: createRequireAuth({ secret: jwtSecret }),
+    requireAuth: createRequireAuth({ secret: jwtSecret, now }),
     controllers: {
       // Without a user repository there is no login route (some tests build the app without one).
       auth: userRepository

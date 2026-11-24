@@ -4,16 +4,16 @@ import { verifyToken } from '../modules/auth/service/tokens.js';
 
 /**
  * Verifies the HS256 bearer token and puts the caller on `res.locals.user`.
- * @param {{ secret: string }} deps
+ * @param {{ secret: string, now?: () => Date }} deps
  * @returns {import('express').RequestHandler}
  */
-export function createRequireAuth({ secret }) {
+export function createRequireAuth({ secret, now = () => new Date() }) {
   return async (req, res, next) => {
     const [scheme, token] = (req.get('authorization') ?? '').split(' ');
     if (scheme !== 'Bearer' || !token) {
       throw new ProblemError('unauthenticated', 'A bearer token is required.');
     }
-    res.locals.user = await verifyToken(token, { secret });
+    res.locals.user = await verifyToken(token, { secret, now: now() });
     next();
   };
 }

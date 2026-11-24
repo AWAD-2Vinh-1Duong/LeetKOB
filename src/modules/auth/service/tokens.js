@@ -25,16 +25,17 @@ const ROLES = new Set(['admin', 'ta', 'student']);
 /**
  * Verifies a bearer token and returns the caller.
  * @param {string} token
- * @param {{ secret: string }} opts
+ * @param {{ secret: string, now?: Date }} opts the same clock that signs tokens, so `exp` is judged consistently
  * @returns {Promise<AuthUser>}
  */
-export async function verifyToken(token, { secret }) {
+export async function verifyToken(token, { secret, now }) {
   const key = new TextEncoder().encode(secret);
   let payload;
   try {
     ({ payload } = await jwtVerify(token, key, {
       algorithms: ['HS256'],
       requiredClaims: ['exp'],
+      currentDate: now,
     }));
   } catch {
     throw new ProblemError(
