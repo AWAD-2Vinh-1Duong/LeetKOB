@@ -1,5 +1,7 @@
 /**
  * @typedef {{ id: string, classId: string, deadline: Date }} Lab
+ * @typedef {{ id: string, role: 'admin' | 'ta' | 'student' }} Viewer
+ * @typedef {{ id: string, email: string, passwordHash: string, role: 'admin' | 'ta' | 'student' }} User
  * @typedef {{
  *   id: string, labId: string, studentId: string, language: 'cpp',
  *   status: 'queued', createdAt: string, idempotencyKey: string, fingerprint: string
@@ -8,8 +10,9 @@
 
 // shortcut: in-memory stores lose data on restart, replace with PostgreSQL repositories in PA#3.
 export class InMemoryLabRepository {
-  /** @param {{ labs: Lab[], enrollments: Array<{ studentId: string, classId: string }> }} seed */
-  constructor({ labs, enrollments }) {
+  /** @param {{ labs: Lab[], enrollments: Array<{ studentId: string, classId: string }>, staff?: Array<{ userId: string, classId: string }> }} seed */
+  constructor({ labs, enrollments, staff = [] }) {
+    this.staff = new Set(staff.map((s) => `${s.userId}\0${s.classId}`));
     this.labs = new Map(labs.map((lab) => [lab.id, lab]));
     this.enrollments = new Set(
       enrollments.map((e) => `${e.studentId}\0${e.classId}`),
@@ -27,6 +30,39 @@ export class InMemoryLabRepository {
     return lab && this.enrollments.has(`${studentId}\0${lab.classId}`)
       ? lab
       : undefined;
+  }
+
+  /**
+   * The lab, only if the caller may see it: an admin always, a TA of its class,
+   * or a student enrolled in its class.
+   * @param {string} labId
+   * @param {Viewer} viewer
+   * @returns {Promise<Lab | undefined>}
+   */
+  async findForUser(labId, viewer) {
+    const lab = this.labs.get(labId);
+    if (!lab) return undefined;
+    const key = `${viewer.id}\0${lab.classId}`;
+    const allowed =
+      viewer.role === 'admin' ||
+      (viewer.role === 'ta' && this.staff.has(key)) ||
+      (viewer.role === 'student' && this.enrollments.has(key));
+    return allowed ? lab : undefined;
+  }
+}
+
+export class InMemoryUserRepository {
+  /** @param {{ users: User[] }} seed */
+  constructor({ users }) {
+    this.byEmail = new Map(users.map((u) => [u.email, u]));
+  }
+
+  /**
+   * @param {string} email
+   * @returns {Promise<User | undefined>}
+   */
+  async findByEmail(email) {
+    return this.byEmail.get(email);
   }
 }
 

@@ -1,5 +1,7 @@
 /**
  * @typedef {{ id: string, classId: string, deadline: Date }} Lab
+ * @typedef {{ id: string, role: 'admin' | 'ta' | 'student' }} Viewer
+ * @typedef {{ id: string, email: string, passwordHash: string, role: 'admin' | 'ta' | 'student' }} User
  * @typedef {{
  *   id: string, labId: string, studentId: string, language: 'cpp',
  *   status: 'queued', createdAt: string, idempotencyKey: string, fingerprint: string,
@@ -33,6 +35,63 @@ export class PostgresLabRepository {
       id: String(row.id),
       classId: String(row.classId),
       deadline: new Date(row.deadline),
+    };
+  }
+
+  /**
+   * The lab, only if the caller may see it: an admin always, a TA of its class
+   * (class_staff), or a student enrolled in its class.
+   * @param {string} labId
+   * @param {Viewer} viewer
+   * @returns {Promise<Lab | undefined>}
+   */
+  async findForUser(labId, viewer) {
+    const res = await this.pool.query(
+      `SELECT l.id, l.class_id AS "classId", l.deadline
+       FROM labs l
+       WHERE l.id = $1 AND (
+         $3::text = 'admin'
+         OR ($3::text = 'ta' AND EXISTS (
+              SELECT 1 FROM class_staff cs
+              WHERE cs.class_id = l.class_id AND cs.user_id = $2))
+         OR ($3::text = 'student' AND EXISTS (
+              SELECT 1 FROM class_enrollments ce
+              WHERE ce.class_id = l.class_id AND ce.student_id = $2))
+       )`,
+      [labId, viewer.id, viewer.role],
+    );
+    if (res.rows.length === 0) return undefined;
+    const row = res.rows[0];
+    return {
+      id: String(row.id),
+      classId: String(row.classId),
+      deadline: new Date(row.deadline),
+    };
+  }
+}
+
+export class PostgresUserRepository {
+  /** @param {{ pool: import('pg').Pool }} deps */
+  constructor({ pool }) {
+    this.pool = pool;
+  }
+
+  /**
+   * @param {string} email
+   * @returns {Promise<User | undefined>}
+   */
+  async findByEmail(email) {
+    const res = await this.pool.query(
+      `SELECT id, email, password_hash AS "passwordHash", role FROM users WHERE email = $1`,
+      [email],
+    );
+    if (res.rows.length === 0) return undefined;
+    const row = res.rows[0];
+    return {
+      id: String(row.id),
+      email: String(row.email),
+      passwordHash: String(row.passwordHash),
+      role: row.role,
     };
   }
 }
