@@ -17,8 +17,8 @@
   > **Note on Deployment Uptime:** This public instance remains active continuously from the submission deadline (Wednesday, Nov 25, 2026, 22:00) until PA#4 grades are published, as other student teams will conduct red-team security attacks against it.
 
 - **Spending Cap & Model Policy:**
-  - **Provider:** Google Gemini via Google AI Studio (`ag/gemini-3.8-flash`, Free Tier).
-  - **Spending Cap:** `$0.00 USD` (strictly enforced by provider). The API key belongs to project `For-Github-CodeSpace` with no billing account attached. Any request exceeding the Free-tier quota receives HTTP `429 RESOURCE_EXHAUSTED` and never incurs financial charges.
+  - **Provider:** Gemini 3.8 Flash (`ag/gemini-3.8-flash`) through 9router, an OpenAI-compatible router running next to the app (`LLM_BASE_URL`).
+  - **Spending Cap:** `$0.00 USD`. The `ag/` provider behind 9router is free and no payment method is attached. The key is created in the 9router dashboard and lives only in `.env`.
   - **Public Exposure Guard:** All synthetic test accounts are strictly isolated and carry no real personal data.
 
 ### Synthetic Test Accounts (5 Pre-created Accounts)
@@ -105,22 +105,18 @@ The outputs from the real-model evaluation run on the `dev set` are committed di
 - **Predictions File:** [`docs/tasks/PA3/submission/dev-run/predictions.jsonl`](dev-run/predictions.jsonl)
 - **`eval.mjs` Summary Report:** [`docs/tasks/PA3/submission/dev-run/eval-report.txt`](dev-run/eval-report.txt)
 - **Full Call Log:** [`docs/tasks/PA3/submission/dev-run/call-log.jsonl`](dev-run/call-log.jsonl)
-  - Records for every LLM invocation: `provider request_id`, model name (`ag/gemini-3.8-flash`), token counts (prompt & completion), latency (ms), calculated cost ($), and the exact prompt dispatched (sanitized of comments and student identifiers).
-- **Custom Eval Cases Directory:** [`<TODO: eval/custom-cases/ or docs/tasks/PA3/submission/custom-cases/>`](<TODO: path>)
+  - Records for every LLM invocation: the request id returned by 9router (`chatcmpl-...`; 9router does not pass on a separate Google id), model name (`ag/gemini-3.8-flash`), token counts (prompt & completion), latency (ms), calculated cost ($), and the exact prompt dispatched (sanitized of comments and student identifiers).
+- **Custom Eval Cases Directory:** [`eval/custom-cases/`](../../../../eval/custom-cases/)
   - Contains `≥ 5` custom test cases in standard `dev set` format with `labels.jsonl`, including at least 1 `trap` case (compliant code using similar keywords) and at least 1 `injection` case (prompt injection attempt in C++ code/comments).
 
 ### Cost Arithmetic for 1 Lab (80 Submissions)
 
-- **Selected Model:** `ag/gemini-3.8-flash` (Google AI Studio Free Tier).
-- **Token Usage Estimation:**
-  - Average Input Tokens per submission: `<TODO: e.g. 850>` tokens
-  - Average Output Tokens per submission: `<TODO: e.g. 160>` tokens
-  - Total Input Tokens (80 submissions): $80 \times \text{Input} = \text{<TODO: e.g. 68,000>}$ tokens
-  - Total Output Tokens (80 submissions): $80 \times \text{Output} = \text{<TODO: e.g. 12,800>}$ tokens
-- **Actual Cost on Free Tier:** **`$0.00 USD`** (within free quota).
-- **Theoretical Cost on Paid Tier (Reference):**
-  - Pricing: \$0.075 / 1M input tokens, \$0.30 / 1M output tokens
-  - Formula: $\text{Total Cost} = (68,000 \times \$0.075 / 10^6) + (12,800 \times \$0.30 / 10^6) \approx \$0.0051 + \$0.0038 = \mathbf{\$0.0089\ USD}$.
+- **Selected Model:** `ag/gemini-3.8-flash` through 9router (free `ag/` provider).
+- **Measured on the dev set** ([call log](dev-run/call-log.jsonl)): 47 submissions, 39 model calls (the 8 `reverse-recursive` submissions have only ban-list constraints, decided by the hard rules), 117,330 input and 1,906 output tokens.
+  - Average per submission: 117,330 / 47 = **2,496.4** input tokens, 1,906 / 47 = **40.6** output tokens.
+  - One lab of 80 submissions: 80 × 2,496.4 ≈ **199,711** input tokens, 80 × 40.6 ≈ **3,244** output tokens.
+  - About 2,000 input tokens per call are added by 9router itself, so the logged counts are used, not the prompt length.
+- **Cost:** 199,711 × price_in / 10⁶ + 3,244 × price_out / 10⁶ = **$0.00** with the free provider (both prices 0). The call log records `costUsd` per call from `LLM_INPUT_USD_PER_MTOK` / `LLM_OUTPUT_USD_PER_MTOK`, both unset (0) for this run.
 
 ---
 

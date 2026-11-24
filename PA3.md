@@ -7,7 +7,7 @@
 ## 1. Public Deployment & Test Accounts
 
 - **Public URL:** `<https://your-deployment-url>` _(kept running until PA#4 marks are out)_
-- **API Spending Cap:** `$0 USD` (Google AI Studio Free tier — `ag/gemini-3.8-flash`, no billing account attached)
+- **API Spending Cap:** `$0 USD` (`ag/gemini-3.8-flash` through 9router; the `ag/` provider is free, no payment method attached)
 
 > **Note:** All accounts below contain synthetic test data only.
 

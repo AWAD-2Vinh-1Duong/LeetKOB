@@ -139,7 +139,7 @@
   - **Phụ trách:** `@Thế Vinh`
   - **Phụ thuộc:** `T11`, `T12`
   - **Chi tiết:** Gọi Google Gemini API (`LLM_MODEL=ag/gemini-3.8-flash`, gói Free tier) qua biến `LLM_API_KEY` để chấm các ràng buộc ngữ nghĩa. Model trả về `pass | violation | unsure` kèm `evidence` (`line`, `text`), **không để model quyết định `deduction`**. Lưu Call Log vào DB/file gồm: `provider request_id`, `model`, `input_tokens`, `output_tokens`, `latency_ms`, `cost_usd` (`0` trên Free tier) và prompt đã gửi.
-  - **Tiêu chí xong:** Chạy thử với key thật, call log ghi nhận được `request_id` từ Google AI Studio.
+  - **Tiêu chí xong:** Chạy thử với key thật, call log ghi nhận được request id do 9router trả về.
 
 - [x] **T14** — **Viết test trước cho 2 Guardrails đầu tiên (`zod` Schema & Timeout)**
   - **Phụ trách:** `@Thế Vinh`
