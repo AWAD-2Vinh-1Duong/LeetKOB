@@ -61,5 +61,5 @@
 - Ran `npm run check` on each commit from `b154004` to `e90f102` in a separate worktree. `b154004` failed only on its two new tests; every later commit was green, with 146 tests at the end.
 - On a throwaway PostgreSQL 16: 167 of 167 tests passed, against 160 of 160 before the refactor.
 - The test diff holds only the new tests and import paths. Probe imports confirmed that the middleware lint block bites.
-- Filled `Changed` and `Rejected` in `AI-LOG.md` for the Codex entry, and added an entry for the Claude Code part (architecture advice, prompts, Prisma checks).
+- Filled `Changed` and `Rejected` in `AI-LOG.md` for the Codex entry. The Claude Code entry was then rewritten to cover the whole session in order: the architecture choice and why, the contract bug, the two prompts, the Prisma check, the review and pull request #16. The field lines were unindented, because Prettier had nested a `Rejected:` line into a bullet list.
 - Not done: lint does not stop a controller or service from importing `src/middlewares/`; `POST /labs` and `POST /auth/login` still use `express.json` directly; the Prisma switch waits for the `pa3` tag. CI runs only for pull requests into `main`, so the pull request into `dev` gets no `quality` check.

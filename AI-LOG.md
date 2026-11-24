@@ -2,26 +2,60 @@
 
 Khi ghi AI Log thì phải ghi ở trên cùng.
 
-## 2026-11-24 — Architecture review, refactor prompts and review of the result (Quang Vinh)
+## 2026-11-24 — Architecture, refactor prompts, Prisma check, review and PR #16 (Quang Vinh)
 
 Tool: Claude Code (Claude Opus 5.5)
-Asked for: Read the project and propose a clearer architecture (layers first or modules first, clean architecture, middleware in its own folder, Prisma ORM). Write prompts so a smaller model (Codex) could do the refactor, and later the Prisma switch. Then check what Codex produced.
-Kept: Modular monolith: `src/modules/<module>/{controller,service,repository}/`, with HTTP middleware in `src/middlewares/`. Ports and adapters are planned for the coming `grading` module, so the HTTP server, the worker and the CLI checker share one core. The contract bug was found by calling the app: a TA with malformed JSON got 400 and an admin with a 300 KB body got 413, where `post-labs-submissions.md` requires `403 forbidden-role` first. The Codex prompt split the work into a red test commit, the fix, `git mv` moves, middleware extraction, a lint rule and docs. Prisma plan for after the `pa3` tag: Prisma 7.10.1 reads the schema that `node-pg-migrate` keeps owning.
-Changed: Claude's first layout put `auth.middleware.js` inside `modules/auth/controller/`. Quang Vinh asked for middleware as its own folder, so the design and the prompt were rewritten around `src/middlewares/`. Claude also said Prisma had no equivalent of `ON CONFLICT DO NOTHING RETURNING`, and could not confirm that Prisma 7 runs in plain JavaScript. Quang Vinh questioned this, so Claude built a scratch project on Node 22.22.3 and a throwaway PostgreSQL 16. The generated `.ts` client ran from `.js` through type stripping (with `allowImportingTsExtensions` for `tsc`), and `createManyAndReturn({ skipDuplicates: true })` emitted `INSERT ... ON CONFLICT DO NOTHING RETURNING`. The earlier answer was corrected.
-Rejected: Going back to folders by layer (`src/controllers/`, `src/services/`, `src/repositories/`): it would undo `0996d35` and spread each feature over three places. Using `requireRole` on the review queue: it would answer 403 before the 404 that `auth-and-lab-access.md` requires and reveal that a lab exists. Switching to Prisma before PA3: postponed because of the deadline, the Tier 2 dependency approval, and the queue being built on `pg`. A bare `npm i prisma`: npm's `latest` tag pointed at `8.0.0-rc.35`, so the prompt pins 7.10.1.
+
+Asked for, in order:
+
+1. Read the project and suggest an architecture with clearer module boundaries.
+2. Read the brief and the rubrics, and compare "layers first" with "modules first" and with clean architecture.
+3. Put middleware in its own folder.
+4. Write a prompt so a smaller model (Codex) could do the refactor.
+5. Name the architecture.
+6. Use Prisma for database access: does it work with plain JavaScript, which ORMs JavaScript usually uses, and why Prisma lacks some SQL statements.
+7. Write a second prompt for the Prisma switch.
+8. Check Codex's result.
+9. Write the AI log, push the branch and open a pull request into `dev`.
+
+Kept:
+
+- **Architecture choice.** A modular monolith: `src/modules/<module>/{controller,service,repository}/`, with HTTP middleware in `src/middlewares/`, and ports and adapters for the coming `grading` module. The reason comes from the rubric. PA3 criterion 2 needs a separate worker, and criterion 6 needs a CLI checker that "works from `statement.md` and `constraints.json` alone" with `MODEL_OFF=1`. So the hard rules, the `ConstraintJudge` and the guardrails must not depend on Express or `pg`.
+- **The contract bug.** Calling the app showed that a TA with malformed JSON got 400 and an admin with a 300 KB body got 413. The "Order of checks" in `post-labs-submissions.md` requires `403 forbidden-role` first. No existing test sent a staff token with a bad body.
+- **The refactor prompt**, in four phases: a red test commit, the fix, `git mv` moves, then middleware extraction with an ESLint rule and docs. It gave a file-by-file move table, a 139-test baseline and stop conditions. Codex ran it (`b154004` to `e90f102`).
+- **The Prisma check.** A scratch project on Node 22.22.3 with Prisma 7.10.1 and a throwaway PostgreSQL 16 showed:
+  - the generated `.ts` client runs from `.js` with no build step;
+  - `tsc` needs `allowImportingTsExtensions`;
+  - `prisma.config.mjs` works, but only with `process.env.DATABASE_URL`, because the `env()` helper makes `prisma generate` fail without a database;
+  - `new PrismaPg(pool)` reuses our `pg.Pool`;
+  - `createManyAndReturn({ skipDuplicates: true })` emits `ON CONFLICT DO NOTHING RETURNING`;
+  - `FOR UPDATE SKIP LOCKED` works through `$queryRaw` in `$transaction`.
+
+  The Prisma prompt (generate from the existing schema, then move one repository at a time, then lint and docs) is written but has not been run.
+
+- **The review of Codex's six commits** (details in the Codex entry below), then pull request #16 from `feat/module-layout` into `dev`.
+
+Changed:
+
+- Claude's first layout put `auth.middleware.js` inside `modules/auth/controller/`. Quang Vinh asked for middleware in its own folder, so the design and the prompt were rewritten around `src/middlewares/`.
+- Claude said Prisma had no equivalent of `ON CONFLICT DO NOTHING RETURNING`, and could not confirm that Prisma 7 runs in plain JavaScript. Quang Vinh questioned both, and asked whether Prisma only supports TypeScript. The scratch project proved both claims wrong, and the answers were corrected.
+- Claude's first AI-log edit put a `Rejected:` line right after a bullet list. Prettier then indented it into the last bullet. It was rewritten without the list.
+
+Rejected:
+
+- Going back to folders by layer (`src/controllers/`, `src/services/`, `src/repositories/`). It would undo `0996d35` and spread each feature over three places.
+- Using `requireRole` on the review queue. It would answer 403 before the 404 that `auth-and-lab-access.md` requires, and so reveal that a lab exists.
+- Kysely, offered as an alternative to Prisma. Quang Vinh kept the Prisma plan.
+- Switching to Prisma before PA3. It is postponed because of the deadline, the Tier 2 approval for the new dependencies, and the queue being built on `pg`. Bình Dương's T03 entry also rejected Prisma under `AGENTS.md`, so the team must agree first.
+- A bare `npm i prisma`. npm's `latest` tag pointed at `8.0.0-rc.35`, so the prompt pins 7.10.1.
 
 ## 2026-11-24 — Submission check order and module layout (Quang Vinh)
 
 Tool: Codex
 Asked for: Fix the submission contract bug, move features into module layers, extract HTTP middleware, enforce layer boundaries with ESLint and update the architecture documentation.
 Kept: Two contract regressions for 403 precedence, the module and middleware layout, five middleware tests, and the lint boundary verified with a temporary lab service import. The suite increased from 139 to 146 passing tests with `DATABASE_URL` unset.
-Changed: No code was changed after review. Claude Code checked the six commits (`b154004` to `e90f102`) before the pull request:
-
-- It ran `npm run check` on each commit in a separate worktree. `b154004` failed only on the two new tests; every later commit was green.
-- On a throwaway PostgreSQL 16, 167 of 167 tests passed; before the refactor it was 160 of 160.
-- The only test changes were the new tests and import paths.
-- Probe imports showed that the new ESLint block blocks services, repositories, controllers and `pg` in middleware.
-  Rejected: Nothing was reverted. Left for a follow-up: lint does not yet stop a controller or a service from importing `src/middlewares/`; `POST /labs` and `POST /auth/login` still call `express.json` directly instead of `jsonBody`; `src/container.js` and `src/shared/db.js` still read `process.env`.
+Changed: No code was changed after review. Before the pull request, Claude Code checked the six commits (`b154004` to `e90f102`). It ran `npm run check` on each commit in a separate worktree: `b154004` failed only on its two new tests, and every later commit was green. On a throwaway PostgreSQL 16, 167 of 167 tests passed, against 160 of 160 before the refactor. The test diff held only the new tests and import paths. Probe imports showed that the new ESLint block stops services, repositories, controllers and `pg` in middleware.
+Rejected: Nothing was reverted. Left for a follow-up: lint does not yet stop a controller or a service from importing `src/middlewares/`; `POST /labs` and `POST /auth/login` still call `express.json` directly instead of `jsonBody`; `src/container.js` and `src/shared/db.js` still read `process.env`.
 
 ## 2026-11-24 — Cài đặt PostgreSQL 16, node-pg-migrate và PostgreSQL Repositories (Bình Dương)
 
