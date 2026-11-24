@@ -55,3 +55,11 @@
 - Moved JWT verification to the auth token helper and the Idempotency-Key check to middleware. Kept lab visibility ahead of the staff check for the review queue. Added five middleware tests covering successful requests and RFC 9457 errors. All 146 tests passed.
 - Added an ESLint import restriction for middleware. A temporary import of the lab service triggered `no-restricted-imports`. Removed the import and verified that lint passed again.
 - Updated the layout, request flow and feature checklist in `docs/architecture.md`, the layout and dev command in `AGENTS.md`, and the source tree in `README.md`. Drafted the AI log entry.
+
+7. Review the refactor and open the pull request into `dev` - Quang Vinh with Claude Code
+
+- Ran `npm run check` on each commit from `b154004` to `e90f102` in a separate worktree. `b154004` failed only on its two new tests; every later commit was green, with 146 tests at the end.
+- On a throwaway PostgreSQL 16: 167 of 167 tests passed, against 160 of 160 before the refactor.
+- The test diff holds only the new tests and import paths. Probe imports confirmed that the middleware lint block bites.
+- Filled `Changed` and `Rejected` in `AI-LOG.md` for the Codex entry, and added an entry for the Claude Code part (architecture advice, prompts, Prisma checks).
+- Not done: lint does not stop a controller or service from importing `src/middlewares/`; `POST /labs` and `POST /auth/login` still use `express.json` directly; the Prisma switch waits for the `pa3` tag. CI runs only for pull requests into `main`, so the pull request into `dev` gets no `quality` check.
