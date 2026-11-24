@@ -11,7 +11,7 @@ Read this before touching the LeeTKOB grading harness. Tool-specific files (`CLA
 - `zod` validation, JWT with `jose`, passwords hashed with `scrypt` from `node:crypto`.
 - Tests: `node:test` + `supertest`. Lint/format: ESLint 10 flat config + Prettier 3.
 - PostgreSQL 16 via `pg` and plain SQL, migrations with `node-pg-migrate`; job queue in a table claimed with `FOR UPDATE SKIP LOCKED`; `pino` logging with request IDs.
-- Sandbox: own Docker runner meeting section 4. LLM: `ConstraintJudge` adapter, Gemini `gemini-3.6-flash` on the free tier, model set by `LLM_MODEL`.
+- Sandbox: own Docker runner meeting section 4. LLM: `ConstraintJudge` adapter, Gemini 3.8 Flash (`ag/gemini-3.8-flash`) through a 9router OpenAI-compatible endpoint (`LLM_BASE_URL`), model set by `LLM_MODEL`.
 
 ## 2. Commands
 

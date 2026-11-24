@@ -17,7 +17,7 @@
   > **Note on Deployment Uptime:** This public instance remains active continuously from the submission deadline (Wednesday, Nov 25, 2026, 22:00) until PA#4 grades are published, as other student teams will conduct red-team security attacks against it.
 
 - **Spending Cap & Model Policy:**
-  - **Provider:** Google Gemini via Google AI Studio (`gemini-3.6-flash`, Free Tier).
+  - **Provider:** Google Gemini via Google AI Studio (`ag/gemini-3.8-flash`, Free Tier).
   - **Spending Cap:** `$0.00 USD` (strictly enforced by provider). The API key belongs to project `For-Github-CodeSpace` with no billing account attached. Any request exceeding the Free-tier quota receives HTTP `429 RESOURCE_EXHAUSTED` and never incurs financial charges.
   - **Public Exposure Guard:** All synthetic test accounts are strictly isolated and carry no real personal data.
 
@@ -105,13 +105,13 @@ The outputs from the real-model evaluation run on the `dev set` are committed di
 - **Predictions File:** [`docs/tasks/PA3/submission/dev-run/predictions.jsonl`](dev-run/predictions.jsonl)
 - **`eval.mjs` Summary Report:** [`docs/tasks/PA3/submission/dev-run/eval-report.txt`](dev-run/eval-report.txt)
 - **Full Call Log:** [`docs/tasks/PA3/submission/dev-run/call-log.jsonl`](dev-run/call-log.jsonl)
-  - Records for every LLM invocation: `provider request_id`, model name (`gemini-3.6-flash`), token counts (prompt & completion), latency (ms), calculated cost ($), and the exact prompt dispatched (sanitized of comments and student identifiers).
+  - Records for every LLM invocation: `provider request_id`, model name (`ag/gemini-3.8-flash`), token counts (prompt & completion), latency (ms), calculated cost ($), and the exact prompt dispatched (sanitized of comments and student identifiers).
 - **Custom Eval Cases Directory:** [`<TODO: eval/custom-cases/ or docs/tasks/PA3/submission/custom-cases/>`](<TODO: path>)
   - Contains `≥ 5` custom test cases in standard `dev set` format with `labels.jsonl`, including at least 1 `trap` case (compliant code using similar keywords) and at least 1 `injection` case (prompt injection attempt in C++ code/comments).
 
 ### Cost Arithmetic for 1 Lab (80 Submissions)
 
-- **Selected Model:** `gemini-3.6-flash` (Google AI Studio Free Tier).
+- **Selected Model:** `ag/gemini-3.8-flash` (Google AI Studio Free Tier).
 - **Token Usage Estimation:**
   - Average Input Tokens per submission: `<TODO: e.g. 850>` tokens
   - Average Output Tokens per submission: `<TODO: e.g. 160>` tokens

@@ -88,7 +88,7 @@ Tuân thủ Tiêu chí 2 về quản lý chi phí và an toàn bảo mật:
 
   [`.gitleaksignore`](.gitleaksignore) bỏ qua đúng một báo động giả: `Idempotency-Key` ví dụ (một UUID) trong request mẫu của [contract](docs/contract/post-labs-submissions.md), không phải secret. Mọi phát hiện khác vẫn làm lệnh trên báo lỗi.
 
-- **Model Provider & Model được chọn**: Google Gemini — **Gemini 3.6 Flash** (`gemini-3.6-flash`, Free tier), cấu hình qua biến `LLM_MODEL`. Ban đầu nhóm ghi Gemini 1.5 Flash, nhưng model này đã bị Google tắt từ tháng 9/2025 nên được thay thế.
+- **Model Provider & Model được chọn**: Google Gemini — **Gemini 3.8 Flash** (`ag/gemini-3.8-flash`), gọi qua **9router** (router chạy local, endpoint kiểu OpenAI ở `LLM_BASE_URL`, mặc định `http://127.0.0.1:20128/v1`), cấu hình qua biến `LLM_MODEL`. Ban đầu nhóm ghi Gemini 1.5 Flash (bị Google tắt từ tháng 9/2025), sau đó là Gemini 3.6 Flash; từ PA#3 nhóm dùng Gemini 3.8 Flash qua 9router.
 
 - **Spending cap: 0 USD (cứng, do provider áp)**: API key thuộc project `For-Github-CodeSpace` trên Google AI Studio, **không gắn billing account** ([ảnh dashboard](docs/tasks/PA2/submission/assets/provider-dashboard.png): _Billing Tier: Free tier — Set up billing_). Không có billing thì Google không thể tính tiền: request vượt quota Free tier bị trả về `429 RESOURCE_EXHAUSTED` thay vì phát sinh phí. Nhóm không bật billing vì AI Studio yêu cầu trả trước 800.000 VNĐ. Nếu sau này bật billing, phải đặt budget/cap dạng số trên provider và cập nhật mục này **trước** khi dùng paid tier.
 
