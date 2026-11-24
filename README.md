@@ -51,6 +51,25 @@ Tất cả các lệnh trên khi chạy trên một bản clone mới đều ph�
 - Format check báo đỏ? Chạy `npm run format` để Prettier tự sửa, rồi commit lại.
 - `npm run check` dừng ở bước đầu tiên bị lỗi (các lệnh nối bằng `&&`).
 
+## 2b. Checker command (`MODEL_OFF=1`)
+
+One command reads a dataset folder in the dev-set layout (`problems/<id>/statement.md`, `constraints.json`, `solutions/<id>/*.cpp`) and writes one prediction line per (solution, constraint). With `MODEL_OFF=1` it runs the hard rules only, writes `unsure` for every semantic constraint and opens no network connection.
+
+```bash
+MODEL_OFF=1 node src/checker.js --data eval/dev-set --out predictions.jsonl
+node eval/dev-set/eval.mjs --data eval/dev-set --predictions predictions.jsonl
+```
+
+Docker image (no `.env`, no tests or eval data inside):
+
+```bash
+docker build -f Dockerfile.checker -t leetkob-checker .
+docker run --rm --network none --memory 512m --pids-limit 64 -e MODEL_OFF=1 \
+  -v "$PWD/eval/dev-set:/data:ro" leetkob-checker --data /data > predictions.jsonl
+```
+
+Options: `--out <file>` (default: stdout), `--call-log <file>` (model calls, empty with the model off).
+
 ## 3. Chính sách phân quyền, Secret & Model API Spending Cap
 
 Tuân thủ Tiêu chí 2 về quản lý chi phí và an toàn bảo mật:
