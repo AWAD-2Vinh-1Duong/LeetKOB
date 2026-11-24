@@ -24,3 +24,14 @@
 - `npm test` now runs with `--test-concurrency=1` because the PostgreSQL test files truncate the same tables.
 - Checked that the tests bite: with the TA check in `findForUser` removed, 3 tests fail.
 - Not done: CI has no PostgreSQL service, so the PostgreSQL tests are skipped there. Users still have to be created by a seed or script; a registration or admin endpoint is not part of T08.
+
+4. Complete Task T09 (TA creates a lab, student follows a submission) - Quang Vinh with Claude Code
+
+- Contract first: `docs/contract/labs-and-submission-status.md`. Tests before code: `tests/labs/` (in-memory, 36 tests) and a PostgreSQL version that creates the lab through the API, with no row inserted by hand for it.
+- Added `POST /labs` (TA of the class or admin; body validated with zod; constraints numbered `c1`, `c2`… by the server; the deduction is a number the TA types), `GET /labs/:labId` now returns title, statement, constraints, and the tests for staff only, and `GET /submissions/:id`, which the `Location` header of a submission already pointed to.
+- `GET /submissions/:id` returns only `id`, `labId`, `studentId`, `language`, `status`, `createdAt`. No source, verdict or deduction can reach a student here. Another student, or a TA of another class, gets `404 submission-not-found`.
+- A TA of another class and a class that does not exist both get `404 class-not-found`.
+- No new migration: `labs` already has `title`, `statement`, `tests` and `constraints` (JSONB).
+- Checked that the tests bite: removing the "TA teaches the class" check and the "student owns the submission" check makes 3 tests fail. Both changes were restored.
+- Verified on a throwaway `postgres:16` container: 153 tests pass there, and `npm run check` is green without a database.
+- Not done: the student does not yet see a test result (`Accepted`, `Wrong Answer`, `TLE`); it needs the queue, worker and sandbox (T05 to T07). `status` stays `queued` until then. Lab creation does not use an `Idempotency-Key`; the contract does not require it for this endpoint.
