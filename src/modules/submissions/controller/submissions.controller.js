@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { ProblemError } from '../shared/problems.js';
-import { parseBody } from '../shared/validation.js';
+import { ProblemError } from '../../../shared/problems.js';
+import { parseBody } from '../../../shared/validation.js';
 
 const IDEMPOTENCY_KEY = /^[\x21-\x7E]{1,255}$/;
 const MAX_SOURCE_BYTES = 65_536;
@@ -16,7 +16,7 @@ const bodySchema = z.strictObject({
 });
 
 export class SubmissionsController {
-  /** @param {{ submissionService: import('./submissions.service.js').SubmissionService }} deps */
+  /** @param {{ submissionService: import('../service/submissions.service.js').SubmissionService }} deps */
   constructor({ submissionService }) {
     this.submissionService = submissionService;
   }

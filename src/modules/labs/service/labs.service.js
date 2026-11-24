@@ -1,12 +1,12 @@
 import { randomUUID } from 'node:crypto';
-import { assertStaff } from '../auth/roles.js';
-import { ProblemError } from '../shared/problems.js';
+import { assertStaff } from '../../auth/service/roles.js';
+import { ProblemError } from '../../../shared/problems.js';
 
-/** @typedef {import('./labs.repository.js').Lab} Lab */
-/** @typedef {import('./labs.repository.js').Viewer} Viewer */
+/** @typedef {import('../repository/labs.repository.js').Lab} Lab */
+/** @typedef {import('../repository/labs.repository.js').Viewer} Viewer */
 
 export class LabService {
-  /** @param {{ labRepository: import('./labs.repository.js').LabRepository }} deps */
+  /** @param {{ labRepository: import('../repository/labs.repository.js').LabRepository }} deps */
   constructor({ labRepository }) {
     this.labRepository = labRepository;
   }

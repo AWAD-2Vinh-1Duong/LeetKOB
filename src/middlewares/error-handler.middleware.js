@@ -1,4 +1,4 @@
-import { ProblemError, sendProblem } from './problems.js';
+import { ProblemError, sendProblem } from '../shared/problems.js';
 
 /**
  * The one place errors become responses. Anything that is not a known problem is

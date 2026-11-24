@@ -1,11 +1,11 @@
-import { ProblemError } from '../shared/problems.js';
+import { ProblemError } from '../../../shared/problems.js';
 import { hashPassword, verifyPassword } from './passwords.js';
 import { signToken, TOKEN_TTL_SECONDS } from './tokens.js';
 
 export class AuthService {
   /**
    * @param {{
-   *   userRepository: import('./users.repository.js').UserRepository,
+   *   userRepository: import('../repository/users.repository.js').UserRepository,
    *   jwtSecret: string,
    *   now: () => Date,
    * }} deps

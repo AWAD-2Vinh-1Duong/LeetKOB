@@ -1,4 +1,4 @@
-import { ProblemError } from '../shared/problems.js';
+import { ProblemError } from '../../../shared/problems.js';
 
 /**
  * Throws `403 staff-only` for a student. Admins and TAs pass.

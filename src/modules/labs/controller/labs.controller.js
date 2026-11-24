@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { assertStaff } from '../auth/roles.js';
-import { parseBody } from '../shared/validation.js';
+import { assertStaff } from '../../auth/service/roles.js';
+import { parseBody } from '../../../shared/validation.js';
 
 const createSchema = z.strictObject({
   classId: z.string().min(1),
@@ -23,7 +23,7 @@ const createSchema = z.strictObject({
 
 /**
  * Staff see the whole lab; a student does not see the expected outputs.
- * @param {import('./labs.repository.js').Lab} lab
+ * @param {import('../repository/labs.repository.js').Lab} lab
  * @param {'admin' | 'ta' | 'student'} role
  */
 function labView(lab, role) {
@@ -41,7 +41,7 @@ function labView(lab, role) {
 }
 
 export class LabsController {
-  /** @param {{ labService: import('./labs.service.js').LabService }} deps */
+  /** @param {{ labService: import('../service/labs.service.js').LabService }} deps */
   constructor({ labService }) {
     this.labService = labService;
   }

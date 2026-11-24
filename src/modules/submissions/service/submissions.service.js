@@ -1,13 +1,13 @@
 import { createHash, randomUUID } from 'node:crypto';
-import { ProblemError } from '../shared/problems.js';
+import { ProblemError } from '../../../shared/problems.js';
 
-/** @typedef {import('./submissions.repository.js').Submission} Submission */
+/** @typedef {import('../repository/submissions.repository.js').Submission} Submission */
 
 export class SubmissionService {
   /**
    * @param {{
-   *   labRepository: import('../labs/labs.repository.js').LabRepository,
-   *   submissionRepository: import('./submissions.repository.js').SubmissionRepository,
+   *   labRepository: import('../../labs/repository/labs.repository.js').LabRepository,
+   *   submissionRepository: import('../repository/submissions.repository.js').SubmissionRepository,
    *   now: () => Date,
    * }} deps
    */
@@ -68,7 +68,7 @@ export class SubmissionService {
   /**
    * A student reads their own submission; staff read those of labs they can see.
    * Anyone else gets the same 404 as for a missing id.
-   * @param {import('../labs/labs.repository.js').Viewer} user
+   * @param {import('../../labs/repository/labs.repository.js').Viewer} user
    * @param {string} id
    * @returns {Promise<Submission>}
    */

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { parseBody } from '../shared/validation.js';
+import { parseBody } from '../../../shared/validation.js';
 
 const bodySchema = z.strictObject({
   email: z.string().min(1),
@@ -7,7 +7,7 @@ const bodySchema = z.strictObject({
 });
 
 export class AuthController {
-  /** @param {{ authService: import('./auth.service.js').AuthService }} deps */
+  /** @param {{ authService: import('../service/auth.service.js').AuthService }} deps */
   constructor({ authService }) {
     this.authService = authService;
   }

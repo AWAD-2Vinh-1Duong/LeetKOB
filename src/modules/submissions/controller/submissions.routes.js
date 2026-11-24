@@ -1,5 +1,5 @@
 import express from 'express';
-import { jsonBody, requireRole } from '../middlewares/index.js';
+import { jsonBody, requireRole } from '../../../middlewares/index.js';
 
 /**
  * Mounted at `/`: the two paths start under different roots (`/labs/...` and `/submissions/...`).

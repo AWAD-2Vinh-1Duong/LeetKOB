@@ -8,7 +8,7 @@ import {
   checkBanList,
   decideConstraint,
   partitionConstraints,
-} from '../../src/rules/hard-rules.js';
+} from '../../src/modules/grading/service/hard-rules.js';
 
 /** @param {string} source @param {string[]} names */
 const check = (source, names) => checkBanList(source, names);

@@ -4,8 +4,8 @@ import assert from 'node:assert/strict';
 import request from 'supertest';
 import { SignJWT } from 'jose';
 import { createApp } from '../../src/app.js';
-import { InMemoryLabRepository } from '../../src/labs/labs.repository.memory.js';
-import { InMemorySubmissionRepository } from '../../src/submissions/submissions.repository.memory.js';
+import { InMemoryLabRepository } from '../../src/modules/labs/repository/labs.repository.memory.js';
+import { InMemorySubmissionRepository } from '../../src/modules/submissions/repository/submissions.repository.memory.js';
 
 const SECRET = 'test-secret-not-a-real-one-0123456789';
 const PROBLEM_BASE = 'https://leettkob.dev/problems/';
@@ -385,7 +385,7 @@ describe('500 internal-error', () => {
   test('an unexpected failure gives 500 internal-error without leaking details', async () => {
     const leaked = 'connect ECONNREFUSED postgres://app:hunter2@db:5432';
     class FailingLabRepository extends InMemoryLabRepository {
-      /** @returns {Promise<import('../../src/labs/labs.repository.js').Lab | undefined>} */
+      /** @returns {Promise<import('../../src/modules/labs/repository/labs.repository.js').Lab | undefined>} */
       async findForStudent() {
         throw new Error(leaked);
       }

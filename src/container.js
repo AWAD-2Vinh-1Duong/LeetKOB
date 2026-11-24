@@ -1,14 +1,14 @@
 import pino from 'pino';
-import { createAuthMiddleware } from './auth/auth.middleware.js';
-import { AuthController } from './auth/auth.controller.js';
-import { AuthService } from './auth/auth.service.js';
-import { PostgresUserRepository } from './auth/users.repository.postgres.js';
-import { LabsController } from './labs/labs.controller.js';
-import { LabService } from './labs/labs.service.js';
-import { PostgresLabRepository } from './labs/labs.repository.postgres.js';
-import { SubmissionsController } from './submissions/submissions.controller.js';
-import { SubmissionService } from './submissions/submissions.service.js';
-import { PostgresSubmissionRepository } from './submissions/submissions.repository.postgres.js';
+import { createAuthMiddleware } from './middlewares/require-auth.middleware.js';
+import { AuthController } from './modules/auth/controller/auth.controller.js';
+import { AuthService } from './modules/auth/service/auth.service.js';
+import { PostgresUserRepository } from './modules/auth/repository/users.repository.postgres.js';
+import { LabsController } from './modules/labs/controller/labs.controller.js';
+import { LabService } from './modules/labs/service/labs.service.js';
+import { PostgresLabRepository } from './modules/labs/repository/labs.repository.postgres.js';
+import { SubmissionsController } from './modules/submissions/controller/submissions.controller.js';
+import { SubmissionService } from './modules/submissions/service/submissions.service.js';
+import { PostgresSubmissionRepository } from './modules/submissions/repository/submissions.repository.postgres.js';
 
 /**
  * The composition root: the only file that decides which implementation backs
@@ -23,9 +23,9 @@ import { PostgresSubmissionRepository } from './submissions/submissions.reposito
  *   now?: () => Date,
  *   logger?: import('pino').Logger,
  *   pool?: import('pg').Pool,
- *   labRepository?: import('./labs/labs.repository.js').LabRepository,
- *   submissionRepository?: import('./submissions/submissions.repository.js').SubmissionRepository,
- *   userRepository?: import('./auth/users.repository.js').UserRepository,
+ *   labRepository?: import('./modules/labs/repository/labs.repository.js').LabRepository,
+ *   submissionRepository?: import('./modules/submissions/repository/submissions.repository.js').SubmissionRepository,
+ *   userRepository?: import('./modules/auth/repository/users.repository.js').UserRepository,
  * }} deps
  */
 export function createContainer({
