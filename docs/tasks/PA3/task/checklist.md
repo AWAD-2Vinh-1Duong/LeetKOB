@@ -135,7 +135,7 @@
   - **Chi tiết:** Trước khi gửi code cho LLM, tự động xóa toàn bộ comment (`//`, `/* ... */`) và thông tin định danh sinh viên (tên, MSSV, email). Payload gửi model chỉ chứa: `statement`, danh sách `constraints` chưa được hard rule xử lý, và `source` đã làm sạch.
   - **Tiêu chí xong:** Có unit test xác nhận prompt đầu ra sạch comment và danh tính.
 
-- [ ] **T13** — **Tích hợp `ConstraintJudge` adapter (`ag/gemini-3.8-flash`) & Call Log**
+- [x] **T13** — **Tích hợp `ConstraintJudge` adapter (`ag/gemini-3.8-flash`) & Call Log**
   - **Phụ trách:** `@Thế Vinh`
   - **Phụ thuộc:** `T11`, `T12`
   - **Chi tiết:** Gọi Google Gemini API (`LLM_MODEL=ag/gemini-3.8-flash`, gói Free tier) qua biến `LLM_API_KEY` để chấm các ràng buộc ngữ nghĩa. Model trả về `pass | violation | unsure` kèm `evidence` (`line`, `text`), **không để model quyết định `deduction`**. Lưu Call Log vào DB/file gồm: `provider request_id`, `model`, `input_tokens`, `output_tokens`, `latency_ms`, `cost_usd` (`0` trên Free tier) và prompt đã gửi.

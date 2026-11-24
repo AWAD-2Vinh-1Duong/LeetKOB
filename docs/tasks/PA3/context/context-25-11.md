@@ -32,3 +32,13 @@
 - Replaced `gemini-3.6-flash` with `ag/gemini-3.8-flash` in `AGENTS.md`, `README.md`, `.env.example` (new empty `LLM_BASE_URL`), `PA3.md`, the PA3 submission drafts and the PA3 checklist.
 - Left on purpose: the default `'gemini-3.6-flash'` in the applied migration `1795453690243_init-schema.sql` (applied migrations are never edited; the app writes the real model name into every call-log row) and the PA#2 reports (history of a submitted checkpoint).
 - Not done: the spending-cap lines still say "Google AI Studio Free tier, no billing, $0". They must be rewritten once the team confirms what the `ag/` provider behind 9router is and whether it can bill.
+
+5. Complete Task T13 (real model through 9router, call log) - Thế Vinh with Claude Code
+
+- A probe call showed what 9router returns: an OpenAI-style completion streamed as server-sent events by default, an `id` such as `chatcmpl-...`, and `usage.prompt_tokens` / `usage.completion_tokens` in the last chunk. No cost field, and no separate upstream request-id header.
+- Tests first, commit `9aa81b0`: `tests/grading/openai-compatible-model.test.js`, 9 tests on a fake `fetch` (no network, no key): the request (`POST <base>/chat/completions`, one user message, `stream: false`, key only in the bearer header, abort signal passed on), JSON and streamed replies, cost from token counts, a 429 that becomes `unsure` through `ConstraintJudge` without the key in any message, and a good reply that becomes verdicts plus a call record with the request id.
+- Code, commit `b8a8437`: `src/modules/grading/service/openai-compatible-model.js` and the wiring in `src/checker.js`. Without `MODEL_OFF=1` the checker needs `LLM_BASE_URL`, `LLM_MODEL` and `LLM_API_KEY` and names any that is missing (never a value). Timeout `LLM_TIMEOUT_MS`, default 60 s. Cost per call = tokens x the optional `LLM_INPUT_USD_PER_MTOK` / `LLM_OUTPUT_USD_PER_MTOK`, 0 when unset.
+- First real run, by Thế Vinh on his machine with the key in `.env`, on `eval/custom-cases` with `ag/gemini-3.8-flash`: 6 calls, all `ok`, 37 s in total (about 5-7 s each), 2,695-3,031 input and 18-50 output tokens per call. Eval: wrongful 0, recall 100% (4/4), unsure 0%, including the trap and the injection case.
+- About 2,000 of the input tokens per call are added by 9router itself: a one-line "Reply OK" probe already counted 2,006 prompt tokens. The cost arithmetic must use the logged counts, not the prompt length.
+- The request ids in the call log are the ones 9router returns (`chatcmpl-...`); 9router does not pass on a separate Google request id.
+- `npm run check` green: 217/217 tests.
