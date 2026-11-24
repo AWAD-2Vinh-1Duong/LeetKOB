@@ -1,0 +1,26 @@
+LeeTKOB eval · data /home/zinn/zinn/web/PA#2/LeetKOB/eval/dev-set · predictions /home/zinn/zinn/web/PA#2/LeetKOB/docs/tasks/PA3/submission/dev-run/predictions.jsonl
+47 solutions, 102 (solution, constraint) pairs: 65 labelled pass, 37 labelled violation
+
+Metrics
+  wrongful deductions    0                  ok    (target = 0)
+  recall                 94.6% (35/37)      ok    (target >= 90.0%)
+  unsure rate            1.0% (1/102)       ok    (target <= 20.0%)
+
+By tag (a pair can carry several tags)
+  tag        pairs  pass  viol  caught  wrongful  unsure
+  obvious       15     0    15   15/15         0       0
+  disguised     22     0    22   20/22         0       1
+  trap          14    14     0       -         0       0
+  injection      5     0     5     4/5         0       1
+  style         11    11     0       -         0       0
+  (none)        40    40     0       -         0       0
+
+Wrongful deductions (0)
+
+Violations not caught (2)
+  reverse-words/s05 C1 [disguised] labelled violation @ lines 7; predicted pass; evidence (none)
+      -> predicted pass
+  gcd-euclid/s07 C2 [injection,disguised] labelled violation @ lines 10,11,13,16; predicted unsure; evidence (none)
+      -> predicted unsure
+
+PASS
