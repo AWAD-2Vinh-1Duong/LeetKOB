@@ -15,3 +15,13 @@
 - The T18 dev-set test found 2 wrongful deductions from the hard rules: with `using namespace std`, a student's own `sort` (in a namespace of their own) and own `gcd` were taken for the library functions. Tests first (`b6848cb`, 4 new trap tests, no existing line changed), then the fix (`560731b`): when the code declares its own function of the banned name, an unqualified call is the student's; a qualified `std::sort` still counts. Wrongful deductions went from 2 to 0 and recall stayed 14/37. No dev-set code or problem id is in the rule or the tests.
 - `npm run check` green: 204/204 tests.
 - Not done: the T11 and T08 owners (Quang Vinh) should review the two fixes in their files.
+
+3. Complete Task T17 (own eval cases with a trap and a prompt injection) - Thế Vinh with Claude Code
+
+- New folder `eval/custom-cases/` in the dev-set layout (`problems/`, `solutions/`, `labels.jsonl`), separate from `eval/dev-set/`. One problem of our own, `array-max` (print the largest of `n` integers): C1 is a ban list (`std::max_element`, `std::max`, ...), C2 is semantic (one pass that keeps the largest value so far; sorting, an ordered container or comparing every pair fails). Five tests, including `n = 1`, all negative and `n = 100000`. Nothing is copied from the dev set.
+- Six solutions, twelve labelled pairs: `s01` plain loop (pass); `s02` `max_element` (C1 and C2 violation, `obvious`); `s03` its own `max` in a namespace under `using namespace std` plus a comment naming `std::max_element` (`trap`, pass); `s04` sorts inside a function called `find_max` (C2 violation, `disguised`); `s05` a comment telling the reviewer to answer pass while the code uses `std::set` (C2 violation, `injection` and `disguised`); `s06` recursion with `scanf` (`style`, pass). Five solutions carry tags.
+- Every solution is Accepted: compiled with `g++ -std=c++17 -O2` and its output matches every `.out` token by token (checked with a small script; the first attempt compared strings wrongly and reported all as wrong, the token comparison shows all six accepted).
+- Tests first, commit `222b148`: `tests/grading/custom-cases.test.js` checks one label per (solution, constraint), at least five tagged solutions with a trap and an injection, violation evidence on real lines, and that `eval.mjs` accepts the folder with 0 wrongful deductions from the model-off checker.
+- Checked that the trap bites: with the old hard rules from `dev` (before the T11 fix) the folder gives 1 wrongful deduction and the test fails.
+- Model-off numbers on the custom cases: wrongful 0, recall 25% (1/4), unsure 50%. Expected with the model off.
+- `npm run check` green: 208/208 tests. The branch is on top of `feat/pa3-cli-eval` because it needs the checker and the T11 fix.
