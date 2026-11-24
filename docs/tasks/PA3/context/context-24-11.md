@@ -71,3 +71,13 @@
 - `eval/dev-set/**` added to `.prettierignore` and ESLint `ignores`, so no tool rewrites it.
 - `tests/grading/dev-set-integrity.test.js` pins both hashes, so CI goes red if anyone edits the labels or the scorer.
 - `npm run check` green: 98/98 tests.
+
+9. Complete Task T14 (tests first for the schema and timeout guardrails) - Thế Vinh with Claude Code
+
+- Commit `69faaca`: `tests/grading/constraint-judge-guardrails.test.js`, 23 tests, written before any guardrail code. They import `ConstraintJudge` from `src/modules/grading/service/constraint-judge.js`, which does not exist yet, so they fail until T15.
+- Interface fixed by the tests: `new ConstraintJudge({ model, timeoutMs }).judge({ statement, constraints, source })` returns `{ verdicts }`, one per constraint, each `{ constraintId, verdict, evidence, decidedBy }`. `decidedBy` is `model` for an accepted answer and `guardrail` (plus a `reason`) for a forced `unsure`. The model is injected as `{ name, complete({ prompt, signal }) }`, so T13 plugs Gemini in behind it and tests use a fake.
+- Schema cases that make every constraint `unsure`: malformed JSON, JSON in a markdown fence, text around the JSON, empty reply, array instead of object, no `verdicts`, a verdict outside `pass | violation | unsure`, an extra `deduction` field, an extra top-level field, evidence that is not `{ line, text }`, a constraint that was not asked for, and a model error such as a 429.
+- Per-constraint cases: a missing constraint, a constraint answered twice, a violation without evidence and a violation citing a line the code does not have each become `unsure`; the other constraints keep the model's answer. Evidence text is taken from the original source line, not from the model.
+- Timeout cases: a model that never answers and one that honours the abort signal both end as `unsure` within the timeout, and the signal passed to the model is aborted. A reply in time is used.
+- No network: the suite replaces `globalThis.fetch` with a function that throws, and no verdict ever carries a deduction. No dev-set code or problem id appears in the tests.
+- Not done: the guardrail code (T15) and the real Gemini model (T13). `npm run check` is red on this branch until T15 lands, only because the module is missing.
