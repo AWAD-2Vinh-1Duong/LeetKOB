@@ -24,12 +24,6 @@ export class SubmissionsController {
   /** @type {import('express').RequestHandler<{ labId: string }>} */
   create = async (req, res) => {
     const user = res.locals.user;
-    if (user.role !== 'student') {
-      throw new ProblemError(
-        'forbidden-role',
-        `Role "${user.role}" cannot submit.`,
-      );
-    }
 
     const idempotencyKey = req.get('idempotency-key') ?? '';
     if (!IDEMPOTENCY_KEY.test(idempotencyKey)) {

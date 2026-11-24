@@ -1,4 +1,5 @@
 import express from 'express';
+import { jsonBody, requireRole } from '../middlewares/index.js';
 
 /**
  * Mounted at `/`: the two paths start under different roots (`/labs/...` and `/submissions/...`).
@@ -12,7 +13,12 @@ export function createSubmissionsRouter({ controller, requireAuth }) {
   router.post(
     '/labs/:labId/submissions',
     requireAuth,
-    express.json({ limit: '256kb', strict: false }),
+    requireRole({
+      roles: ['student'],
+      slug: 'forbidden-role',
+      detail: (role) => `Role "${role}" cannot submit.`,
+    }),
+    jsonBody({ limit: '256kb' }),
     controller.create,
   );
   router.get('/submissions/:id', requireAuth, controller.get);
