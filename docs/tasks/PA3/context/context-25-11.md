@@ -51,3 +51,11 @@
 - `gcd-euclid/s07` C2 became `unsure`: the model's JSON was cut off before its closing `]}`. The schema guardrail rejected it, so no mark was taken. `reverse-words/s05` C1 was missed by the hard rules (a disguised ban-list use); the model is not asked about ban lists.
 - Tokens: 117,330 input and 1,906 output in total, 227 s of model time. Per submission (47): 2,496.4 input and 40.6 output tokens on average. A lab of 80 submissions: about 199,711 input and 3,244 output tokens. Cost logged per call is 0 because no price is configured; the price per token and the spending cap are still to be confirmed for the provider behind 9router.
 - Not done: the cost arithmetic in `README.md` and `AI-LOG.md` (waits for the price), and the review of the `reverse-words/s05` hard-rule miss.
+
+7. Complete Task T19 (cost per lab, spending cap) - Thế Vinh with Claude Code
+
+- Thế Vinh confirmed that the `ag/` provider behind 9router is free: cap $0, no payment method attached.
+- Rewrote the spending-cap and cost lines in `README.md`, `PA3.md`, `docs/tasks/PA3/submission/PA3.md`, `submission-note.txt` and the checklist: they no longer claim Google AI Studio for PA#3 (only as PA#2 history). The cost per lab is now measured, not guessed: 2,496.4 input and 40.6 output tokens per submission, 199,711 and 3,244 for 80 submissions, $0 at the free provider. The old "theoretical paid tier" numbers ($0.075 / $0.30 per 1M, from Gemini 1.5 Flash) were removed because they do not apply to this model.
+- Corrected a false claim in `README.md`: the per-lab cost cap `LLM_COST_CAP_PER_LAB_USD` was described as enforced from PA#3, but no code does it; the README now says it is not implemented yet.
+- `AI-LOG.md`: new entry on top with the tool, the request, what was kept and the cost arithmetic. `Changed` and `Rejected` are left for Thế Vinh, as `CLAUDE.md` asks.
+- `docs/tasks/PA3/submission/PA3.md` now links `eval/custom-cases/` instead of a TODO.

@@ -177,7 +177,7 @@
   - **Chi tiết:** Viết lệnh CLI nhận đường dẫn thư mục dataset (chỉ đọc `statement.md`, `constraints.json` và các file `.cpp` — không cấu hình tay từng bài) và xuất ra `predictions.jsonl`. Hỗ trợ **`MODEL_OFF=1`**: chỉ chạy hard rules, mọi semantic constraint ghi `unsure`, và **không mở bất kỳ kết nối mạng nào**. Tạo `Dockerfile` build image cho CLI checker.
   - **Tiêu chí xong:** Chạy `docker run --network none -e MODEL_OFF=1 ...` trên `dev set` thành công; chấm bằng `eval.mjs` trả exit code `0` hoặc `1` (không bao giờ `2`) và đạt **0 wrongful deductions**.
 
-- [ ] **T19** — **Chạy Eval thật trên `dev set` & Commit kết quả kèm phép tính chi phí**
+- [x] **T19** — **Chạy Eval thật trên `dev set` & Commit kết quả kèm phép tính chi phí**
   - **Phụ trách:** `@Thế Vinh`
   - **Phụ thuộc:** `T17`, `T18`
   - **Chi tiết:** Chạy CLI checker với model thật `ag/gemini-3.8-flash` (`MODEL_OFF=0`) trên toàn bộ `dev set` (chạy thủ công trên máy, không gọi model thật trong CI theo luật mục 4 `AGENTS.md`). Lưu thư mục kết quả gồm: `predictions.jsonl`, báo cáo output từ `eval.mjs`, và `call-log.jsonl` (đầy đủ `request_id`, tokens, latency, cost). Tính chi phí trung bình cho **1 lab 80 sinh viên** kèm công thức số học (nêu rõ `$0` trên Free tier + ước tính tương đương theo token nếu bật billing).
