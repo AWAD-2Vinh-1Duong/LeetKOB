@@ -256,6 +256,30 @@ describe('who may call it', () => {
     });
   }
 
+  test('a TA with malformed JSON gets 403 forbidden-role', async () => {
+    const { app } = setup();
+    const res = await request(app)
+      .post('/labs/lab-open/submissions')
+      .set('Authorization', `Bearer ${await token({ sub: 'ta1', role: 'ta' })}`)
+      .set('Idempotency-Key', 'key-1')
+      .set('Content-Type', 'application/json')
+      .send('{"language": "cpp",');
+    assertProblem(res, 403, 'forbidden-role', 'Only students may submit');
+  });
+
+  test('an admin with a body over 256 KiB gets 403 forbidden-role', async () => {
+    const { app } = setup();
+    const res = await request(app)
+      .post('/labs/lab-open/submissions')
+      .set(
+        'Authorization',
+        `Bearer ${await token({ sub: 'a1', role: 'admin' })}`,
+      )
+      .set('Idempotency-Key', 'key-1')
+      .send({ language: 'cpp', source: 'x'.repeat(300 * 1024) });
+    assertProblem(res, 403, 'forbidden-role', 'Only students may submit');
+  });
+
   test('401 wins over a missing Idempotency-Key', async () => {
     const { app } = setup();
     assertProblem(
