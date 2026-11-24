@@ -43,6 +43,7 @@ describe('auth and class access', () => {
   let app;
 
   before(async () => {
+    /** @type {Array<{ id: string, email: string, role: 'admin' | 'ta' | 'student' }>} */
     const users = [
       { id: 'admin1', email: 'admin@t.local', role: 'admin' },
       { id: 'ta-a', email: 'ta-a@t.local', role: 'ta' },
