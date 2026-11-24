@@ -10,6 +10,8 @@ export const PROBLEMS = /** @type {const} */ ({
   'forbidden-role': { status: 403, title: 'Only students may submit' },
   'staff-only': { status: 403, title: 'Only staff may do this' },
   'lab-not-found': { status: 404, title: 'Lab not found' },
+  'class-not-found': { status: 404, title: 'Class not found' },
+  'submission-not-found': { status: 404, title: 'Submission not found' },
   'lab-closed': { status: 409, title: 'Lab is closed for submissions' },
   'payload-too-large': { status: 413, title: 'Request body is too large' },
   'idempotency-key-reused': {

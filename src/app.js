@@ -5,6 +5,7 @@ import { createAuthMiddleware } from './middlewares/auth.js';
 import { SubmissionsController } from './controllers/submissions-controller.js';
 import { AuthController } from './controllers/auth-controller.js';
 import { LabsController } from './controllers/labs-controller.js';
+import { LabService } from './services/lab-service.js';
 import { SubmissionService } from './services/submission-service.js';
 import { ProblemError, sendProblem } from './problems.js';
 import {
@@ -55,7 +56,10 @@ export function createApp({
     }),
   });
 
-  const labs = new LabsController({ labRepository });
+  const labs = new LabsController({
+    labService: new LabService({ labRepository }),
+    labRepository,
+  });
   const requireAuth = createAuthMiddleware({ secret: jwtSecret });
 
   const app = express();
@@ -79,8 +83,16 @@ export function createApp({
     );
   }
 
+  app.post(
+    '/labs',
+    requireAuth,
+    express.json({ limit: '256kb', strict: false }),
+    labs.create,
+  );
   app.get('/labs/:labId', requireAuth, labs.get);
   app.get('/labs/:labId/review-queue', requireAuth, labs.reviewQueue);
+
+  app.get('/submissions/:id', requireAuth, submissions.get);
 
   app.post(
     '/labs/:labId/submissions',

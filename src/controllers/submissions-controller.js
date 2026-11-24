@@ -64,4 +64,16 @@ export class SubmissionsController {
     if (replayed) res.set('Idempotent-Replayed', 'true');
     res.json({ id, labId, studentId, language, status, createdAt });
   };
+
+  /** @type {import('express').RequestHandler<{ id: string }>} */
+  get = async (req, res) => {
+    /** @type {import('../middlewares/auth.js').AuthUser} */
+    const user = res.locals.user;
+    const submission = await this.submissionService.getVisible(
+      user,
+      req.params.id,
+    );
+    const { id, labId, studentId, language, status, createdAt } = submission;
+    res.json({ id, labId, studentId, language, status, createdAt });
+  };
 }

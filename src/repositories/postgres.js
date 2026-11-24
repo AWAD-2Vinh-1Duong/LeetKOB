@@ -1,5 +1,11 @@
 /**
- * @typedef {{ id: string, classId: string, deadline: Date }} Lab
+ * @typedef {{ id: string, text: string, deduction: number }} LabConstraint
+ * @typedef {{
+ *   id: string, classId: string, deadline: Date,
+ *   title?: string, statement?: string,
+ *   tests?: Array<{ input: string, expectedOutput: string }>,
+ *   constraints?: LabConstraint[],
+ * }} Lab
  * @typedef {{ id: string, role: 'admin' | 'ta' | 'student' }} Viewer
  * @typedef {{ id: string, email: string, passwordHash: string, role: 'admin' | 'ta' | 'student' }} User
  * @typedef {{
@@ -8,6 +14,21 @@
  *   source?: string
  * }} Submission
  */
+
+const LAB_COLUMNS = `l.id, l.class_id AS "classId", l.title, l.statement, l.tests, l.constraints, l.deadline`;
+
+/** @param {any} row @returns {Lab} */
+function toLab(row) {
+  return {
+    id: String(row.id),
+    classId: String(row.classId),
+    title: row.title,
+    statement: row.statement,
+    tests: row.tests,
+    constraints: row.constraints,
+    deadline: new Date(row.deadline),
+  };
+}
 
 export class PostgresLabRepository {
   /** @param {{ pool: import('pg').Pool }} deps */
@@ -23,19 +44,14 @@ export class PostgresLabRepository {
    */
   async findForStudent(labId, studentId) {
     const res = await this.pool.query(
-      `SELECT l.id, l.class_id AS "classId", l.deadline
+      `SELECT ${LAB_COLUMNS}
        FROM labs l
        JOIN class_enrollments ce ON ce.class_id = l.class_id
        WHERE l.id = $1 AND ce.student_id = $2`,
       [labId, studentId],
     );
     if (res.rows.length === 0) return undefined;
-    const row = res.rows[0];
-    return {
-      id: String(row.id),
-      classId: String(row.classId),
-      deadline: new Date(row.deadline),
-    };
+    return toLab(res.rows[0]);
   }
 
   /**
@@ -47,7 +63,7 @@ export class PostgresLabRepository {
    */
   async findForUser(labId, viewer) {
     const res = await this.pool.query(
-      `SELECT l.id, l.class_id AS "classId", l.deadline
+      `SELECT ${LAB_COLUMNS}
        FROM labs l
        WHERE l.id = $1 AND (
          $3::text = 'admin'
@@ -61,12 +77,50 @@ export class PostgresLabRepository {
       [labId, viewer.id, viewer.role],
     );
     if (res.rows.length === 0) return undefined;
-    const row = res.rows[0];
-    return {
-      id: String(row.id),
-      classId: String(row.classId),
-      deadline: new Date(row.deadline),
-    };
+    return toLab(res.rows[0]);
+  }
+
+  /**
+   * Whether the caller may create labs in the class: an admin in any existing
+   * class, a TA only in a class they teach (class_staff).
+   * @param {Viewer} viewer
+   * @param {string} classId
+   * @returns {Promise<boolean>}
+   */
+  async canManageClass(viewer, classId) {
+    if (viewer.role === 'admin') {
+      const res = await this.pool.query('SELECT 1 FROM classes WHERE id = $1', [
+        classId,
+      ]);
+      return res.rows.length > 0;
+    }
+    if (viewer.role !== 'ta') return false;
+    const res = await this.pool.query(
+      'SELECT 1 FROM class_staff WHERE class_id = $1 AND user_id = $2',
+      [classId, viewer.id],
+    );
+    return res.rows.length > 0;
+  }
+
+  /**
+   * @param {Lab} lab
+   * @returns {Promise<Lab>}
+   */
+  async create(lab) {
+    await this.pool.query(
+      `INSERT INTO labs (id, class_id, title, statement, tests, constraints, deadline)
+       VALUES ($1, $2, $3, $4, $5::jsonb, $6::jsonb, $7)`,
+      [
+        lab.id,
+        lab.classId,
+        lab.title,
+        lab.statement,
+        JSON.stringify(lab.tests ?? []),
+        JSON.stringify(lab.constraints ?? []),
+        lab.deadline,
+      ],
+    );
+    return lab;
   }
 }
 
@@ -100,6 +154,31 @@ export class PostgresSubmissionRepository {
   /** @param {{ pool: import('pg').Pool }} deps */
   constructor({ pool }) {
     this.pool = pool;
+  }
+
+  /**
+   * @param {string} id
+   * @returns {Promise<Submission | undefined>}
+   */
+  async findById(id) {
+    const res = await this.pool.query(
+      `SELECT id, lab_id AS "labId", student_id AS "studentId", language, status,
+              created_at AS "createdAt", idempotency_key AS "idempotencyKey", fingerprint
+       FROM submissions WHERE id = $1`,
+      [id],
+    );
+    if (res.rows.length === 0) return undefined;
+    const row = res.rows[0];
+    return {
+      id: String(row.id),
+      labId: String(row.labId),
+      studentId: String(row.studentId),
+      language: row.language,
+      status: row.status,
+      createdAt: new Date(row.createdAt).toISOString(),
+      idempotencyKey: String(row.idempotencyKey),
+      fingerprint: String(row.fingerprint),
+    };
   }
 
   /**

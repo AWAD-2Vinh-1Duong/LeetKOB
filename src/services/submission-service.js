@@ -65,6 +65,31 @@ export class SubmissionService {
       : this.#replay(submission, fingerprint);
   }
 
+  /**
+   * A student reads their own submission; staff read those of labs they can see.
+   * Anyone else gets the same 404 as for a missing id.
+   * @param {import('../repositories/in-memory.js').Viewer} user
+   * @param {string} id
+   * @returns {Promise<Submission>}
+   */
+  async getVisible(user, id) {
+    const submission = await this.submissionRepository.findById(id);
+    const visible =
+      submission &&
+      (user.role === 'student'
+        ? submission.studentId === user.id
+        : Boolean(
+            await this.labRepository.findForUser(submission.labId, user),
+          ));
+    if (!submission || !visible) {
+      throw new ProblemError(
+        'submission-not-found',
+        `No submission "${id}" is open to you.`,
+      );
+    }
+    return submission;
+  }
+
   /** @param {Submission} submission @param {string} fingerprint */
   #replay(submission, fingerprint) {
     if (submission.fingerprint !== fingerprint) {
