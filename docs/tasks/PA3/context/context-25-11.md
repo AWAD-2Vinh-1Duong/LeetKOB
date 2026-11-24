@@ -42,3 +42,12 @@
 - About 2,000 of the input tokens per call are added by 9router itself: a one-line "Reply OK" probe already counted 2,006 prompt tokens. The cost arithmetic must use the logged counts, not the prompt length.
 - The request ids in the call log are the ones 9router returns (`chatcmpl-...`); 9router does not pass on a separate Google request id.
 - `npm run check` green: 217/217 tests.
+
+6. Task T19, first part (real-model run on the dev set) - Thế Vinh with Claude Code
+
+- Thế Vinh ran the checker on his machine with `ag/gemini-3.8-flash` through 9router (key only in `.env`), writing straight into `docs/tasks/PA3/submission/dev-run/`: `predictions.jsonl` (102 lines), `eval-report.txt`, `call-log.jsonl` (39 calls). Committed as `d40db20`. No key, bearer header or `LLM_API_KEY` appears in any of the three files.
+- `eval.mjs` on the run: wrongful deductions 0, recall 94.6% (35/37), unsure 1.0% (1/102), exit code 0. Every `trap` and `style` pair passed; all 15 `obvious` violations were caught.
+- 39 calls for 47 solutions: the 8 `reverse-recursive` solutions made no call, because both of that problem's constraints are ban lists and the hard rules decided them. 39 distinct request ids, none empty.
+- `gcd-euclid/s07` C2 became `unsure`: the model's JSON was cut off before its closing `]}`. The schema guardrail rejected it, so no mark was taken. `reverse-words/s05` C1 was missed by the hard rules (a disguised ban-list use); the model is not asked about ban lists.
+- Tokens: 117,330 input and 1,906 output in total, 227 s of model time. Per submission (47): 2,496.4 input and 40.6 output tokens on average. A lab of 80 submissions: about 199,711 input and 3,244 output tokens. Cost logged per call is 0 because no price is configured; the price per token and the spending cap are still to be confirmed for the provider behind 9router.
+- Not done: the cost arithmetic in `README.md` and `AI-LOG.md` (waits for the price), and the review of the `reverse-words/s05` hard-rule miss.
