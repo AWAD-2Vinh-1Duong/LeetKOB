@@ -24,3 +24,11 @@
 - `npm test` now runs with `--test-concurrency=1` because the PostgreSQL test files truncate the same tables.
 - Checked that the tests bite: with the TA check in `findForUser` removed, 3 tests fail.
 - Not done: CI has no PostgreSQL service, so the PostgreSQL tests are skipped there. Users still have to be created by a seed or script; a registration or admin endpoint is not part of T08.
+
+4. Complete Task T04 (official dev set, SHA-256 check) - Thế Vinh with Claude Code
+
+- Copied the dev set from `github.com/fithcmus/awad-leetkob-eval` (commit `552c811`) into `eval/dev-set/` byte for byte: `eval.mjs`, `labels.jsonl`, `README.md`, 6 problems, 47 solutions (128 files). `diff -r` against the clone shows no difference.
+- SHA-256 checked: `eval.mjs` `c836edd8713521bb...`, `labels.jsonl` `262cda7b0ef5612e...`, both match `AGENTS.md`.
+- `eval/dev-set/**` added to `.prettierignore` and ESLint `ignores`, so no tool rewrites it.
+- `tests/rules/dev-set-integrity.test.js` pins both hashes, so CI goes red if anyone edits the labels or the scorer.
+- `npm run check` green: 98/98 tests.
