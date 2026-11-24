@@ -149,7 +149,7 @@
     2. **Timeout check:** Model treo quá thời gian quy định (`AbortSignal.timeout`) → ngắt request, worker không bị crash, ép verdict thành **`unsure`**.
   - **Tiêu chí xong:** Commit `test(rules): add fake-model tests for schema and timeout guardrails` **trước** khi viết code guardrail.
 
-- [ ] **T15** — **Cài đặt Guardrail Schema & Timeout trên Worker**
+- [x] **T15** — **Cài đặt Guardrail Schema & Timeout trên Worker**
   - **Phụ trách:** `@Thế Vinh`
   - **Phụ thuộc:** `T13`, `T14`
   - **Chi tiết:** Tích hợp `zod` schema validator và HTTP timeout vào `ConstraintJudge` adapter. Mọi lỗi parse/schema hoặc timeout đều fallback an toàn về `unsure` kèm lý do để TA xem xét.

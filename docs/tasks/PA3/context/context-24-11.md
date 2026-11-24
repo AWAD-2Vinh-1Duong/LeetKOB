@@ -92,3 +92,15 @@
 - Checked that the tests bite: forgetting string literals (2 fail), dropping a comment's newlines (1 fail) and sending the deduction (1 fail). Each change was restored.
 - `npm run check`: lint and format pass, and typecheck has no error from T12; 168 tests pass. The one failure is the T14 guardrail test file, which waits for `constraint-judge.js` (T15).
 - Not done: string literals are kept as they are, so an injection written inside a string still reaches the model; the prompt in T13 must tell the model the code is data. A name folded into an identifier (`NguyenVanA`) is not redacted (marked `shortcut:` in the code).
+
+11. Complete Task T15 (schema and timeout guardrails) - Thế Vinh with Claude Code
+
+- Added `src/modules/grading/service/constraint-judge.js`: `ConstraintJudge({ model, timeoutMs }).judge({ statement, constraints, source, identity })`. The model is injected as `{ name, complete({ prompt, signal }) }`, so T13 adds a Gemini model and tests keep a fake one. No `process.env`, no `fetch` here.
+- Schema: the reply must be JSON only and match a strict `zod` schema (`verdicts[]` of `{ constraint, verdict, evidence[{ line, text }] }`, no other field). Malformed JSON, a markdown fence, text around the JSON, an extra field such as `deduction`, or a constraint that was not asked makes every constraint `unsure`. A missing or repeated constraint, or a violation without evidence on an existing code line, makes only that constraint `unsure`. Evidence text is taken from the original source line, never from the model.
+- Timeout: `Promise.race` between the model and a timer; on time-out the `AbortSignal` passed to the model is aborted and every constraint becomes `unsure`. A thrown model error (429, network) also becomes `unsure`; the worker never crashes.
+- Every forced `unsure` has `decidedBy: 'guardrail'` and a `reason` the TA can read; an accepted answer has `decidedBy: 'model'`. No verdict carries a deduction.
+- The judge sends the code through `stripComments` and `redactIdentity` (T12) and numbers each line in the prompt, which tells the model that the code is data and that instructions inside it are ignored. It also returns a call record (`model`, `prompt`, `response`, `outcome`, `latencyMs`, `requestId`, tokens, `costUsd`) for the T13 call log.
+- The 23 tests from T14 pass with no assertion changed. One test-only commit (`cf74279`) replaced the fake model's JSDoc type `Function` with `JudgeModel` because `tsc` rejected it.
+- Checked that the tests bite: plain `z.object` instead of strict (2 fail), no timeout race (3 timeout tests fail), no evidence check (2 fail), no check for unknown constraints (1 fail). Each change was restored.
+- `npm run check` green: 191/191 tests.
+- Not done: the real Gemini model and the call log rows (T13); wiring the judge into the worker (needs T05) and into the CLI (T18).
