@@ -119,13 +119,38 @@ LeeTKOB/
 │           ├── context/             # Nhật ký ngữ cảnh (context-dd-mm.md) theo quy định AGENTS.md
 │           ├── submission/          # Bản mẫu báo cáo tự đánh giá PA#3
 │           └── task/                # Rubric và checklist thực thi PA#3
-├── src/                             # Mã nguồn hệ thống
-│   ├── controllers/                 # Lớp Routing & Controllers (nhận HTTP request, trả RFC 9457 Problem Details)
-│   ├── middlewares/                 # Xử lý phân quyền & authentication (Tiêu chí 5 - Who may call it)
-│   ├── repositories/                # Lớp Data Access (In-memory storage, Dependency Injection)
-│   ├── services/                    # Lớp Business Logic (xử lý logic bài nộp, gọi Sandbox, xử lý Idempotency)
-│   ├── app.js                       # Điểm khởi chạy ứng dụng (Setup Express & DI container)
-│   └── problems.js                  # Định nghĩa các loại RFC 9457 Problem Details
+├── src/
+│   ├── app.js
+│   ├── config.js
+│   ├── container.js
+│   ├── server.js
+│   ├── middlewares/
+│   │   ├── error-handler.middleware.js
+│   │   ├── idempotency-key.middleware.js
+│   │   ├── index.js
+│   │   ├── json-body.middleware.js
+│   │   ├── request-context.middleware.js
+│   │   ├── require-auth.middleware.js
+│   │   └── require-role.middleware.js
+│   ├── modules/
+│   │   ├── auth/
+│   │   │   ├── controller/
+│   │   │   ├── repository/
+│   │   │   └── service/
+│   │   ├── grading/
+│   │   │   └── service/
+│   │   ├── labs/
+│   │   │   ├── controller/
+│   │   │   ├── repository/
+│   │   │   └── service/
+│   │   └── submissions/
+│   │       ├── controller/
+│   │       ├── repository/
+│   │       └── service/
+│   └── shared/
+│       ├── db.js
+│       ├── problems.js
+│       └── validation.js
 ├── tests/
 │   └── contract/                    # (Tiêu chí 6) Chứa các contract tests kiểm thử endpoint (bắt chặt lỗi, ownership, idempotency)
 │       └── post-labs-submissions.test.js
