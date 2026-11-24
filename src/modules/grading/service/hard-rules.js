@@ -30,6 +30,44 @@ export function parseBanList(text) {
 /** @param {Token | undefined} t @param {string} text */
 const isPunct = (t, text) => t?.kind === 'punct' && t.text === text;
 
+// Words that can stand right before a call without making it a declaration.
+const NOT_A_TYPE = new Set([
+  'return',
+  'else',
+  'do',
+  'case',
+  'new',
+  'delete',
+  'throw',
+  'co_return',
+  'co_await',
+  'co_yield',
+  'sizeof',
+  'alignof',
+  'decltype',
+  'typeid',
+  'not',
+  'and',
+  'or',
+]);
+
+/**
+ * Whether the code declares or defines its own function `name` (`void sort(`, `long long gcd(`).
+ * Then an unqualified `name(...)` calls the student's function, not the library one.
+ * @param {Token[]} tokens
+ * @param {string} name
+ */
+function declaresOwn(tokens, name) {
+  return tokens.some(
+    (t, k) =>
+      t.kind === 'ident' &&
+      t.text === name &&
+      isPunct(tokens[k + 1], '(') &&
+      tokens[k - 1]?.kind === 'ident' &&
+      !NOT_A_TYPE.has(tokens[k - 1].text),
+  );
+}
+
 /**
  * Whether the tokens before `idx` say "using namespace <ns>;" or "using <ns>::<base>;".
  * @param {Token[]} tokens
@@ -90,6 +128,7 @@ function linesUsing(tokens, name) {
   const parts = name.split('::').filter((p) => p !== '');
   const base = parts[parts.length - 1];
   const quals = parts.slice(0, -1);
+  const ownFunction = declaresOwn(tokens, base);
 
   for (let i = 0; i < tokens.length; i++) {
     const t = tokens[i];
@@ -116,7 +155,9 @@ function linesUsing(tokens, name) {
     }
 
     // no qualifier written: a use only if the name was brought into scope,
-    // or it is a global (C) name with nothing to bring in
+    // or it is a global (C) name with nothing to bring in, and the student
+    // did not write a function of that name themselves
+    if (ownFunction) continue;
     if (quals.length === 0 || isBroughtIntoScope(tokens, i, quals, base)) {
       lines.add(t.line);
     }
