@@ -2,6 +2,15 @@
 
 Khi ghi AI Log thì phải ghi ở trên cùng.
 
+## 2026-11-25 — Guardrails, checker command, 9router model and dev-set run (PA#3, Thế Vinh)
+
+Tool: Claude Code (Claude Opus 5.5)
+Asked for: T12, T14, T15, T17, T18, T13 and T19: strip comments and identity, schema and timeout guardrails tested with a fake model, the checker command with `MODEL_OFF=1` and its Docker image, our own eval cases, Gemini 3.8 Flash through 9router, and the real dev-set run with its cost per lab.
+Kept: Tests before code for every part (`sanitize`, `constraint-judge`, `checker`, `custom-cases`, `openai-compatible-model`); `ConstraintJudge` turns every schema failure, model error and time-out into `unsure` with `decidedBy: 'guardrail'`; the checker works from `statement.md` and `constraints.json` alone and gives 0 wrongful deductions with the model off; the real run on the dev set (`docs/tasks/PA3/submission/dev-run/`) gives wrongful 0, recall 94.6% (35/37), unsure 1.0%.
+Model and cost: `ag/gemini-3.8-flash` through 9router, a free provider ($0 cap, no payment method). Measured on the dev set: 47 submissions, 39 calls, 117,330 input and 1,906 output tokens, so 2,496.4 input and 40.6 output tokens per submission. One lab of 80 submissions ≈ 80 × 2,496.4 = 199,711 input and 80 × 40.6 = 3,244 output tokens; cost = 199,711 × 0 / 10⁶ + 3,244 × 0 / 10⁶ = $0.
+Changed:
+Rejected:
+
 ## 2026-11-24 — Architecture, refactor prompts, Prisma check, review and PR #16 (Quang Vinh)
 
 Tool: Claude Code (Claude Opus 5.5)
