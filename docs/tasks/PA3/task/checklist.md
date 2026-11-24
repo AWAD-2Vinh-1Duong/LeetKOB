@@ -104,7 +104,7 @@
   - **Chi tiết:** Hoàn thiện đăng nhập JWT (`sub`, `role` thuộc `admin | ta | student`, `exp`) và phân quyền lớp học. Chặn ở tầng API theo đúng convention RFC 9457 của PA#2: TA của lớp khác truy cập lab hoặc review queue của lớp này phải bị từ chối với HTTP status và problem slug chuẩn xác.
   - **Tiêu chí xong:** Có integration test (`node:test` + `supertest`) kiểm tra TA lớp B gọi API lấy lab/queue của lớp A bị từ chối.
 
-- [ ] **T09** — **Xây dựng chức năng TA tạo Lab & Sinh viên nộp bài End-to-End**
+- [x] **T09** — **Xây dựng chức năng TA tạo Lab & Sinh viên nộp bài End-to-End**
   - **Phụ trách:** `@Quang Vinh`
   - **Phụ thuộc:** `T05`, `T08`
   - **Chi tiết:** Xây dựng UI/API cho phép TA tạo mới Lab trong lớp mình: nhập `statement`, bộ test cases (input/expected output), và danh sách `constraints` kèm `deduction`. Đảm bảo endpoint `POST /labs/{labId}/submissions` chạy mượt với PostgreSQL repository, sinh viên xem được trạng thái chuyển từ `queued` sang kết quả chấm test (`Accepted`, `Wrong Answer`, `TLE`...).

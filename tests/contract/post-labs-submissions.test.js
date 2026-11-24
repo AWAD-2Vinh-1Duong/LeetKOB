@@ -4,10 +4,8 @@ import assert from 'node:assert/strict';
 import request from 'supertest';
 import { SignJWT } from 'jose';
 import { createApp } from '../../src/app.js';
-import {
-  InMemoryLabRepository,
-  InMemorySubmissionRepository,
-} from '../../src/repositories/in-memory.js';
+import { InMemoryLabRepository } from '../../src/modules/labs/repository/labs.repository.memory.js';
+import { InMemorySubmissionRepository } from '../../src/modules/submissions/repository/submissions.repository.memory.js';
 
 const SECRET = 'test-secret-not-a-real-one-0123456789';
 const PROBLEM_BASE = 'https://leettkob.dev/problems/';
@@ -258,6 +256,30 @@ describe('who may call it', () => {
     });
   }
 
+  test('a TA with malformed JSON gets 403 forbidden-role', async () => {
+    const { app } = setup();
+    const res = await request(app)
+      .post('/labs/lab-open/submissions')
+      .set('Authorization', `Bearer ${await token({ sub: 'ta1', role: 'ta' })}`)
+      .set('Idempotency-Key', 'key-1')
+      .set('Content-Type', 'application/json')
+      .send('{"language": "cpp",');
+    assertProblem(res, 403, 'forbidden-role', 'Only students may submit');
+  });
+
+  test('an admin with a body over 256 KiB gets 403 forbidden-role', async () => {
+    const { app } = setup();
+    const res = await request(app)
+      .post('/labs/lab-open/submissions')
+      .set(
+        'Authorization',
+        `Bearer ${await token({ sub: 'a1', role: 'admin' })}`,
+      )
+      .set('Idempotency-Key', 'key-1')
+      .send({ language: 'cpp', source: 'x'.repeat(300 * 1024) });
+    assertProblem(res, 403, 'forbidden-role', 'Only students may submit');
+  });
+
   test('401 wins over a missing Idempotency-Key', async () => {
     const { app } = setup();
     assertProblem(
@@ -363,7 +385,7 @@ describe('500 internal-error', () => {
   test('an unexpected failure gives 500 internal-error without leaking details', async () => {
     const leaked = 'connect ECONNREFUSED postgres://app:hunter2@db:5432';
     class FailingLabRepository extends InMemoryLabRepository {
-      /** @returns {Promise<import('../../src/repositories/in-memory.js').Lab | undefined>} */
+      /** @returns {Promise<import('../../src/modules/labs/repository/labs.repository.js').Lab | undefined>} */
       async findForStudent() {
         throw new Error(leaked);
       }
