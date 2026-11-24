@@ -98,7 +98,7 @@
 
 ### Giai đoạn 3: Luồng Nghiệp Vụ Chính & Hard Rules AST (Ngày 22/11 – 23/11)
 
-- [ ] **T08** — **Hoàn thiện Auth (`jose`, `scrypt`) & Phân quyền lớp học (Luật `T1`)**
+- [x] **T08** — **Hoàn thiện Auth (`jose`, `scrypt`) & Phân quyền lớp học (Luật `T1`)**
   - **Phụ trách:** `@Quang Vinh`
   - **Phụ thuộc:** `T03`
   - **Chi tiết:** Hoàn thiện đăng nhập JWT (`sub`, `role` thuộc `admin | ta | student`, `exp`) và phân quyền lớp học. Chặn ở tầng API theo đúng convention RFC 9457 của PA#2: TA của lớp khác truy cập lab hoặc review queue của lớp này phải bị từ chối với HTTP status và problem slug chuẩn xác.
