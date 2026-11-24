@@ -81,3 +81,14 @@
 - Timeout cases: a model that never answers and one that honours the abort signal both end as `unsure` within the timeout, and the signal passed to the model is aborted. A reply in time is used.
 - No network: the suite replaces `globalThis.fetch` with a function that throws, and no verdict ever carries a deduction. No dev-set code or problem id appears in the tests.
 - Not done: the guardrail code (T15) and the real Gemini model (T13). `npm run check` is red on this branch until T15 lands, only because the module is missing.
+
+10. Complete Task T12 (strip comments and student identity before the model) - Thế Vinh with Claude Code
+
+- Tests first, commit `177fef1`: `tests/grading/sanitize.test.js`, 20 tests. Then `src/modules/grading/service/sanitize.js` with `stripComments`, `redactIdentity` and `buildJudgePayload`. No test was changed after its commit.
+- `stripComments` removes `//` and `/* */` comments, including a `//` comment continued with a backslash. A comment becomes one space plus the newlines it spanned, so every code line keeps its line number and the model's evidence lines map back to the original `.cpp` without a table. It keeps `//` and `/*` inside strings, character literals and multi-line raw strings, and does not mistake a digit separator (`1'000`) for a character literal. A prompt-injection comment is gone before the model sees it.
+- The existing tokenizer (`cpp-tokens.js`) drops comments but does not give their positions, so `sanitize.js` has its own small scanner with the same lexical rules instead of changing T11's file.
+- `redactIdentity` replaces the student's name (any case), id and email, and any email address, with `[redacted]`. It treats them as plain text, not as patterns, and leaves other numbers alone.
+- `buildJudgePayload` returns exactly `{ statement, constraints, source }`: only the semantic constraints (`partitionConstraints` from T11 leaves ban lists to the hard rules), each as `{ id, text }` without its deduction, and the cleaned code.
+- Checked that the tests bite: forgetting string literals (2 fail), dropping a comment's newlines (1 fail) and sending the deduction (1 fail). Each change was restored.
+- `npm run check`: lint and format pass, and typecheck has no error from T12; 168 tests pass. The one failure is the T14 guardrail test file, which waits for `constraint-judge.js` (T15).
+- Not done: string literals are kept as they are, so an injection written inside a string still reaches the model; the prompt in T13 must tell the model the code is data. A name folded into an identifier (`NguyenVanA`) is not redacted (marked `shortcut:` in the code).

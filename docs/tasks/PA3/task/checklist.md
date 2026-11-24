@@ -129,7 +129,7 @@
 
 ### Giai đoạn 4: LLM (`gemini-3.6-flash`), Guardrails & Review Queue (Ngày 23/11 – 24/11)
 
-- [ ] **T12** — **Xây dựng bộ tiền xử lý Code (Xóa comment & danh tính sinh viên)**
+- [x] **T12** — **Xây dựng bộ tiền xử lý Code (Xóa comment & danh tính sinh viên)**
   - **Phụ trách:** `@Thế Vinh`
   - **Phụ thuộc:** `T01`
   - **Chi tiết:** Trước khi gửi code cho LLM, tự động xóa toàn bộ comment (`//`, `/* ... */`) và thông tin định danh sinh viên (tên, MSSV, email). Payload gửi model chỉ chứa: `statement`, danh sách `constraints` chưa được hard rule xử lý, và `source` đã làm sạch.
