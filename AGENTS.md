@@ -2,23 +2,25 @@
 
 Read this before touching the LeeTKOB grading harness. Tool-specific files (`CLAUDE.md`, `.github/copilot-instructions.md`) only add to it.
 
-## 1. Stack
+- Each change must be reported in each file `context-dd-mm` in `LeetKOB/docs/tasks/PA-<number>/context` based on the PA number which you are working on.
 
-_(PA#3)_ = decided, not installed yet; PA#2 uses in-memory repositories behind the same interfaces.
+## 1. Stack
 
 - Node.js 22 LTS, ESM, JavaScript with JSDoc and strict `checkJs`; no other language, npm only.
 - Express 5 in one process: controllers → services → repositories, dependencies injected through constructors.
 - `zod` validation, JWT with `jose`, passwords hashed with `scrypt` from `node:crypto`.
 - Tests: `node:test` + `supertest`. Lint/format: ESLint 10 flat config + Prettier 3.
-- _(PA#3)_ PostgreSQL 16 via `pg` and plain SQL, migrations with `node-pg-migrate`; job queue in a table claimed with `FOR UPDATE SKIP LOCKED`; `pino` logging with request IDs.
-- _(PA#3)_ Sandbox: own Docker runner meeting section 4. LLM: `ConstraintJudge` adapter, Gemini `gemini-3.6-flash` on the free tier, model set by `LLM_MODEL`.
+- PostgreSQL 16 via `pg` and plain SQL, migrations with `node-pg-migrate`; job queue in a table claimed with `FOR UPDATE SKIP LOCKED`; `pino` logging with request IDs.
+- Sandbox: own Docker runner meeting section 4. LLM: `ConstraintJudge` adapter, Gemini `gemini-3.6-flash` on the free tier, model set by `LLM_MODEL`.
 
 ## 2. Commands
 
 Local and CI run the same commands. `npm run check` runs all four in order.
 
 - `npm run lint` · `npm run format:check` · `npm run typecheck` · `npm test`
-- `npm run format` fixes formatting. Not in `package.json` until PA#3: `npm run dev`, `npm run db:migrate`.
+- `npm run format` fixes formatting.
+- `npm run dev` starts the application in development mode (`node --watch src/app.js`).
+- `npm run db:migrate` runs database migrations with `node-pg-migrate`.
 
 ## 3. Conventions
 
@@ -32,10 +34,15 @@ Local and CI run the same commands. `npm run check` runs all four in order.
 
 ## 4. Never
 
-- Never expose the model API key, database credentials or any `.env` value to the sandbox: not its environment, filesystem or image.
-- Never relax the sandbox baselines: no network; limits on CPU time, wall time, memory, processes and output; non-root; no host mounts; no Docker socket.
+- Never expose the model API key, database credentials or any `.env` value to the sandbox: not its environment, filesystem, image, or anything the compiler can `#include`.
+- Never relax the sandbox baselines: no network (`--network none`); limits on CPU time, wall time (killing container, not just child process), memory + swap (always read back allocated memory in test to prevent compiler `-O2` elimination), processes (`pids-limit`), and output size; non-root user (`geteuid() != 0`); no host mounts; no Docker socket (`/var/run/docker.sock`); no `--privileged` or `--env-file`.
 - Never call a real model in unit, contract or CI eval runs; use stubs or recorded fixtures. Live model runs are manual only.
-- Never edit a test, a dev-set case, a label or a threshold in `eval.mjs` to make a check pass. Change the code.
+- Never edit a test, an eval case, a label, or a threshold in `eval.mjs` to make a check pass. Change the code.
+- Never edit `eval.mjs` (SHA-256 starts `c836edd8713521bb`), `labels.jsonl` (SHA-256 starts `262cda7b0ef5612e`), or any dev-set `.cpp` file.
+- Never hardcode dev-set problem IDs (such as `sort-merge/s05`) or quote dev-set code in prompts or hard rules.
+- Never allow a model verdict to alter student marks directly without explicit TA review in the Review Queue (Zero-Tolerance syllabus rule).
+- Never use model output without schema validation and timeout checks (falling back to `unsure`).
+- Never fake a dev-set run: committed `call-log.jsonl` must contain genuine provider request IDs, models, tokens, latency, and cost per call.
 - Never make a CI step pass silently (`|| true`, `continue-on-error`, an empty workflow).
 - Never push to `main`; everything goes through a pull request with the required `quality` check green.
 

@@ -2,6 +2,38 @@
 
 Khi ghi AI Log thì phải ghi ở trên cùng.
 
+## 2026-11-24 — Cài đặt PostgreSQL 16, node-pg-migrate và PostgreSQL Repositories (Bình Dương)
+
+Tool: Antigravity Agent
+Asked for: Thực hiện Task T03 trong checklist: Cài đặt các bảng cơ sở dữ liệu qua `node-pg-migrate`, cài đặt PostgreSQL repositories cho `labs` và `submissions`, tích hợp `pino` logger với `request-id`, và đảm bảo toàn bộ contract tests pass trên PostgreSQL.
+Kept: Migration SQL `migrations/1795453690243_init-schema.sql` tạo đủ 8 bảng (`users`, `classes`, `class_enrollments`, `labs`, `submissions`, `judge_jobs`, `verdicts`, `llm_call_logs`) kèm index và unique index `(student_id, lab_id, idempotency_key)`. Tạo `src/db.js` và `src/repositories/postgres.js` với `PostgresLabRepository` và `PostgresSubmissionRepository` chuẩn interface. Tích hợp `pino` logger vào `src/app.js` tự động gắn `req.id` và child logger. Viết test `tests/contract/post-labs-submissions-postgres.test.js` kiểm tra toàn bộ contract trên PostgreSQL thực tế.
+Changed: Cấu hình test contract postgres tự động skip khi không có biến `DATABASE_URL` để đảm bảo lệnh `npm run check` trên môi trường CI (chưa bật container DB) vẫn xanh 100%, đồng thời chạy đầy đủ 43 tests khi có `DATABASE_URL`.
+Rejected: Không dùng ORM nặng (Prisma, TypeORM) theo đúng quy tắc kiến trúc `AGENTS.md` (chỉ dùng `pg` và plain SQL).
+
+## 2026-11-21 — Sửa lỗi Prettier format cho toàn bộ tài liệu PA#3 (Bình Dương)
+
+Tool: Antigravity Agent
+Asked for: Sửa lỗi Prettier (`npm run format:check`) báo đỏ trên CI workflow cho 11 file Markdown và tài liệu.
+Kept: Cập nhật `.prettierignore` để bỏ qua các file tài liệu rubric đề bài môn học từ Classroom theo đúng quy định. Chạy `npm run format` định dạng lại toàn bộ 11 file và xác minh `npm run check` xanh 100%.
+Changed: No
+Rejected: No
+
+## 2026-11-21 — Cập nhật AGENTS.md, .env.example và scripts cho PA#3 (Bình Dương)
+
+Tool: Antigravity Agent
+Asked for: Thực hiện Task T02 trong checklist: Cập nhật `AGENTS.md` bổ sung các quy tắc Never của PA#3 theo rubric Catching your assistant, cập nhật `.env.example`, thêm `npm run dev` và `npm run db:migrate` vào `package.json`.
+Kept: Danh sách cấm (Never) đặc thù PA#3: cấm mount docker socket, cấm `--privileged`, cấm truyền secret (`LLM_API_KEY`) vào sandbox container, cấm test cấp phát bộ nhớ mà không đọc lại (tránh tối ưu hóa compiler), cấm sửa dev set/eval script, cấm hardcode ID dev set trong rules/prompts, cấm bypass TA review queue. Cập nhật `.env.example` đầy đủ biến và giữ trống giá trị. Thêm script `dev` và `db:migrate` vào `package.json`.
+Changed: Giữ `MODEL_OFF=` trong `.env.example` để hỗ trợ switch đánh giá chuẩn theo yêu cầu Tiêu chí 6 rubric. Cập nhật mục Stack và Commands của `AGENTS.md` phản ánh trạng thái kích hoạt của PA#3.
+Rejected: Không truyền bất kỳ giá trị secret thật nào vào file mẫu; không gán giá trị mặc định cho `.env.example`.
+
+## 2026-11-21 — Thiết lập không gian nộp bài PA#3 (Bình Dương)
+
+Tool: Antigravity Agent
+Asked for: Thiết lập không gian làm việc `docs/tasks/PA3/submission/` với các mẫu sẵn sàng điền (`PA3.md`, `SELF_ASSESSMENT_REPORT.md`, `dev-run/.gitkeep`), bảng kiểm tra trước khi nộp (`submission-note.txt`), và cập nhật `.prettierignore` để đảm bảo quy trình kiểm tra chất lượng đồng nhất.
+Kept: Cấu trúc 8 tiêu chí chấm điểm của PA#3 (tổng 100 điểm), 9 luật tối thiểu của sandbox (`M1`–`M9`), bảng 5 tài khoản test giả lập, các lệnh CLI checker với cờ `MODEL_OFF=1`, thư mục lưu trữ kết quả chạy dev set, và bảng kiểm tra plain-text nhấn mạnh quy tắc điểm liệt (Syllabus rule) và cơ chế Human Gate.
+Changed: Lưu các bản mẫu trực tiếp trong `docs/tasks/PA3/submission/` kèm quy tắc đồng bộ bắt buộc ra thư mục gốc (`PA3.md` và `SELF_ASSESSMENT_REPORT.md`) trước khi gắn tag `pa3` và nén file `.zip`. Thêm `docs/tasks/PA3/submission/dev-run/**` và `submission-note.txt` vào `.prettierignore` để tránh lỗi định dạng dữ liệu raw/plain text.
+Rejected: Tuyệt đối không lưu API key hay tài khoản thật vào bất kỳ file template nào; không điền sẵn điểm số tự chấm mà dùng các placeholder `<TODO: ...>` để nhóm tự đánh giá trung thực khi hoàn thiện từng tiêu chí.
+
 ## 2026-11-08 — Kiểm tra bài nộp PA#2 và sửa minh chứng (Quang Vinh)
 
 Tool: Claude Code (Claude Opus 5.5)
