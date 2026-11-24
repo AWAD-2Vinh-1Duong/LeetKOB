@@ -95,7 +95,8 @@ describe('auth and class access', () => {
       const { payload } = await jwtVerify(
         res.body.token,
         new TextEncoder().encode(SECRET),
-        { algorithms: ['HS256'] },
+        // the app signs with the injected NOW, so verify against it, not the wall clock
+        { algorithms: ['HS256'], currentDate: NOW },
       );
       assert.equal(payload.sub, 'ta-a');
       assert.equal(payload.role, 'ta');
