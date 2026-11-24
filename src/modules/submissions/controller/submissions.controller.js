@@ -1,8 +1,6 @@
 import { z } from 'zod';
-import { ProblemError } from '../../../shared/problems.js';
 import { parseBody } from '../../../shared/validation.js';
 
-const IDEMPOTENCY_KEY = /^[\x21-\x7E]{1,255}$/;
 const MAX_SOURCE_BYTES = 65_536;
 
 const bodySchema = z.strictObject({
@@ -25,13 +23,7 @@ export class SubmissionsController {
   create = async (req, res) => {
     const user = res.locals.user;
 
-    const idempotencyKey = req.get('idempotency-key') ?? '';
-    if (!IDEMPOTENCY_KEY.test(idempotencyKey)) {
-      throw new ProblemError(
-        'idempotency-key-missing',
-        'Send an Idempotency-Key of 1-255 printable ASCII characters.',
-      );
-    }
+    const idempotencyKey = res.locals.idempotencyKey;
 
     const body = parseBody(bodySchema, req.body);
 

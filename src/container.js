@@ -1,5 +1,5 @@
 import pino from 'pino';
-import { createAuthMiddleware } from './middlewares/require-auth.middleware.js';
+import { createRequireAuth } from './middlewares/require-auth.middleware.js';
 import { AuthController } from './modules/auth/controller/auth.controller.js';
 import { AuthService } from './modules/auth/service/auth.service.js';
 import { PostgresUserRepository } from './modules/auth/repository/users.repository.postgres.js';
@@ -45,7 +45,7 @@ export function createContainer({
 
   return {
     logger,
-    requireAuth: createAuthMiddleware({ secret: jwtSecret }),
+    requireAuth: createRequireAuth({ secret: jwtSecret }),
     controllers: {
       // Without a user repository there is no login route (some tests build the app without one).
       auth: userRepository
