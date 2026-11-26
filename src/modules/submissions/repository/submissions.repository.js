@@ -4,7 +4,8 @@
  *
  * @typedef {{
  *   id: string, labId: string, studentId: string, language: 'cpp',
- *   status: 'queued', createdAt: string, idempotencyKey: string, fingerprint: string,
+ *   status: 'queued' | 'compiling' | 'running' | 'judged' | 'failed',
+ *   createdAt: string, idempotencyKey: string, fingerprint: string,
  *   source?: string
  * }} Submission
  * @typedef {{

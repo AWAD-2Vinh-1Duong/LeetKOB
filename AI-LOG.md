@@ -2,6 +2,14 @@
 
 Khi ghi AI Log thì phải ghi ở trên cùng.
 
+## 2026-11-26 — PostgreSQL Job Queue (`FOR UPDATE SKIP LOCKED`) & Isolated Worker (PA#3 T05, Dương)
+
+Tool: Antigravity
+Asked for: Task T05 — Enqueue a job in `judge_jobs` atomically when `POST /labs/:labId/submissions` returns `202 Accepted`, build an isolated background worker process pulling jobs with PostgreSQL `FOR UPDATE SKIP LOCKED`, guarantee idempotent verdict persistence for Law `Q1` (stop worker -> submit -> start worker -> graded once with 1 unique set of unreviewed verdicts), and add `node:test` coverage for both in-memory and PostgreSQL.
+Kept: Modular layout (`src/modules/grading/repository/judge-jobs.repository.{js,memory.js,postgres.js}`, `src/modules/grading/service/judge-worker.service.js`, `src/worker.js`, `createWorkerContainer` in `src/container.js`); transactional `INSERT INTO submissions` + `INSERT INTO judge_jobs` in `PostgresSubmissionRepository.insertIfAbsent`; deterministic SHA-256 verdict IDs (`(submission_id, constraint_id)`) with `ON CONFLICT (id) DO NOTHING`, `deduction = 0`, `is_reviewed = FALSE`; verified 245/245 tests passing against real PostgreSQL 18 (`npm run db:migrate && npm run check`) and 222/222 tests without DB.
+Changed: Replaced initial single-statement data-modifying CTE for `submissions` + `judge_jobs` with an explicit PostgreSQL transaction (`BEGIN`/`COMMIT`) after real PostgreSQL tests caught FK snapshot visibility errors, and added explicit SQL type casts (`::varchar`, `::timestamptz`) in `PostgresJudgeJobsRepository.enqueue`.
+Rejected: Adding a new database migration (Tier 2) — reused the existing `judge_jobs` and `verdicts` tables from `1795453690243_init-schema.sql` with deterministic 64-char primary keys on `verdicts(id)`.
+
 ## 2026-11-25 — Guardrails, checker command, 9router model and dev-set run (PA#3, Thế Vinh)
 
 Tool: Claude Code (Claude Opus 5.5)

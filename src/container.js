@@ -9,6 +9,8 @@ import { PostgresLabRepository } from './modules/labs/repository/labs.repository
 import { SubmissionsController } from './modules/submissions/controller/submissions.controller.js';
 import { SubmissionService } from './modules/submissions/service/submissions.service.js';
 import { PostgresSubmissionRepository } from './modules/submissions/repository/submissions.repository.postgres.js';
+import { PostgresJudgeJobsRepository } from './modules/grading/repository/judge-jobs.repository.postgres.js';
+import { JudgeWorkerService } from './modules/grading/service/judge-worker.service.js';
 
 /**
  * The composition root: the only file that decides which implementation backs
@@ -26,6 +28,7 @@ import { PostgresSubmissionRepository } from './modules/submissions/repository/s
  *   labRepository?: import('./modules/labs/repository/labs.repository.js').LabRepository,
  *   submissionRepository?: import('./modules/submissions/repository/submissions.repository.js').SubmissionRepository,
  *   userRepository?: import('./modules/auth/repository/users.repository.js').UserRepository,
+ *   judgeJobsRepository?: import('./modules/grading/repository/judge-jobs.repository.js').JudgeJobsRepository,
  * }} deps
  */
 export function createContainer({
@@ -36,6 +39,7 @@ export function createContainer({
   labRepository = pool && new PostgresLabRepository({ pool }),
   submissionRepository = pool && new PostgresSubmissionRepository({ pool }),
   userRepository = pool && new PostgresUserRepository({ pool }),
+  judgeJobsRepository = pool && new PostgresJudgeJobsRepository({ pool }),
 }) {
   if (!labRepository || !submissionRepository) {
     throw new Error(
@@ -60,9 +64,48 @@ export function createContainer({
         submissionService: new SubmissionService({
           labRepository,
           submissionRepository,
+          judgeJobsRepository,
           now,
         }),
       }),
     },
   };
+}
+
+/**
+ * Composition root for the isolated background worker process.
+ * @param {{
+ *   pool?: import('pg').Pool,
+ *   judgeJobsRepository?: import('./modules/grading/repository/judge-jobs.repository.js').JudgeJobsRepository,
+ *   judge?: import('./modules/grading/service/judge-worker.service.js').Judge | null,
+ *   evaluator?: import('./modules/grading/service/judge-worker.service.js').SubmissionEvaluator,
+ *   workerId?: string,
+ *   pollIntervalMs?: number,
+ *   logger?: import('pino').Logger,
+ *   now?: () => Date,
+ * }} deps
+ */
+export function createWorkerContainer({
+  pool,
+  judgeJobsRepository = pool && new PostgresJudgeJobsRepository({ pool }),
+  judge = null,
+  evaluator,
+  workerId,
+  pollIntervalMs = 500,
+  logger = pino({ level: process.env.LOG_LEVEL || 'silent' }),
+  now = () => new Date(),
+}) {
+  if (!judgeJobsRepository) {
+    throw new Error('judgeJobsRepository or pool must be provided');
+  }
+  const worker = new JudgeWorkerService({
+    judgeJobsRepository,
+    judge,
+    evaluator,
+    workerId,
+    pollIntervalMs,
+    logger,
+    now,
+  });
+  return { worker, judgeJobsRepository, logger };
 }

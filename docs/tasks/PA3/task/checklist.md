@@ -67,7 +67,7 @@
 
 ### Giai đoạn 2: Queue (`FOR UPDATE SKIP LOCKED`) & Sandbox 9 Luật (Ngày 21/11 – 22/11)
 
-- [ ] **T05** — **Xây dựng Job Queue trên PostgreSQL & Worker tách biệt (Luật `Q1`)**
+- [x] **T05** — **Xây dựng Job Queue trên PostgreSQL & Worker tách biệt (Luật `Q1`)**
   - **Phụ trách:** `@Dương`
   - **Phụ thuộc:** `T03`
   - **Chi tiết:** Khi `POST /labs/{labId}/submissions` trả về `202 Accepted` (`status: "queued"`), ghi đồng thời 1 job vào bảng `judge_jobs`. Xây dựng tiến trình Worker độc lập (không chạy chung HTTP request handler) kéo job bằng câu lệnh SQL `FOR UPDATE SKIP LOCKED`. Đảm bảo tính idempotent khi lưu verdict để thỏa luật `Q1`: _dừng worker → nộp bài → bật worker → bài chỉ được chấm đúng 1 lần (1 bộ verdict duy nhất)_.

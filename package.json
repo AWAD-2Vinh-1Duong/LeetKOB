@@ -9,6 +9,7 @@
   },
   "scripts": {
     "dev": "node --watch src/server.js",
+    "worker": "node src/worker.js",
     "db:migrate": "node-pg-migrate up",
     "lint": "eslint .",
     "format": "prettier --write .",

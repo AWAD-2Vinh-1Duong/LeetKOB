@@ -8,12 +8,19 @@ export class SubmissionService {
    * @param {{
    *   labRepository: import('../../labs/repository/labs.repository.js').LabRepository,
    *   submissionRepository: import('../repository/submissions.repository.js').SubmissionRepository,
+   *   judgeJobsRepository?: import('../../grading/repository/judge-jobs.repository.js').JudgeJobsRepository,
    *   now: () => Date,
    * }} deps
    */
-  constructor({ labRepository, submissionRepository, now }) {
+  constructor({
+    labRepository,
+    submissionRepository,
+    judgeJobsRepository,
+    now,
+  }) {
     this.labRepository = labRepository;
     this.submissionRepository = submissionRepository;
+    this.judgeJobsRepository = judgeJobsRepository;
     this.now = now;
   }
 
@@ -60,9 +67,11 @@ export class SubmissionService {
         idempotencyKey,
         fingerprint,
       });
-    return created
-      ? { submission, replayed: false }
-      : this.#replay(submission, fingerprint);
+    if (!created) return this.#replay(submission, fingerprint);
+    if (this.judgeJobsRepository) {
+      await this.judgeJobsRepository.enqueue(submission.id, now);
+    }
+    return { submission, replayed: false };
   }
 
   /**
