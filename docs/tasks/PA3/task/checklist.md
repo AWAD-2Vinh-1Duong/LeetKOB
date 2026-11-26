@@ -73,7 +73,7 @@
   - **Chi tiết:** Khi `POST /labs/{labId}/submissions` trả về `202 Accepted` (`status: "queued"`), ghi đồng thời 1 job vào bảng `judge_jobs`. Xây dựng tiến trình Worker độc lập (không chạy chung HTTP request handler) kéo job bằng câu lệnh SQL `FOR UPDATE SKIP LOCKED`. Đảm bảo tính idempotent khi lưu verdict để thỏa luật `Q1`: _dừng worker → nộp bài → bật worker → bài chỉ được chấm đúng 1 lần (1 bộ verdict duy nhất)_.
   - **Tiêu chí xong:** Có test `node:test` chứng minh dừng/bật worker không tạo duplicate verdict; commit `feat(sandbox): add postgres job queue and isolated worker`.
 
-- [ ] **T06** — **Viết trước 9 bài nộp C++ tấn công (Attack Submissions) cho Sandbox (`M1`–`M9`)**
+- [x] **T06** — **Viết trước 9 bài nộp C++ tấn công (Attack Submissions) cho Sandbox (`M1`–`M9`)**
   - **Phụ trách:** `@Dương`
   - **Phụ thuộc:** `T01`
   - **Chi tiết:** Tạo 9 file `.cpp` tấn công và test suite tương ứng 9 luật tối thiểu:
@@ -88,7 +88,7 @@
     9. `M9`: Đọc biến môi trường (`getenv("LLM_API_KEY")`), lục file hệ thống hoặc `#include` file chứa secret.
   - **Tiêu chí xong:** Commit `test(sandbox): add 9 minimum security attack submissions` **trước** khi hoàn thiện cấu hình runner.
 
-- [ ] **T07** — **Cấu hình Docker Sandbox Runner đạt 9 luật & chạy CI trên tag `pa3`**
+- [x] **T07** — **Cấu hình Docker Sandbox Runner đạt 9 luật & chạy CI trên tag `pa3`**
   - **Phụ trách:** `@Dương`
   - **Phụ thuộc:** `T05`, `T06`
   - **Chi tiết:** Thực hiện cả biên dịch (`g++`) và chạy thực thi bên trong sandbox container với `--network none`, giới hạn CPU/memory/swap/pids/ulimit, user non-root, không bind-mount host/docker.sock, chỉ truyền biến `SANDBOX_*` (tuyệt đối không truyền `LLM_*` hay `DATABASE_URL`). Đưa bộ test 9 attack submissions vào `.github/workflows/ci.yml` để chạy tự động trên PR và tag `pa3`.
