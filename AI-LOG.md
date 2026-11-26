@@ -2,6 +2,14 @@
 
 Khi ghi AI Log thì phải ghi ở trên cùng.
 
+## 2026-11-26 — Hardened Docker Sandbox & 9 Attack Submissions (PA#3 T06 & T07, Dương)
+
+Tool: Antigravity
+Asked for: Tasks T06 and T07 — write and commit 9 C++ attack submissions (`M1`–`M9`) before configuring the runner, build a hardened Docker sandbox (`Dockerfile.sandbox`, `src/modules/grading/service/sandbox-runner.js`) enforcing all 9 security minimums (compile inside sandbox, `--network none`, CPU/wall/memory+swap/pids/output limits, non-root UID 10001, `--read-only` rootfs with no host mounts or `docker.sock`, stripped environment passing only `SANDBOX_*`), and wire the 9-attack suite into `.github/workflows/ci.yml` on PRs and tag `pa3`.
+Kept: Test-first commit `724a87b` (`test(sandbox): add 9 minimum security attack submissions`); Alpine 3.20 + `g++` sandbox image (`USER 10001:10001`); stdin base64 source/input transport eliminating host bind mounts; container-level wall-clock kill (`docker rm -f`); verified 20/20 sandbox tests passing against real Docker (`SANDBOX_DOCKER=1`) and 232/232 tests in `npm run check`.
+Changed: Added `uid=10001,gid=10001` and `TMPDIR=/work` to `--tmpfs /work` so non-root `g++` compilation works under `--read-only`; used `--ulimit cpu=<s:s>` with duration disambiguation for `exitCode 137` (`cpu-limit` vs `memory-limit`) because Alpine PID 1 masks `SIGXCPU`.
+Rejected: Bind-mounting a host temp directory (`-v`) into the sandbox container (violates `M8` no-host-mount rule).
+
 ## 2026-11-26 — PostgreSQL Job Queue (`FOR UPDATE SKIP LOCKED`) & Isolated Worker (PA#3 T05, Dương)
 
 Tool: Antigravity
