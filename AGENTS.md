@@ -36,9 +36,12 @@ Local and CI run the same commands. `npm run check` runs all four in order.
 
 - Never expose the model API key, database credentials or any `.env` value to the sandbox: not its environment, filesystem, image, or anything the compiler can `#include`.
 - Never relax the sandbox baselines: no network (`--network none`); limits on CPU time, wall time (killing container, not just child process), memory + swap (always read back allocated memory in test to prevent compiler `-O2` elimination), processes (`pids-limit`), and output size; non-root user (`geteuid() != 0`); no host mounts; no Docker socket (`/var/run/docker.sock`); no `--privileged` or `--env-file`.
-- Never call a real model in unit, contract or CI eval runs; use stubs or recorded fixtures. Live model runs are manual only.
+- Never call a real model in unit tests, contract tests, or the `quality` CI job; those must run offline with stubs or recorded fixtures. Real model calls in CI are permitted only in the dedicated `eval-gate` job using repository secrets (never exposed to fork PRs).
 - Never edit a test, an eval case, a label, or a threshold in `eval.mjs` to make a check pass. Change the code.
 - Never edit `eval.mjs` (SHA-256 starts `c836edd8713521bb`), `labels.jsonl` (SHA-256 starts `262cda7b0ef5612e`), or any dev-set `.cpp` file.
+- Never edit labels, `.cpp` files, or tags in `eval/custom-cases/` (or `eval/dev-set/`) to make a red CI eval gate pass; fix the checker instead.
+- Never commit `marking.env` to Git or pack it inside the submission `.zip` archive.
+- Never write a guardrail test that still passes when the guardrail code is removed.
 - Never hardcode dev-set problem IDs (such as `sort-merge/s05`) or quote dev-set code in prompts or hard rules.
 - Never allow a model verdict to alter student marks directly without explicit TA review in the Review Queue (Zero-Tolerance syllabus rule).
 - Never use model output without schema validation and timeout checks (falling back to `unsure`).
@@ -52,7 +55,7 @@ Tier 3 overrides Tiers 1 and 2.
 
 - **Tier 1, run freely:** read and search files; `git status`, `git diff`; the commands in section 2.
 - **Tier 2, ask first:** `git push` or opening a pull request; adding, updating or removing a dependency; writing a migration; changing CI configuration.
-- **Tier 3, never (a human does it):** migrating the production database; deploy or rollback; deleting records, dropping tables or rotating keys; sending email or charging users; reading, printing or editing `.env`, or copying a secret into code, a commit, a log, a chat or `AI-LOG.md`; changing the provider's spending cap or billing.
+- **Tier 3, never (a human does it):** migrating the production database; deploy or rollback; deleting records, dropping tables or rotating keys; sending email or charging users; reading, printing, editing, or committing `.env` or `marking.env`, or copying a secret into code, a commit, a log, a chat or `AI-LOG.md`; changing the provider's spending cap or billing.
 
 ## 6. Code layout
 

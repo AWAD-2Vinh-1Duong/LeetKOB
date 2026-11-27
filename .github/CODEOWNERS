@@ -1,0 +1,4 @@
+# Require code owner review for tests, eval datasets/cases, and CI workflows.
+/tests/ @AWAD-2Vinh-1Duong
+/eval/ @AWAD-2Vinh-1Duong
+/.github/ @AWAD-2Vinh-1Duong

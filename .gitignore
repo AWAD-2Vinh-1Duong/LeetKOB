@@ -1,6 +1,7 @@
 .env
 .env.*
 !.env.example
+marking.env
 node_modules/
 coverage/
 CLAUDE.local.md
