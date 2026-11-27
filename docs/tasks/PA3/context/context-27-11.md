@@ -10,6 +10,7 @@
     - Cấu hình chung `x-logging` (`driver: json-file`, `max-size: '10m'`, `max-file: '3'`) áp dụng cho toàn bộ service để tránh tràn log trên VPS 8 GB khi bị spam/tấn công.
     - Tách quyền Docker socket: `api` **không** gắn `/var/run/docker.sock`; chỉ riêng `worker` mount `/var/run/docker.sock` để gọi `leetkob-sandbox`.
     - Dùng `env_file: [{ path: .env, required: false }]` để `docker compose config` hợp lệ cả khi chưa có `.env`.
+    - Bổ sung `environment: { PUBLIC_DOMAIN: ${PUBLIC_DOMAIN:-localhost} }` cho riêng service `caddy` (và thêm `PUBLIC_DOMAIN=` vào `.env.example`) để Caddy nhận được domain thật xin HTTPS Let's Encrypt mà không bị lộ các biến bí mật (`JWT_SECRET`, `LLM_API_KEY`, `DATABASE_URL`) vào container proxy.
   - `Caddyfile`: Reverse proxy `{$PUBLIC_DOMAIN:localhost}` $\rightarrow$ `api:3000` (tự động cấp HTTPS Let's Encrypt khi triển khai trên VPS).
 - **Xác minh:**
   - `npm run format && npm run check`: **232/232 tests pass**, ESLint/Prettier/`tsc --noEmit` xanh.

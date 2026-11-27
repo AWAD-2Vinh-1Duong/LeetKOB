@@ -89,6 +89,8 @@ services:
     image: caddy:2-alpine
     restart: unless-stopped
     logging: *default-logging
+    environment:
+      PUBLIC_DOMAIN: ${PUBLIC_DOMAIN:-localhost}
     ports:
       - '80:80'
       - '443:443'
