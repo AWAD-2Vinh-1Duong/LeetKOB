@@ -5,5 +5,4 @@ node_modules
 tests
 eval
 docs
-migrations
 *.md
