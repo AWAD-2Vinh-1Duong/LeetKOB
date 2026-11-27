@@ -155,8 +155,8 @@
   - **Chi tiết:** Tích hợp `zod` schema validator và HTTP timeout vào `ConstraintJudge` adapter. Mọi lỗi parse/schema hoặc timeout đều fallback an toàn về `unsure` kèm lý do để TA xem xét.
   - **Tiêu chí xong:** Pass 100% test fake-model ở `T14`; commit `feat(rules): enforce schema validation and timeout guardrails`.
 
-- [ ] **T16** — **Xây dựng Review Queue của TA & Khóa cổng công bố điểm (Human Gate)**
-  - **Phụ trách:** `@Quang Vinh`
+- [x] **T16** — **Xây dựng Review Queue của TA & Khóa cổng công bố điểm (Human Gate)**
+  - **Phụ trách:** `@Quang Vinh` (làm thay: `@Thế Vinh`, 27/11)
   - **Phụ thuộc:** `T11`, `T15`
   - **Chi tiết:** Đẩy toàn bộ verdict (kèm `evidence` và `deduction` của TA) vào **Review Queue của TA**. Đảm bảo điểm công bố của sinh viên tuyệt đối không bị trừ trước khi TA duyệt; nếu đã có API/nút `Publish`, API bắt buộc trả lỗi RFC 9457 khi còn bất kỳ verdict nào trong queue chưa được duyệt. Kiểm tra **Product Owners' FAQ** trên group lớp để hiển thị đúng trạng thái cho sinh viên trước khi publish và ghi lại mã câu hỏi FAQ đã áp dụng.
   - **Tiêu chí xong:** Có integration test chứng minh sinh viên không thấy điểm trừ khi TA chưa duyệt.
