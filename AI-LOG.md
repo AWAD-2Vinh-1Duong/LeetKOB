@@ -2,6 +2,14 @@
 
 Khi ghi AI Log thì phải ghi ở trên cùng.
 
+## 2026-11-28 — Update AGENTS.md, .gitignore, CODEOWNERS & PA#4 Context Log (PA#4 T02, Dương)
+
+Tool: Antigravity
+Asked for: Run pre-flight checks on branch and existing config, then execute task T02 for PA#4 (prepare for PA4): update `AGENTS.md` (allow real model calls only in the CI `eval-gate` job via secrets, keep unit/contract/`quality` offline, add PA#4 eval/guardrail/`marking.env` rules in `## 4. Never` and `marking.env` in `## 5. Permissions` Tier 3), ensure `LLM_COST_CAP_PER_LAB_USD=` is in `.env.example`, add `marking.env` to `.gitignore`, add `CODEOWNERS` protecting `/tests/`, `/eval/`, and `/.github/`, log in `docs/tasks/PA4/context/context-28-11.md`, verify `npm run check`, and commit locally as `chore(rules): update AGENTS.md and env config for PA4` without pushing.
+Kept: Verified `feat/pa4-prototype` branch and `LLM_COST_CAP_PER_LAB_USD=` already present in `.env.example`; updated `AGENTS.md` and `.gitignore` (verified `git check-ignore -v marking.env`); created `.github/CODEOWNERS` (`@AWAD-2Vinh-1Duong`); updated `docs/tasks/PA4/context/context-28-11.md`; ran `npm run format && npm run check` (lint, format:check, typecheck, 234/234 tests pass) and committed `f8d5c79` locally. Note: prepare for PA4.
+Changed:
+Rejected:
+
 ## 2026-11-27 — Wire Docker Sandbox Execution into JudgeWorkerService (PA#3 T07+T09+T11, Dương)
 
 Tool: Antigravity
