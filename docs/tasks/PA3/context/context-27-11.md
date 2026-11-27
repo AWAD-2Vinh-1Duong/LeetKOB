@@ -16,3 +16,16 @@
   - `npm run format && npm run check`: **232/232 tests pass**, ESLint/Prettier/`tsc --noEmit` xanh.
   - `docker compose config -q`: Hợp lệ (`docker-compose.yml valid`).
   - _(Chưa chạy `git commit` theo yêu cầu của người dùng)._
+
+## 2. Tạo Script Seed PA#3 Idempotent (`scripts/seed-pa3.js` — `@Dương`)
+
+- **Kiểm tra thực tế schema & auth:**
+  - Bảng từ `migrations/`: `classes(id, name)`, `users(id, email, password_hash, role)`, `class_staff(class_id, user_id)`, `class_enrollments(class_id, student_id)`.
+  - Hàm băm mật khẩu từ `src/modules/auth/service/passwords.js`: `hashPassword` dùng `node:crypto` `scrypt` (salt 16 bytes, key 64 bytes, format `scrypt$<saltHex>$<hashHex>`).
+- **Cài đặt:**
+  - `scripts/seed-pa3.js`: Kết nối `process.env.DATABASE_URL`, chạy transaction `BEGIN ... COMMIT`, idempotent (`ON CONFLICT DO NOTHING`) cho 2 lớp (`Class A`, `Class B`) và 5 tài khoản synthetic (`admin@leettkob.dev`, `ta1@leettkob.dev`, `ta2@leettkob.dev`, `student1@student.hcmus.edu.vn`, `student2@student.hcmus.edu.vn`), in bảng tài khoản + mật khẩu ra console.
+  - `package.json`: Thêm `"db:seed": "node scripts/seed-pa3.js"`.
+  - `Dockerfile.app`: Thêm `COPY scripts ./scripts` vào stage `api` để chạy được `npm run db:seed` trong container.
+- **Xác minh:**
+  - Chạy `npm run db:seed` **2 lần liên tiếp** trên PostgreSQL 18 đều thành công (2 classes, 5 users, 2 class_staff, 2 class_enrollments).
+  - Chạy `npm run format && npm run check`: pass **232/232 tests**.

@@ -6,6 +6,7 @@ COPY src ./src
 COPY migrations ./migrations
 
 FROM base AS api
+COPY scripts ./scripts
 USER node
 EXPOSE 3000
 CMD ["node", "src/server.js"]

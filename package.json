@@ -11,6 +11,7 @@
     "dev": "node --watch src/server.js",
     "worker": "node src/worker.js",
     "db:migrate": "node-pg-migrate up",
+    "db:seed": "node scripts/seed-pa3.js",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",

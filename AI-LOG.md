@@ -2,6 +2,14 @@
 
 Khi ghi AI Log thì phải ghi ở trên cùng.
 
+## 2026-11-27 — Idempotent PA#3 Synthetic Seed Script (PA#3 T20 Prep, Dương)
+
+Tool: Antigravity
+Asked for: Inspect migration schemas and `scrypt` password hashing, create an idempotent `scripts/seed-pa3.js` seeding `Class A`, `Class B`, and 5 synthetic accounts (`admin@leettkob.dev`, `ta1@leettkob.dev`, `ta2@leettkob.dev`, `student1@student.hcmus.edu.vn`, `student2@student.hcmus.edu.vn`), add `db:seed` to `package.json`, copy `scripts/` into `Dockerfile.app` (`api` stage), and document in `seed-report.md`.
+Kept: Reused `hashPassword` (`src/modules/auth/service/passwords.js`, `scrypt$<salt>$<hash>`) and `createPool` (`src/shared/db.js`); wrapped seeding in a PostgreSQL `BEGIN`/`COMMIT` transaction with `ON CONFLICT DO NOTHING` on `classes`, `users(email)`, `class_staff`, and `class_enrollments`; verified running `npm run db:seed` twice consecutively against PostgreSQL 18 and ran `npm run check` cleanly.
+Changed: Resolved `user.id` by `SELECT id FROM users WHERE email = $1` after `ON CONFLICT (email) DO NOTHING` so foreign-key inserts into `class_staff` and `class_enrollments` remain resilient even if a pre-existing user row has a different ID.
+Rejected: Re-implementing `scrypt` logic separately inside `scripts/seed-pa3.js` (would risk drifting from `verifyPassword`).
+
 ## 2026-11-27 — Production Docker Compose Stack, Dockerfile.app & Caddyfile (PA#3 T20 Prep, Dương)
 
 Tool: Antigravity
