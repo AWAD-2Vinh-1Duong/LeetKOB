@@ -8,7 +8,7 @@
 ## 1. Public Deployment & Test Accounts
 
 - **Public URL:** https://57.155.2.27.sslip.io _(kept running until PA#4 marks are out)_
-- **API Spending Cap:** `$0 USD` (`gemini-3.5-flash` on the Google AI Studio free tier, no billing attached; the committed dev-run was measured earlier with `ag/gemini-3.8-flash` through 9router, also free)
+- **API Spending Cap:** `$0 USD` (`ag/gemini-3.8-flash` through 9router; the `ag/` provider is free, no payment method attached)
 - The backend is a REST API (no web UI): `GET /` returns `404`. Use the `curl` walk-through below.
 
 > **Note:** All accounts below contain synthetic test data only.
@@ -100,7 +100,7 @@ A student who asks for the lab of another class gets the same `404`, and a stude
 
 - **Predictions:** [`docs/tasks/PA3/submission/dev-run/predictions.jsonl`](docs/tasks/PA3/submission/dev-run/predictions.jsonl)
 - **`eval.mjs` report:** [`docs/tasks/PA3/submission/dev-run/eval-report.txt`](docs/tasks/PA3/submission/dev-run/eval-report.txt)
-- **Call log:** [`docs/tasks/PA3/submission/dev-run/call-log.jsonl`](docs/tasks/PA3/submission/dev-run/call-log.jsonl): per call the request id returned by 9router (`chatcmpl-...`), the model of that run (`ag/gemini-3.8-flash`), tokens, latency, cost and the prompt sent (comments and identity removed).
+- **Call log:** [`docs/tasks/PA3/submission/dev-run/call-log.jsonl`](docs/tasks/PA3/submission/dev-run/call-log.jsonl): per call the request id returned by 9router (`chatcmpl-...`), model, tokens, latency, cost and the prompt sent (comments and identity removed).
 - **Our own cases:** [`eval/custom-cases/`](eval/custom-cases/) (6 solutions, 12 labelled pairs, with `trap` and `injection` tags).
 
 | Metric              | Result            | Target |
