@@ -158,6 +158,7 @@ export class PostgresJudgeJobsRepository {
               s.language AS "language",
               s.source AS "source",
               l.statement AS "statement",
+              l.tests AS "tests",
               l.constraints AS "constraints",
               u.email AS "studentEmail"
        FROM submissions s
@@ -180,6 +181,7 @@ export class PostgresJudgeJobsRepository {
       lab: {
         id: String(row.labId),
         statement: String(row.statement),
+        tests: Array.isArray(row.tests) ? row.tests : [],
         constraints: Array.isArray(row.constraints) ? row.constraints : [],
       },
       student: {

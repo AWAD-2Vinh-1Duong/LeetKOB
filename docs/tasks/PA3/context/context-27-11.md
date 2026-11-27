@@ -29,3 +29,9 @@
 - **Xác minh:**
   - Chạy `npm run db:seed` **2 lần liên tiếp** trên PostgreSQL 18 đều thành công (2 classes, 5 users, 2 class_staff, 2 class_enrollments).
   - Chạy `npm run format && npm run check`: pass **232/232 tests**.
+
+## 3. Nối `runInSandbox` vào `JudgeWorkerService` (`T07 + T09 + T11` — `@Dương`)
+
+- `src/modules/grading/repository/judge-jobs.repository.{js,memory.js,postgres.js}`: Bổ sung `tests` của lab vào `JobSubmissionContext` trong `getSubmissionContext`.
+- `src/modules/grading/service/judge-worker.service.js`, `src/container.js`, `src/worker.js`: Inject `sandboxRunner` (lấy `runInSandbox` ở `src/worker.js`) vào đầu `#evaluateDefault` — chạy tất cả test cases của lab trong container `leetkob-sandbox`; chỉ khi đạt `Accepted` mới chạy Hard Rules + LLM `ConstraintJudge`.
+- `tests/grading/judge-worker.test.js`: Bổ sung 2 test kiểm chứng nhánh `Wrong Answer` bỏ qua Hard Rules/LLM và nhánh `Accepted` kích hoạt chấm ràng buộc.

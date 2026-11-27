@@ -6,6 +6,7 @@ import { createPool } from './shared/db.js';
 import { createWorkerContainer } from './container.js';
 import { ConstraintJudge } from './modules/grading/service/constraint-judge.js';
 import { createOpenAICompatibleModel } from './modules/grading/service/openai-compatible-model.js';
+import { runInSandbox } from './modules/grading/service/sandbox-runner.js';
 
 const config = loadConfig(process.env);
 const logger = pino({ level: config.logLevel });
@@ -36,6 +37,7 @@ const pollIntervalMs = Number(process.env.WORKER_POLL_INTERVAL_MS || 500);
 const { worker } = createWorkerContainer({
   pool,
   judge,
+  sandboxRunner: runInSandbox,
   logger,
   pollIntervalMs,
 });

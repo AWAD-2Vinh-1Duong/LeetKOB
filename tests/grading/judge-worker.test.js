@@ -21,7 +21,8 @@ function token(claims) {
     .sign(new TextEncoder().encode(SECRET));
 }
 
-function buildFixture() {
+/** @param {Array<{ input: string, expectedOutput: string }>} [tests] */
+function buildFixture(tests = []) {
   const labRepository = new InMemoryLabRepository({
     labs: [
       {
@@ -30,6 +31,7 @@ function buildFixture() {
         deadline: DEADLINE,
         title: 'Merge sort',
         statement: 'Implement merge sort without std::sort.',
+        tests,
         constraints: [
           { id: 'c1', text: 'Do not use `std::sort`', deduction: 50 },
           { id: 'c2', text: 'Must run in O(n log n) time', deduction: 50 },
@@ -280,5 +282,102 @@ describe('Judge job queue & isolated worker (In-Memory, Law Q1)', () => {
 
     // No longer claimable
     assert.equal(await worker.runOnce(), null);
+  });
+
+  test('sandbox gate: Wrong Answer skips hard rules and LLM judge', async () => {
+    const { app, judgeJobsRepository } = buildFixture([
+      { input: '2\n2 1\n', expectedOutput: '1 2\n' },
+    ]);
+    const auth = `Bearer ${await token({ sub: 's1', role: 'student' })}`;
+    const res = await request(app)
+      .post('/labs/lab-sort/submissions')
+      .set('Authorization', auth)
+      .set('Idempotency-Key', 'idem-sbx-wa')
+      .send({
+        language: 'cpp',
+        source:
+          '#include <algorithm>\nint main(){ int a[2]; std::sort(a, a+2); }\n',
+      });
+    const submissionId = res.body.id;
+
+    let llmCalls = 0;
+    const { worker } = createWorkerContainer({
+      judgeJobsRepository,
+      now: () => NOW,
+      sandboxRunner: async () => ({
+        outcome: 'ok',
+        exitCode: 0,
+        stdout: 'WRONG_OUTPUT\n',
+        stderr: '',
+        durationMs: 25,
+      }),
+      judge: {
+        async judge() {
+          llmCalls += 1;
+          return { verdicts: [], call: null };
+        },
+      },
+    });
+
+    const result = await worker.runOnce();
+    assert.equal(result?.outcome, 'completed');
+    assert.equal(llmCalls, 0);
+    const verdicts =
+      await judgeJobsRepository.findVerdictsBySubmission(submissionId);
+    assert.equal(verdicts.length, 0);
+  });
+
+  test('sandbox gate: Accepted runs hard rules and LLM judge for all constraints', async () => {
+    const { app, judgeJobsRepository } = buildFixture([
+      { input: '2\n2 1\n', expectedOutput: '1 2\n' },
+    ]);
+    const auth = `Bearer ${await token({ sub: 's1', role: 'student' })}`;
+    const res = await request(app)
+      .post('/labs/lab-sort/submissions')
+      .set('Authorization', auth)
+      .set('Idempotency-Key', 'idem-sbx-ac')
+      .send({
+        language: 'cpp',
+        source:
+          '#include <algorithm>\nint main(){ int a[2]; std::sort(a, a+2); }\n',
+      });
+    const submissionId = res.body.id;
+
+    let llmCalls = 0;
+    const { worker } = createWorkerContainer({
+      judgeJobsRepository,
+      now: () => NOW,
+      sandboxRunner: async () => ({
+        outcome: 'ok',
+        exitCode: 0,
+        stdout: '1 2\n',
+        stderr: '',
+        durationMs: 25,
+      }),
+      judge: {
+        async judge({ constraints }) {
+          llmCalls += 1;
+          return {
+            verdicts: constraints.map((c) => ({
+              constraintId: c.id,
+              verdict: 'pass',
+              evidence: [],
+              decidedBy: 'model',
+            })),
+            call: null,
+          };
+        },
+      },
+    });
+
+    const result = await worker.runOnce();
+    assert.equal(result?.outcome, 'completed');
+    assert.equal(llmCalls, 1);
+    const verdicts =
+      await judgeJobsRepository.findVerdictsBySubmission(submissionId);
+    assert.equal(verdicts.length, 2);
+    const byConstraint = new Map(verdicts.map((v) => [v.constraintId, v]));
+    assert.equal(byConstraint.get('c1')?.verdict, 'violation');
+    assert.equal(byConstraint.get('c2')?.verdict, 'pass');
   });
 });

@@ -5,6 +5,8 @@ import { decideConstraint } from './hard-rules.js';
 /** @typedef {import('../repository/judge-jobs.repository.js').VerdictInput} VerdictInput */
 /** @typedef {import('../repository/judge-jobs.repository.js').JobSubmissionContext} JobSubmissionContext */
 /** @typedef {import('./constraint-judge.js').CallRecord} CallRecord */
+/** @typedef {import('./sandbox-runner.js').SandboxResult} SandboxResult */
+/** @typedef {(req: { source: string, input?: string }) => Promise<SandboxResult>} SandboxRunner */
 /** @typedef {{ judge(input: {
  *   statement: string,
  *   constraints: Array<{ id: string, text: string }>,
@@ -13,11 +15,15 @@ import { decideConstraint } from './hard-rules.js';
  * }): Promise<{ verdicts: import('./constraint-judge.js').JudgeVerdict[], call: CallRecord | null }> }} Judge */
 /** @typedef {(ctx: JobSubmissionContext) => Promise<{ verdicts: VerdictInput[], call?: CallRecord | null }>} SubmissionEvaluator */
 
+/** @param {string} text */
+const normalizeOutput = (text) => text.replace(/\r\n/g, '\n').trimEnd();
+
 export class JudgeWorkerService {
   /**
    * @param {{
    *   judgeJobsRepository: import('../repository/judge-jobs.repository.js').JudgeJobsRepository,
    *   judge?: Judge | null,
+   *   sandboxRunner?: SandboxRunner | null,
    *   evaluator?: SubmissionEvaluator,
    *   workerId?: string,
    *   pollIntervalMs?: number,
@@ -28,6 +34,7 @@ export class JudgeWorkerService {
   constructor({
     judgeJobsRepository,
     judge = null,
+    sandboxRunner = null,
     evaluator,
     workerId = `worker-${randomUUID()}`,
     pollIntervalMs = 500,
@@ -36,6 +43,7 @@ export class JudgeWorkerService {
   }) {
     this.judgeJobsRepository = judgeJobsRepository;
     this.judge = judge;
+    this.sandboxRunner = sandboxRunner;
     this.evaluator = evaluator;
     this.workerId = workerId;
     this.pollIntervalMs = pollIntervalMs;
@@ -172,12 +180,20 @@ export class JudgeWorkerService {
   }
 
   /**
-   * Default evaluation pipeline: syntax-aware hard rules first, then semantic LLM judge
+   * Default evaluation pipeline: run lab tests in the Docker sandbox first (if configured);
+   * only Accepted submissions proceed to syntax-aware hard rules and semantic LLM judge
    * (or `unsure` when MODEL_OFF=1 / no judge configured).
    * @param {JobSubmissionContext} ctx
    * @returns {Promise<{ verdicts: VerdictInput[], call: CallRecord | null }>}
    */
   async #evaluateDefault(ctx) {
+    if (this.sandboxRunner && ctx.lab.tests.length > 0) {
+      const accepted = await this.#runSandboxTests(ctx);
+      if (!accepted) {
+        return { verdicts: [], call: null };
+      }
+    }
+
     /** @type {Map<string, { verdict: 'pass' | 'violation' | 'unsure', evidence: Array<{ line: number, text: string }> }>} */
     const decided = new Map();
     const semantic = [];
@@ -223,5 +239,39 @@ export class JudgeWorkerService {
     });
 
     return { verdicts, call };
+  }
+
+  /**
+   * Runs every lab test case inside the sandbox. Stops on the first failure.
+   * @param {JobSubmissionContext} ctx
+   * @returns {Promise<boolean>}
+   */
+  async #runSandboxTests(ctx) {
+    if (!this.sandboxRunner) return true;
+    for (let i = 0; i < ctx.lab.tests.length; i += 1) {
+      const tc = ctx.lab.tests[i];
+      const res = await this.sandboxRunner({
+        source: ctx.submission.source,
+        input: tc.input,
+      });
+      const matched =
+        res.outcome === 'ok' &&
+        normalizeOutput(res.stdout) === normalizeOutput(tc.expectedOutput);
+      this.logger.info(
+        {
+          workerId: this.workerId,
+          submissionId: ctx.submission.id,
+          testIndex: i,
+          outcome: res.outcome,
+          matched,
+          durationMs: res.durationMs,
+        },
+        'Sandbox execution completed',
+      );
+      if (!matched) {
+        return false;
+      }
+    }
+    return true;
   }
 }

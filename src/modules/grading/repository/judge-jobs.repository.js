@@ -38,6 +38,7 @@
  *   lab: {
  *     id: string,
  *     statement: string,
+ *     tests: Array<{ input: string, expectedOutput: string }>,
  *     constraints: Array<{ id: string, text: string, deduction: number }>,
  *   },
  *   student: { id: string, email?: string },

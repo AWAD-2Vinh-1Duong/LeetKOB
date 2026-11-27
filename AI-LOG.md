@@ -2,6 +2,14 @@
 
 Khi ghi AI Log thì phải ghi ở trên cùng.
 
+## 2026-11-27 — Wire Docker Sandbox Execution into JudgeWorkerService (PA#3 T07+T09+T11, Dương)
+
+Tool: Antigravity
+Asked for: Connect `runInSandbox` to the front of `JudgeWorkerService.#evaluateDefault` so every lab test case compiles and executes inside `leetkob-sandbox` first, triggering syntax-aware hard rules and `ConstraintJudge` LLM only when `Accepted`.
+Kept: Added `tests` to `JobSubmissionContext.lab` across `judge-jobs.repository.{js,memory.js,postgres.js}`; injected optional `sandboxRunner` into `JudgeWorkerService` and `createWorkerContainer` (default `null` for fast unit/contract suites without Docker, wired to `runInSandbox` in `src/worker.js`); added 2 unit tests in `tests/grading/judge-worker.test.js` covering both Wrong Answer bypass and Accepted pass-through.
+Changed: None.
+Rejected: Calling `runInSandbox` directly inside `JudgeWorkerService` without constructor injection (would block unit tests without a Docker daemon).
+
 ## 2026-11-27 — Idempotent PA#3 Synthetic Seed Script (PA#3 T20 Prep, Dương)
 
 Tool: Antigravity

@@ -118,6 +118,7 @@ export class InMemoryJudgeJobsRepository {
       lab: {
         id: lab.id,
         statement: lab.statement ?? '',
+        tests: lab.tests ?? [],
         constraints: lab.constraints ?? [],
       },
       student,

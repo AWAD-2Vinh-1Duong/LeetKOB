@@ -78,6 +78,7 @@ export function createContainer({
  *   pool?: import('pg').Pool,
  *   judgeJobsRepository?: import('./modules/grading/repository/judge-jobs.repository.js').JudgeJobsRepository,
  *   judge?: import('./modules/grading/service/judge-worker.service.js').Judge | null,
+ *   sandboxRunner?: import('./modules/grading/service/judge-worker.service.js').SandboxRunner | null,
  *   evaluator?: import('./modules/grading/service/judge-worker.service.js').SubmissionEvaluator,
  *   workerId?: string,
  *   pollIntervalMs?: number,
@@ -89,6 +90,7 @@ export function createWorkerContainer({
   pool,
   judgeJobsRepository = pool && new PostgresJudgeJobsRepository({ pool }),
   judge = null,
+  sandboxRunner = null,
   evaluator,
   workerId,
   pollIntervalMs = 500,
@@ -101,6 +103,7 @@ export function createWorkerContainer({
   const worker = new JudgeWorkerService({
     judgeJobsRepository,
     judge,
+    sandboxRunner,
     evaluator,
     workerId,
     pollIntervalMs,
