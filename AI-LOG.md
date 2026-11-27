@@ -2,6 +2,14 @@
 
 Khi ghi AI Log thì phải ghi ở trên cùng.
 
+## 2026-11-27 — Production Docker Compose Stack, Dockerfile.app & Caddyfile (PA#3 T20 Prep, Dương)
+
+Tool: Antigravity
+Asked for: Prepare production deployment files (`Dockerfile.app`, `docker-compose.yml`, `Caddyfile`) with Docker `json-file` log rotation (`max-size: 10m`, `max-file: 3`) suitable for an 8 GB disk VPS, without committing yet.
+Kept: Multi-stage `Dockerfile.app` (`api` target running as non-root `node` with `npm ci --omit=dev`; `worker` target copying only the static `docker` CLI binary from `docker:27-cli`); `docker-compose.yml` orchestrating `postgres`, `migrate`, `api` (no `docker.sock`), `worker` (isolated `/var/run/docker.sock` mount for `leetkob-sandbox`), and `caddy` (`caddy:2-alpine` HTTPS reverse proxy) with `x-logging` rotation (`10m` × `3`); `Caddyfile` using `{$PUBLIC_DOMAIN:localhost}`.
+Changed: Set `env_file: [{ path: .env, required: false }]` in `docker-compose.yml` after `docker compose config -q` failed when `.env` was absent.
+Rejected: Installing full `docker.io` package inside the worker image via `apt-get` (bloat on 8 GB VPS) and mounting `docker.sock` into the `api` container (red-team security risk).
+
 ## 2026-11-26 — Hardened Docker Sandbox & 9 Attack Submissions (PA#3 T06 & T07, Dương)
 
 Tool: Antigravity
