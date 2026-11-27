@@ -34,6 +34,22 @@
  *   createdAt: string,
  * }} StoredVerdict
  * @typedef {{
+ *   verdict: 'pass' | 'violation',
+ *   evidence: Array<{ line: number, text: string }>,
+ *   deduction: number,
+ *   reviewedBy: string,
+ *   reviewedAt: string,
+ * }} Decision
+ * @typedef {{
+ *   id: string,
+ *   submissionId: string,
+ *   studentId: string,
+ *   source: string,
+ *   constraintId: string,
+ *   proposal: { verdict: 'pass' | 'violation' | 'unsure', evidence: Array<{ line: number, text: string }> },
+ *   decision: Decision | null,
+ * }} ReviewRow
+ * @typedef {{
  *   submission: { id: string, labId: string, studentId: string, language: 'cpp', source: string },
  *   lab: {
  *     id: string,
@@ -52,6 +68,9 @@
  *   recordLlmCall(submissionId: string, call: import('../service/constraint-judge.js').CallRecord): Promise<void>,
  *   findVerdictsBySubmission(submissionId: string): Promise<StoredVerdict[]>,
  *   findJobsBySubmission(submissionId: string): Promise<JudgeJob[]>,
+ *   findReviewQueue(labId: string): Promise<ReviewRow[]>,
+ *   findReviewRow(labId: string, verdictId: string): Promise<ReviewRow | null>,
+ *   saveDecision(verdictId: string, decision: Decision): Promise<void>,
  * }} JudgeJobsRepository
  */
 

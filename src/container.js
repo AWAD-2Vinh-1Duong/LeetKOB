@@ -58,7 +58,11 @@ export function createContainer({
           })
         : undefined,
       labs: new LabsController({
-        labService: new LabService({ labRepository }),
+        labService: new LabService({
+          labRepository,
+          judgeJobsRepository,
+          now,
+        }),
       }),
       submissions: new SubmissionsController({
         submissionService: new SubmissionService({

@@ -4,6 +4,44 @@ import { createHash, randomUUID } from 'node:crypto';
 /** @typedef {import('./judge-jobs.repository.js').VerdictInput} VerdictInput */
 /** @typedef {import('./judge-jobs.repository.js').StoredVerdict} StoredVerdict */
 /** @typedef {import('./judge-jobs.repository.js').JobSubmissionContext} JobSubmissionContext */
+/** @typedef {import('./judge-jobs.repository.js').ReviewRow} ReviewRow */
+/** @typedef {import('./judge-jobs.repository.js').Decision} Decision */
+
+const REVIEW_SELECT = `SELECT v.id, v.submission_id AS "submissionId", s.student_id AS "studentId",
+         s.source, v.constraint_id AS "constraintId", v.verdict, v.evidence,
+         v.decision, v.decision_evidence AS "decisionEvidence", v.deduction,
+         v.reviewed_by AS "reviewedBy", v.reviewed_at AS "reviewedAt"
+  FROM verdicts v
+  JOIN submissions s ON s.id = v.submission_id`;
+
+/**
+ * @param {Record<string, any>} row
+ * @returns {ReviewRow}
+ */
+function mapReviewRow(row) {
+  return {
+    id: String(row.id),
+    submissionId: String(row.submissionId),
+    studentId: String(row.studentId),
+    source: String(row.source),
+    constraintId: String(row.constraintId),
+    proposal: {
+      verdict: row.verdict,
+      evidence: Array.isArray(row.evidence) ? row.evidence : [],
+    },
+    decision: row.decision
+      ? {
+          verdict: row.decision,
+          evidence: Array.isArray(row.decisionEvidence)
+            ? row.decisionEvidence
+            : [],
+          deduction: Number(row.deduction),
+          reviewedBy: String(row.reviewedBy),
+          reviewedAt: new Date(row.reviewedAt).toISOString(),
+        }
+      : null,
+  };
+}
 
 /**
  * Deterministic 64-char hex id for (submissionId, constraintId) so verdict inserts
@@ -373,5 +411,54 @@ export class PostgresJudgeJobsRepository {
       [submissionId],
     );
     return res.rows.map(mapJobRow);
+  }
+
+  /**
+   * @param {string} labId
+   * @returns {Promise<ReviewRow[]>}
+   */
+  async findReviewQueue(labId) {
+    const res = await this.pool.query(
+      `${REVIEW_SELECT}
+       WHERE s.lab_id = $1
+       ORDER BY s.created_at ASC, s.id ASC, v.constraint_id ASC`,
+      [labId],
+    );
+    return res.rows.map(mapReviewRow);
+  }
+
+  /**
+   * @param {string} labId
+   * @param {string} verdictId
+   * @returns {Promise<ReviewRow | null>}
+   */
+  async findReviewRow(labId, verdictId) {
+    const res = await this.pool.query(
+      `${REVIEW_SELECT}
+       WHERE s.lab_id = $1 AND v.id = $2`,
+      [labId, verdictId],
+    );
+    return res.rows[0] ? mapReviewRow(res.rows[0]) : null;
+  }
+
+  /**
+   * @param {string} verdictId
+   * @param {Decision} decision
+   */
+  async saveDecision(verdictId, decision) {
+    await this.pool.query(
+      `UPDATE verdicts
+       SET decision = $2, decision_evidence = $3::jsonb, deduction = $4,
+           is_reviewed = TRUE, reviewed_by = $5, reviewed_at = $6
+       WHERE id = $1`,
+      [
+        verdictId,
+        decision.verdict,
+        JSON.stringify(decision.evidence),
+        decision.deduction,
+        decision.reviewedBy,
+        decision.reviewedAt,
+      ],
+    );
   }
 }
