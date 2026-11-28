@@ -1,3 +1,6 @@
 # False positive: example Idempotency-Key (a UUID) in the contract's sample request, not a secret.
 a67545cc5f4ec3be3d15326716c875d77db5793e:docs/contract/post-labs-submissions.md:generic-api-key:22
 docs/contract/post-labs-submissions.md:generic-api-key:22
+# False positive: dummy test string in tests/config.test.js, not a real secret.
+e4eb2272593d966d877e94e89d0142080dbdaa2c:tests/config.test.js:generic-api-key:7
+tests/config.test.js:generic-api-key:7
