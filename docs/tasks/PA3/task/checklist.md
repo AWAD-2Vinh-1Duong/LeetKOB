@@ -224,7 +224,7 @@
   - **Chi tiết:** Merge các nhánh tính năng vào `main` qua Pull Request (giữ nguyên từng commit nhỏ, không squash). Gắn tag `pa3` (`git tag pa3 && git push origin pa3`). Đợi GitHub Actions chạy xanh toàn bộ workflow (`npm run check` + 9 sandbox attack tests + CLI `MODEL_OFF=1` test) trên tag `pa3`, dán link CI run đó vào `PA3.md` và cập nhật lại tag `pa3` trỏ vào commit cuối cùng.
   - **Tiêu chí xong:** Repo public, tag `pa3` trỏ đúng commit cuối, CI trên tag `pa3` xanh 100%.
 
-- [ ] **T25** — **Viết `SELF_ASSESSMENT_REPORT.md` & Rà soát tính trung thực**
+- [x] **T25** — **Viết `SELF_ASSESSMENT_REPORT.md` & Rà soát tính trung thực**
   - **Phụ trách:** `@Dương` (cùng `@Quang Vinh`, `@Thế Vinh` đối chiếu từng tiêu chí)
   - **Phụ thuộc:** `T24`
   - **Chi tiết:** Tạo `SELF_ASSESSMENT_REPORT.md` (theo template của môn học), lập bảng chấm điểm 8 tiêu chí Rubric PA#3 (tổng 100 điểm) kèm **bằng chứng cụ thể** (file, commit hash, PR, link CI run) và mục _What we did not manage_. Đảm bảo chênh lệch với điểm thật nằm trong khoảng `±10` để không bị trừ điểm Honesty adjustment.
