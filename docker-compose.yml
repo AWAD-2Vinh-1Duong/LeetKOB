@@ -107,6 +107,10 @@ services:
     image: decolua/9router:0.5.104
     restart: unless-stopped
     logging: *default-logging
+    # The default password (123456) is refused for a remote login, so both come from .env.
+    environment:
+      INITIAL_PASSWORD: ${NINEROUTER_PASSWORD:?set NINEROUTER_PASSWORD in .env}
+      JWT_SECRET: ${NINEROUTER_JWT_SECRET:?set NINEROUTER_JWT_SECRET in .env}
     ports:
       - '127.0.0.1:20128:20128'
     volumes:
