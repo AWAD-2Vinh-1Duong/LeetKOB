@@ -1,6 +1,9 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
-import { hashPassword, verifyPassword } from '../../src/auth/passwords.js';
+import {
+  hashPassword,
+  verifyPassword,
+} from '../../src/modules/auth/service/passwords.js';
 
 describe('passwords (scrypt)', () => {
   test('the stored value is not the password', async () => {

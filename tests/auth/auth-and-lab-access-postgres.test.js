@@ -5,8 +5,8 @@ import assert from 'node:assert/strict';
 import request from 'supertest';
 import { SignJWT } from 'jose';
 import { createApp } from '../../src/app.js';
-import { createPool } from '../../src/db.js';
-import { hashPassword } from '../../src/auth/passwords.js';
+import { createPool } from '../../src/shared/db.js';
+import { hashPassword } from '../../src/modules/auth/service/passwords.js';
 
 const SECRET = 'test-secret-not-a-real-one-0123456789';
 const hasDb = Boolean(process.env.DATABASE_URL);

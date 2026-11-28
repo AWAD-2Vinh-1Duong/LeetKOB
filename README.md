@@ -37,19 +37,79 @@ cp .env.example .env
 
 Để đảm bảo chất lượng mã nguồn và thỏa mãn yêu cầu của Tiêu chí 3, các kiểm tra cục bộ và trên CI GitHub Actions sử dụng **cùng một bộ lệnh duy nhất**:
 
-| Mục đích kiểm tra  | Lệnh thực thi (Local & CI) | Mô tả                                                              |
-| ------------------ | -------------------------- | ------------------------------------------------------------------ |
-| **Lint Check**     | `npm run lint`             | Kiểm tra quy tắc định dạng và lỗi cú pháp tĩnh                     |
-| **Format Check**   | `npm run format:check`     | Xác minh mã nguồn tuân thủ quy chuẩn trình bày                     |
-| **Type Check**     | `npm run typecheck`        | Phân tích kiểu dữ liệu tĩnh (nếu áp dụng)                          |
-| **Contract Tests** | `npm test`                 | Chạy toàn bộ các bài kiểm tra hợp đồng API trong `tests/contract/` |
-| **Chạy tất cả**    | `npm run check`            | Lệnh tổng hợp chạy toàn bộ các kiểm tra trên trước khi commit/push |
+| Mục đích kiểm tra  | Lệnh thực thi (Local & CI) | Mô tả                                                                                              |
+| ------------------ | -------------------------- | -------------------------------------------------------------------------------------------------- |
+| **Lint Check**     | `npm run lint`             | Kiểm tra quy tắc định dạng và lỗi cú pháp tĩnh                                                     |
+| **Format Check**   | `npm run format:check`     | Xác minh mã nguồn tuân thủ quy chuẩn trình bày                                                     |
+| **Type Check**     | `npm run typecheck`        | Phân tích kiểu dữ liệu tĩnh (nếu áp dụng)                                                          |
+| **Contract Tests** | `npm test`                 | Chạy toàn bộ test `node:test` trong `tests/` (contract, auth, labs, grading, sandbox, middlewares) |
+| **Chạy tất cả**    | `npm run check`            | Lệnh tổng hợp chạy toàn bộ các kiểm tra trên trước khi commit/push                                 |
 
 Tất cả các lệnh trên khi chạy trên một bản clone mới đều phải trả về trạng thái màu xanh (green/pass).
 
 - CI phải chạy **đúng** `npm ci` rồi `npm run check` — không thêm, không bớt bước nào so với local.
 - Format check báo đỏ? Chạy `npm run format` để Prettier tự sửa, rồi commit lại.
 - `npm run check` dừng ở bước đầu tiên bị lỗi (các lệnh nối bằng `&&`).
+
+**Lệnh test (giảng viên có thể chạy sau khi đã cài xong dependency và ngắt mạng):**
+
+```bash
+npm ci                 # cần mạng, chỉ một lần
+npm run lint           # ESLint
+npm test               # toàn bộ test; dùng repository in-memory và model giả, không cần DB, Docker hay mạng
+```
+
+- Các test `*-postgres.test.js` tự bỏ qua khi không có `DATABASE_URL`. Để chạy chúng: `export DATABASE_URL=postgresql://...; npm run db:migrate; npm test`.
+- Test sandbox chạy container thật chỉ khi có Docker và `SANDBOX_DOCKER=1`:
+  ```bash
+  docker build -f Dockerfile.sandbox -t leetkob-sandbox .
+  SANDBOX_DOCKER=1 node --test tests/sandbox/sandbox-attacks.test.js
+  ```
+- Không test nào gọi model thật (luật mục 4 `AGENTS.md`); lần chạy model thật là thủ công và nằm ở `docs/tasks/PA3/submission/dev-run/`.
+
+## 2b. Checker command (`MODEL_OFF=1`)
+
+One command reads a dataset folder in the dev-set layout (`problems/<id>/statement.md`, `constraints.json`, `solutions/<id>/*.cpp`) and writes one prediction line per (solution, constraint). With `MODEL_OFF=1` it runs the hard rules only, writes `unsure` for every semantic constraint and opens no network connection.
+
+```bash
+MODEL_OFF=1 node src/checker.js --data eval/dev-set --out predictions.jsonl
+node eval/dev-set/eval.mjs --data eval/dev-set --predictions predictions.jsonl
+```
+
+Docker image (no `.env`, no tests or eval data inside):
+
+```bash
+docker build -f Dockerfile.checker -t leetkob-checker .
+docker run --rm --network none --memory 512m --pids-limit 64 -e MODEL_OFF=1 \
+  -v "$PWD/eval/dev-set:/data:ro" leetkob-checker --data /data > predictions.jsonl
+```
+
+Options: `--out <file>` (default: stdout), `--call-log <file>` (model calls, empty with the model off).
+
+## 2c. Kiến trúc & Cô lập Sandbox
+
+```
+Client ──HTTPS──> Caddy ──> API (src/server.js) ──> PostgreSQL
+                                                      ▲  judge_jobs (hàng đợi, FOR UPDATE SKIP LOCKED)
+                       Worker (src/worker.js) ────────┘  verdicts, llm_call_logs
+                          │  1. chạy mọi test của lab trong sandbox (biên dịch + chạy)
+                          │  2. chỉ khi Accepted: hard rules (code) rồi ConstraintJudge (model)
+                          └─> docker run leetkob-sandbox (Dockerfile.sandbox)
+```
+
+- **API** nhận bài nộp (`202 queued`) và ghi `submissions` + `judge_jobs` trong một transaction. **Worker** là tiến trình riêng, kéo job bằng `FOR UPDATE SKIP LOCKED`; verdict lưu idempotent (khóa `sha256(submission, constraint)`), nên dừng/bật worker vẫn chỉ có một bộ verdict (luật `Q1`).
+- Verdict của worker luôn lưu với `deduction = 0`, chưa có quyết định: không verdict nào của model đổi điểm sinh viên. Verdict chỉ hiện trong review queue của TA (`GET /labs/:labId/review-queue`); chỉ quyết định của TA (`PUT /labs/:labId/review-queue/:verdictId`) mới mang mức trừ, lấy từ ràng buộc. Chưa có Publish, sinh viên chỉ thấy trạng thái bài nộp (FAQ-08). Đầu ra model qua kiểm tra schema (`zod`) và timeout; lỗi thì thành `unsure`.
+- **9 giới hạn của sandbox** (`src/modules/grading/service/sandbox-runner.js`, được kiểm bằng 9 bài tấn công `tests/sandbox/attacks/m1`–`m9`, chạy trong CI trên tag `pa3`):
+  1. không mạng (`--network none`);
+  2. giới hạn CPU (`--ulimit cpu`);
+  3. giới hạn thời gian thực, kill **cả container** (`docker rm -f`);
+  4. giới hạn RAM + swap bằng nhau (`--memory` = `--memory-swap`);
+  5. giới hạn số tiến trình (`--pids-limit`);
+  6. giới hạn kích thước output;
+  7. user không phải root (`--user 10001:10001`, `--cap-drop ALL`, `no-new-privileges`, rootfs `--read-only`);
+  8. không mount thư mục host, không `/var/run/docker.sock` (mã nguồn đi qua stdin dạng base64);
+  9. không secret: chỉ truyền các biến `SANDBOX_*`; `LLM_*`, `DATABASE_URL`, `JWT_SECRET` không vào container.
+- **Triển khai:** `docker-compose.yml` chạy `postgres`, `migrate`, `api`, `worker`, `caddy` (HTTPS tự động qua `PUBLIC_DOMAIN`). Chỉ `worker` được mount Docker socket; `api` thì không. `npm run db:seed` tạo 2 lớp và 5 tài khoản thử.
 
 ## 3. Chính sách phân quyền, Secret & Model API Spending Cap
 
@@ -69,11 +129,11 @@ Tuân thủ Tiêu chí 2 về quản lý chi phí và an toàn bảo mật:
 
   [`.gitleaksignore`](.gitleaksignore) bỏ qua đúng một báo động giả: `Idempotency-Key` ví dụ (một UUID) trong request mẫu của [contract](docs/contract/post-labs-submissions.md), không phải secret. Mọi phát hiện khác vẫn làm lệnh trên báo lỗi.
 
-- **Model Provider & Model được chọn**: Google Gemini — **Gemini 3.6 Flash** (`gemini-3.6-flash`, Free tier), cấu hình qua biến `LLM_MODEL`. Ban đầu nhóm ghi Gemini 1.5 Flash, nhưng model này đã bị Google tắt từ tháng 9/2025 nên được thay thế.
+- **Model Provider & Model được chọn**: Google Gemini — **Gemini 3.8 Flash** (`ag/gemini-3.8-flash`), gọi qua **9router** (router chạy local, endpoint kiểu OpenAI ở `LLM_BASE_URL`, mặc định `http://127.0.0.1:20128/v1`), cấu hình qua biến `LLM_MODEL`. Ban đầu nhóm ghi Gemini 1.5 Flash (bị Google tắt từ tháng 9/2025), sau đó là Gemini 3.6 Flash; từ PA#3 nhóm dùng Gemini 3.8 Flash qua 9router.
 
-- **Spending cap: 0 USD (cứng, do provider áp)**: API key thuộc project `For-Github-CodeSpace` trên Google AI Studio, **không gắn billing account** ([ảnh dashboard](docs/tasks/PA2/submission/assets/provider-dashboard.png): _Billing Tier: Free tier — Set up billing_). Không có billing thì Google không thể tính tiền: request vượt quota Free tier bị trả về `429 RESOURCE_EXHAUSTED` thay vì phát sinh phí. Nhóm không bật billing vì AI Studio yêu cầu trả trước 800.000 VNĐ. Nếu sau này bật billing, phải đặt budget/cap dạng số trên provider và cập nhật mục này **trước** khi dùng paid tier.
+- **Spending cap: 0 USD**: từ PA#3 model được gọi qua **9router**, provider `ag/` của 9router là gói **miễn phí, 0 USD** (Thế Vinh xác nhận ngày 2026-11-25); nhóm không gắn phương thức thanh toán nào. Key được tạo trong dashboard 9router và chỉ nằm trong `.env` trên máy chạy app. PA#2 dùng key Google AI Studio Free tier, không gắn billing ([ảnh dashboard](docs/tasks/PA2/submission/assets/provider-dashboard.png)). Nếu sau này đổi sang provider tính phí, phải đặt cap dạng số trên provider và cập nhật mục này **trước** khi dùng.
 
-- **Chi phí một lab (80 bài nộp)**: **0 USD** trên Free tier. Giới hạn thực tế là quota Free tier; ngoài ra app sẽ chặn thêm bằng biến `LLM_COST_CAP_PER_LAB_USD` trong adapter `ConstraintJudge` (từ PA#3).
+- **Chi phí một lab (80 bài nộp)**: đo từ lần chạy thật trên dev set ([call log](docs/tasks/PA3/submission/dev-run/call-log.jsonl), 47 bài, 39 lần gọi; 8 bài chỉ có ràng buộc ban list nên hard rules quyết, không gọi model): 117.330 token vào + 1.906 token ra, trung bình **2.496,4 vào + 40,6 ra mỗi bài**. Một lab 80 bài ≈ 80 × 2.496,4 = **199.711 token vào** và 80 × 40,6 = **3.244 token ra**. Chi phí = 199.711 × giá_vào/10⁶ + 3.244 × giá_ra/10⁶ = **0 USD** vì provider miễn phí (giá = 0). Khoảng 2.000 token vào mỗi lần gọi do 9router tự thêm Nếu có giá, đặt `LLM_INPUT_USD_PER_MTOK` / `LLM_OUTPUT_USD_PER_MTOK` thì call log tự tính chi phí từng lần gọi. Giới hạn chi phí theo lab (`LLM_COST_CAP_PER_LAB_USD`) **chưa được cài** (dự kiến PA#4).
 
 - **Cô lập Sandbox**: Toàn bộ tiến trình chạy mã nguồn sinh viên trong sandbox hoàn toàn **không có quyền truy cập Internet** và **không nhận bất kỳ API secret nào** trong biến môi trường cũng như hệ thống tập tin.
 
@@ -119,16 +179,37 @@ LeeTKOB/
 │           ├── context/             # Nhật ký ngữ cảnh (context-dd-mm.md) theo quy định AGENTS.md
 │           ├── submission/          # Bản mẫu báo cáo tự đánh giá PA#3
 │           └── task/                # Rubric và checklist thực thi PA#3
-├── src/                             # Mã nguồn hệ thống
-│   ├── controllers/                 # Lớp Routing & Controllers (nhận HTTP request, trả RFC 9457 Problem Details)
-│   ├── middlewares/                 # Xử lý phân quyền & authentication (Tiêu chí 5 - Who may call it)
-│   ├── repositories/                # Lớp Data Access (In-memory storage, Dependency Injection)
-│   ├── services/                    # Lớp Business Logic (xử lý logic bài nộp, gọi Sandbox, xử lý Idempotency)
-│   ├── app.js                       # Điểm khởi chạy ứng dụng (Setup Express & DI container)
-│   └── problems.js                  # Định nghĩa các loại RFC 9457 Problem Details
+├── eval/
+│   ├── dev-set/                     # Dev set của giảng viên, giữ nguyên từng byte (không sửa)
+│   └── custom-cases/                # Ca eval tự tạo (cùng layout), có trap và injection
+├── migrations/                      # SQL cho node-pg-migrate (schema, class_staff)
+├── scripts/
+│   └── seed-pa3.js                  # `npm run db:seed`: 2 lớp + 5 tài khoản thử (idempotent)
+├── src/
+│   ├── app.js                       # Gắn request context, router, error handler
+│   ├── checker.js                   # Lệnh checker CLI (MODEL_OFF=1)
+│   ├── config.js
+│   ├── container.js                 # Composition root: API và worker
+│   ├── server.js                    # Tiến trình API
+│   ├── worker.js                    # Tiến trình worker (hàng đợi + sandbox)
+│   ├── middlewares/                 # auth, role, json body, idempotency key, request context, error handler
+│   ├── modules/
+│   │   ├── auth/                    # controller / repository / service
+│   │   ├── grading/                 # hard rules, tokenizer, sanitize, ConstraintJudge, sandbox-runner, worker, hàng đợi judge_jobs
+│   │   ├── labs/                    # controller / repository / service
+│   │   └── submissions/             # controller / repository / service
+│   └── shared/
+│       ├── db.js
+│       ├── problems.js
+│       └── validation.js
 ├── tests/
-│   └── contract/                    # (Tiêu chí 6) Chứa các contract tests kiểm thử endpoint (bắt chặt lỗi, ownership, idempotency)
-│       └── post-labs-submissions.test.js
+│   ├── auth/  config.test.js  contract/  grading/  labs/  middlewares/
+│   └── sandbox/                     # 9 bài tấn công M1–M9 (attacks/*.cpp) + test
+├── Caddyfile                        # Reverse proxy HTTPS
+├── Dockerfile.app                   # Image api/worker
+├── Dockerfile.checker               # Image checker CLI
+├── Dockerfile.sandbox               # Image sandbox (g++, user không root)
+├── docker-compose.yml               # postgres, migrate, api, worker, caddy
 ├── .env.example                     # (Tiêu chí 2) Liệt kê mọi biến môi trường, tuyệt đối bỏ trống giá trị
 ├── .gitignore                       # Đảm bảo bỏ qua file .env, node_modules để không lọt secret vào Git
 ├── .gitleaksignore                  # Bỏ qua false positive cho công cụ quét secret gitleaks
@@ -140,6 +221,8 @@ LeeTKOB/
 ├── eslint.config.js                 # (Tiêu chí 3) Cấu hình ESLint (flat config)
 ├── package.json                     # (Tiêu chí 3) Khai báo scripts (lint / format:check / typecheck / test / check)
 ├── package-lock.json                # Khóa chính xác phiên bản các package phụ thuộc
+├── PA3.md                           # Bài nộp PA#3 (URL public, tài khoản, CI, checker, dev-run, video)
+├── PA3-SELF_ASSESSMENT_REPORT.md    # Tự đánh giá PA#3
 ├── README.md                        # Hướng dẫn setup, chạy các lệnh check đồng nhất và cấu trúc dự án
 └── tsconfig.json                    # (Tiêu chí 3) Type check JS bằng tsc --checkJs
 ```

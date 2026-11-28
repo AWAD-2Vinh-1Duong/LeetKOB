@@ -1,0 +1,12 @@
+[
+  {
+    "id": "C1",
+    "text": "Do not call a library function that finds a maximum: `std::max_element`, `std::ranges::max_element`, `std::max`, `std::ranges::max`, `std::minmax_element`.",
+    "deduction": 3
+  },
+  {
+    "id": "C2",
+    "text": "Find the largest value in one pass over the numbers that you wrote yourself, keeping the largest value seen so far. Sorting the numbers, putting them in an ordered container (such as `std::set` or `std::priority_queue`), or comparing every pair does not satisfy this constraint, whatever the function is called.",
+    "deduction": 4
+  }
+]

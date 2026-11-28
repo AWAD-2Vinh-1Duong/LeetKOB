@@ -1,0 +1,112 @@
+import { createHash, randomUUID } from 'node:crypto';
+import { ProblemError } from '../../../shared/problems.js';
+
+/** @typedef {import('../repository/submissions.repository.js').Submission} Submission */
+
+export class SubmissionService {
+  /**
+   * @param {{
+   *   labRepository: import('../../labs/repository/labs.repository.js').LabRepository,
+   *   submissionRepository: import('../repository/submissions.repository.js').SubmissionRepository,
+   *   judgeJobsRepository?: import('../../grading/repository/judge-jobs.repository.js').JudgeJobsRepository,
+   *   now: () => Date,
+   * }} deps
+   */
+  constructor({
+    labRepository,
+    submissionRepository,
+    judgeJobsRepository,
+    now,
+  }) {
+    this.labRepository = labRepository;
+    this.submissionRepository = submissionRepository;
+    this.judgeJobsRepository = judgeJobsRepository;
+    this.now = now;
+  }
+
+  /**
+   * @param {{ studentId: string, labId: string, idempotencyKey: string, language: 'cpp', source: string }} input
+   * @returns {Promise<{ submission: Submission, replayed: boolean }>}
+   */
+  async submit({ studentId, labId, idempotencyKey, language, source }) {
+    const lab = await this.labRepository.findForStudent(labId, studentId);
+    if (!lab)
+      throw new ProblemError(
+        'lab-not-found',
+        `No lab "${labId}" is open to you.`,
+      );
+
+    const fingerprint = createHash('sha256')
+      .update(JSON.stringify([language, source]))
+      .digest('hex');
+    const existing = await this.submissionRepository.findByIdempotencyKey(
+      studentId,
+      labId,
+      idempotencyKey,
+    );
+    // Replay before the deadline check: a retry of an accepted request must not turn into 409.
+    if (existing) return this.#replay(existing, fingerprint);
+
+    const now = this.now();
+    if (now >= lab.deadline) {
+      throw new ProblemError(
+        'lab-closed',
+        `The deadline was ${lab.deadline.toISOString()}.`,
+      );
+    }
+
+    const { submission, created } =
+      await this.submissionRepository.insertIfAbsent({
+        id: randomUUID(),
+        labId,
+        studentId,
+        language,
+        source,
+        status: 'queued',
+        createdAt: now.toISOString(),
+        idempotencyKey,
+        fingerprint,
+      });
+    if (!created) return this.#replay(submission, fingerprint);
+    if (this.judgeJobsRepository) {
+      await this.judgeJobsRepository.enqueue(submission.id, now);
+    }
+    return { submission, replayed: false };
+  }
+
+  /**
+   * A student reads their own submission; staff read those of labs they can see.
+   * Anyone else gets the same 404 as for a missing id.
+   * @param {import('../../labs/repository/labs.repository.js').Viewer} user
+   * @param {string} id
+   * @returns {Promise<Submission>}
+   */
+  async getVisible(user, id) {
+    const submission = await this.submissionRepository.findById(id);
+    const visible =
+      submission &&
+      (user.role === 'student'
+        ? submission.studentId === user.id
+        : Boolean(
+            await this.labRepository.findForUser(submission.labId, user),
+          ));
+    if (!submission || !visible) {
+      throw new ProblemError(
+        'submission-not-found',
+        `No submission "${id}" is open to you.`,
+      );
+    }
+    return submission;
+  }
+
+  /** @param {Submission} submission @param {string} fingerprint */
+  #replay(submission, fingerprint) {
+    if (submission.fingerprint !== fingerprint) {
+      throw new ProblemError(
+        'idempotency-key-reused',
+        'This Idempotency-Key was first used with a different language or source.',
+      );
+    }
+    return { submission, replayed: true };
+  }
+}

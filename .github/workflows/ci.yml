@@ -7,6 +7,7 @@ on:
   push:
     tags:
       - pa2
+      - pa3
 
 permissions:
   contents: read
@@ -23,3 +24,16 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run check
+
+  sandbox:
+    name: sandbox
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: docker build -f Dockerfile.sandbox -t leetkob-sandbox .
+      - run: SANDBOX_DOCKER=1 node --test tests/sandbox/sandbox-attacks.test.js

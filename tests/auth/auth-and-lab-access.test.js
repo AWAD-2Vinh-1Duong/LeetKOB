@@ -1,15 +1,13 @@
-// Contract tests for docs/contract/auth-and-lab-access.md (revision 1).
+// Contract tests for docs/contract/auth-and-lab-access.md (revision 2).
 import { test, describe, before } from 'node:test';
 import assert from 'node:assert/strict';
 import request from 'supertest';
 import { SignJWT, jwtVerify } from 'jose';
 import { createApp } from '../../src/app.js';
-import {
-  InMemoryLabRepository,
-  InMemorySubmissionRepository,
-  InMemoryUserRepository,
-} from '../../src/repositories/in-memory.js';
-import { hashPassword } from '../../src/auth/passwords.js';
+import { InMemoryLabRepository } from '../../src/modules/labs/repository/labs.repository.memory.js';
+import { InMemorySubmissionRepository } from '../../src/modules/submissions/repository/submissions.repository.memory.js';
+import { InMemoryUserRepository } from '../../src/modules/auth/repository/users.repository.memory.js';
+import { hashPassword } from '../../src/modules/auth/service/passwords.js';
 
 const SECRET = 'test-secret-not-a-real-one-0123456789';
 const PROBLEM_BASE = 'https://leettkob.dev/problems/';
@@ -97,7 +95,8 @@ describe('auth and class access', () => {
       const { payload } = await jwtVerify(
         res.body.token,
         new TextEncoder().encode(SECRET),
-        { algorithms: ['HS256'] },
+        // the app signs with the injected NOW, so verify against it, not the wall clock
+        { algorithms: ['HS256'], currentDate: NOW },
       );
       assert.equal(payload.sub, 'ta-a');
       assert.equal(payload.role, 'ta');
