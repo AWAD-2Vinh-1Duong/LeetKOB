@@ -4,3 +4,6 @@
 node_modules/
 coverage/
 CLAUDE.local.md
+
+# VPS access notes and SSH key, never committed
+vps/
