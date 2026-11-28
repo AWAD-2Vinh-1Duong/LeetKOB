@@ -13,3 +13,10 @@
 - **`docker-compose.yml`:** thêm service `9router` (image `decolua/9router:0.5.104`, cùng bản đang chạy ở máy local) với volume `9router-data`. Dashboard chỉ bind `127.0.0.1:20128` của VPS, mở qua SSH tunnel, Caddy không proxy. Worker gọi qua mạng Docker: `LLM_BASE_URL=http://9router:20128/v1`. Sandbox vẫn `--network none` nên không chạm được 9router.
 - **`.gitignore`:** thêm `vps/`, vì thư mục này chứa `azure-vm-key.pem` (khóa SSH của VPS) mà trước đó chưa bị ignore.
 - **Kiểm tra:** `docker compose config -q` hợp lệ. Chưa chạy trên VPS; việc deploy và sửa `.env` trên VPS do người làm (Tier 3).
+
+## 3. Mật khẩu dashboard 9router trên VPS (`@Thế Vinh`, với Claude Code)
+
+- **Vấn đề:** 9router từ chối đăng nhập bằng mật khẩu mặc định `123456` khi request đến từ xa (qua SSH tunnel và Docker), nên không vào được dashboard trên VPS.
+- **`docker-compose.yml`:** service `9router` nhận `INITIAL_PASSWORD` và `JWT_SECRET` từ `NINEROUTER_PASSWORD` và `NINEROUTER_JWT_SECRET` trong `.env`. Thiếu một trong hai thì `docker compose` báo lỗi ngay, không lặng lẽ dùng mặc định.
+- **`.env.example`:** thêm 2 biến trên, để trống.
+- **Kiểm tra:** `docker compose config -q` hợp lệ khi có đủ biến, báo lỗi khi thiếu. Giá trị thật do Thế Vinh tự đặt trong `.env` trên VPS.
