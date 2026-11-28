@@ -187,7 +187,7 @@
 
 ### Giai đoạn 6: Public Deployment, Tài liệu & Đóng gói Nộp Bài (Ngày 25/11 — Trước 22:00)
 
-- [ ] **T20** — **Deploy Public & Tạo 5 tài khoản Test**
+- [x] **T20** — **Deploy Public & Tạo 5 tài khoản Test**
   - **Phụ trách:** `@Dương`
   - **Phụ thuộc:** `T07`, `T09`, `T16`
   - **Chi tiết:** Triển khai toàn bộ Web/API, PostgreSQL, Worker và Docker Sandbox lên server public (giữ chạy liên tục từ 25/11 cho đến khi có điểm PA#4 để đội red-team tấn công). Tạo sẵn 5 tài khoản test (chỉ dùng dữ liệu giả): `1 Admin`, `2 TA ở 2 lớp khác nhau` (TA1 lớp A, TA2 lớp B), và `2 Student thuộc lớp của TA1`. Xác nhận API key `ag/gemini-3.8-flash` thuộc project Free tier không gắn billing ($0 cap).
@@ -203,7 +203,7 @@
     4. TA1 mở Review Queue xem verdict, evidence, deduction; đăng nhập TA2 kiểm tra bị API từ chối (RFC 9457) khi truy cập lab/queue của TA1.
   - **Tiêu chí xong:** Video rõ nét, dưới 5 phút, mở xem được ở chế độ ẩn danh.
 
-- [ ] **T22** — **Cập nhật `README.md`, `PA3.md` & Nhật ký `docs/tasks/PA3/context/`**
+- [x] **T22** — **Cập nhật `README.md`, `PA3.md` & Nhật ký `docs/tasks/PA3/context/`**
   - **Phụ trách:** `@Dương` (phối hợp `@Thế Vinh`, `@Quang Vinh`)
   - **Phụ thuộc:** `T19`, `T20`, `T21`
   - **Chi tiết:**
@@ -212,7 +212,7 @@
     - Kiểm tra nhật ký `docs/tasks/PA3/context/context-dd-mm.md` đã ghi nhận đầy đủ các thay đổi.
   - **Tiêu chí xong:** Commit `docs(docs): add PA3.md and update README with checker commands`.
 
-- [ ] **T23** — **Cập nhật `AI-LOG.md` (Entry mới nhất nằm trên cùng)**
+- [x] **T23** — **Cập nhật `AI-LOG.md` (Entry mới nhất nằm trên cùng)**
   - **Phụ trách:** `@Dương`, `@Quang Vinh`, `@Thế Vinh` (mỗi người tự viết phần việc của mình)
   - **Phụ thuộc:** `T07`, `T11`, `T15`, `T19`
   - **Chi tiết:** Theo convention mục 3 của `AGENTS.md`, đặt entry mới nhất lên **trên cùng** file `AI-LOG.md`. Ghi rõ công cụ AI đã dùng cho từng phần (sandbox, queue, hard rules, model call, guardrails, checker) cùng các mục **`Changed` / `Rejected` thực tế** và phép tính chi phí 80 bài nộp.

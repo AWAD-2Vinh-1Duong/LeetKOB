@@ -123,5 +123,5 @@ Not caught: `reverse-words/s05` C1 (predicted pass) and `gcd-euclid/s07` C2 (pre
 
 ## 5. End-to-End Screen Recording (≤ 5 minutes)
 
-- **Recording URL:** `<TODO: https://youtu.be/... or Google Drive public link>`
+- **Recording URL:** [Google Drive](https://drive.google.com/drive/u/1/folders/1mJJ8yDFILgQ0pEPbWqEoraiQJH9NnmiQ)
 - **Flow shown:** TA1 creates `sort-merge` → Student 1 submits a compliant solution, Student 2 a violation and an injection → stop the worker, submit, start the worker (judged once, `Q1`) → TA1 opens the review queue → TA2 is refused (`404`, RFC 9457).
