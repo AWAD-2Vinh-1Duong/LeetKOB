@@ -9,6 +9,13 @@ Asked for: Run pre-flight checks on branch and existing config, then execute tas
 Kept: Verified `feat/pa4-prototype` branch and `LLM_COST_CAP_PER_LAB_USD=` already present in `.env.example`; updated `AGENTS.md` and `.gitignore` (verified `git check-ignore -v marking.env`); created `.github/CODEOWNERS` (`@AWAD-2Vinh-1Duong`); updated `docs/tasks/PA4/context/context-28-11.md`; ran `npm run format && npm run check` (lint, format:check, typecheck, 234/234 tests pass) and committed `f8d5c79` locally. Note: prepare for PA4.
 Changed:
 Rejected:
+## 2026-11-28 — PA#3 Submission Docs & E2E Recording Link Sync (PA#3 T22, Dương)
+
+Tool: Antigravity
+Asked for: Complete Task T22 — verify `PA3.md`, `README.md`, sync the E2E screen recording Google Drive link, update `docs/tasks/PA3/context/context-28-11.md`, mark T22 done in `checklist.md`, and run `npm run check`.
+Kept: Formatted the Google Drive recording URL in `PA3.md` and `docs/tasks/PA3/submission/E2E-record-link.md`; verified `README.md` already contains `MODEL_OFF=1` checker commands, `ag/gemini-3.8-flash` via 9router, and 80-submission lab cost arithmetic; left the `pa3` CI run URL placeholder in `PA3.md` to be filled after tagging in T24.
+Changed: None.
+Rejected: Modifying the `pa3` CI run placeholder before the `pa3` tag is created and executed in GitHub Actions.
 
 ## 2026-11-27 — Wire Docker Sandbox Execution into JudgeWorkerService (PA#3 T07+T09+T11, Dương)
 

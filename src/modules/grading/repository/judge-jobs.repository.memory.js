@@ -4,6 +4,8 @@ import { createHash, randomUUID } from 'node:crypto';
 /** @typedef {import('./judge-jobs.repository.js').VerdictInput} VerdictInput */
 /** @typedef {import('./judge-jobs.repository.js').StoredVerdict} StoredVerdict */
 /** @typedef {import('./judge-jobs.repository.js').JobSubmissionContext} JobSubmissionContext */
+/** @typedef {import('./judge-jobs.repository.js').ReviewRow} ReviewRow */
+/** @typedef {import('./judge-jobs.repository.js').Decision} Decision */
 
 /**
  * Deterministic 64-char hex id for (submissionId, constraintId) so verdict writes are idempotent.
@@ -35,6 +37,8 @@ export class InMemoryJudgeJobsRepository {
     this.verdicts = new Map();
     /** @type {Array<{ submissionId: string, call: import('../service/constraint-judge.js').CallRecord }>} */
     this.llmCalls = [];
+    /** @type {Map<string, Decision>} TA decisions, keyed by verdict id */
+    this.decisions = new Map();
   }
 
   /**
@@ -216,5 +220,62 @@ export class InMemoryJudgeJobsRepository {
     return [...this.jobs.values()]
       .filter((j) => j.submissionId === submissionId)
       .map((j) => ({ ...j }));
+  }
+
+  /**
+   * @param {string} labId
+   * @returns {Promise<ReviewRow[]>}
+   */
+  async findReviewQueue(labId) {
+    if (!this.submissionRepository) return [];
+    /** @type {Array<{ row: ReviewRow, createdAt: string }>} */
+    const rows = [];
+    for (const v of this.verdicts.values()) {
+      const sub = await this.submissionRepository.findById(v.submissionId);
+      if (!sub || sub.labId !== labId) continue;
+      rows.push({
+        createdAt: sub.createdAt,
+        row: {
+          id: v.id,
+          submissionId: v.submissionId,
+          studentId: sub.studentId,
+          source: sub.source ?? '',
+          constraintId: v.constraintId,
+          proposal: { verdict: v.verdict, evidence: v.evidence },
+          decision: this.decisions.get(v.id) ?? null,
+        },
+      });
+    }
+    rows.sort(
+      (a, b) =>
+        a.createdAt.localeCompare(b.createdAt) ||
+        a.row.submissionId.localeCompare(b.row.submissionId) ||
+        a.row.constraintId.localeCompare(b.row.constraintId),
+    );
+    return rows.map((r) => r.row);
+  }
+
+  /**
+   * @param {string} labId
+   * @param {string} verdictId
+   * @returns {Promise<ReviewRow | null>}
+   */
+  async findReviewRow(labId, verdictId) {
+    const rows = await this.findReviewQueue(labId);
+    return rows.find((r) => r.id === verdictId) ?? null;
+  }
+
+  /**
+   * @param {string} verdictId
+   * @param {Decision} decision
+   */
+  async saveDecision(verdictId, decision) {
+    const v = this.verdicts.get(verdictId);
+    if (!v) return;
+    this.decisions.set(verdictId, decision);
+    v.deduction = decision.deduction;
+    v.isReviewed = true;
+    v.reviewedBy = decision.reviewedBy;
+    v.reviewedAt = decision.reviewedAt;
   }
 }

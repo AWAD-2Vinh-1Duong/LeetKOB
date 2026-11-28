@@ -1,4 +1,4 @@
-// Contract tests for docs/contract/auth-and-lab-access.md (revision 1).
+// Contract tests for docs/contract/auth-and-lab-access.md (revision 2).
 import { test, describe, before } from 'node:test';
 import assert from 'node:assert/strict';
 import request from 'supertest';

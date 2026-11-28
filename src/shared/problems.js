@@ -12,11 +12,16 @@ export const PROBLEMS = /** @type {const} */ ({
   'lab-not-found': { status: 404, title: 'Lab not found' },
   'class-not-found': { status: 404, title: 'Class not found' },
   'submission-not-found': { status: 404, title: 'Submission not found' },
+  'verdict-not-found': { status: 404, title: 'Verdict not found' },
   'lab-closed': { status: 409, title: 'Lab is closed for submissions' },
   'payload-too-large': { status: 413, title: 'Request body is too large' },
   'idempotency-key-reused': {
     status: 422,
     title: 'Idempotency-Key was used with a different request',
+  },
+  'evidence-not-in-source': {
+    status: 422,
+    title: 'Evidence line is not in the source',
   },
   'internal-error': { status: 500, title: 'Internal server error' },
 });

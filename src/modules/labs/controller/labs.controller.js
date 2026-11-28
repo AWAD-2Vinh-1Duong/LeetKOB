@@ -21,6 +21,29 @@ const createSchema = z.strictObject({
   deadline: z.iso.datetime({ offset: true }),
 });
 
+const decisionSchema = z
+  .strictObject({
+    verdict: z.enum(['pass', 'violation']),
+    evidenceLines: z.array(z.number().int()).max(200).optional(),
+  })
+  .superRefine((body, ctx) => {
+    const n = body.evidenceLines?.length ?? 0;
+    if (body.verdict === 'violation' && n === 0) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['evidenceLines'],
+        message: 'A violation needs at least one evidence line.',
+      });
+    }
+    if (body.verdict === 'pass' && n > 0) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['evidenceLines'],
+        message: 'A pass takes no evidence lines.',
+      });
+    }
+  });
+
 /**
  * Staff see the whole lab; a student does not see the expected outputs.
  * @param {import('../repository/labs.repository.js').Lab} lab
@@ -69,6 +92,16 @@ export class LabsController {
   reviewQueue = async (req, res) => {
     res.json(
       await this.labService.openReviewQueue(res.locals.user, req.params.labId),
+    );
+  };
+
+  /** @type {import('express').RequestHandler<{ labId: string, verdictId: string }>} */
+  decide = async (req, res) => {
+    const user = res.locals.user;
+    const lab = await this.labService.getReviewable(user, req.params.labId);
+    const input = parseBody(decisionSchema, req.body);
+    res.json(
+      await this.labService.decide(user, lab, req.params.verdictId, input),
     );
   };
 }

@@ -4,11 +4,22 @@ import { ProblemError } from '../../../shared/problems.js';
 
 /** @typedef {import('../repository/labs.repository.js').Lab} Lab */
 /** @typedef {import('../repository/labs.repository.js').Viewer} Viewer */
+/** @typedef {import('../../grading/repository/judge-jobs.repository.js').ReviewRow} ReviewRow */
+/** @typedef {import('../../grading/repository/judge-jobs.repository.js').Decision} Decision */
+/** @typedef {Omit<ReviewRow, 'proposal' | 'decision'> & { constraint: string, deduction: number, proposal: ReviewRow['proposal'], decision: Decision | null }} ReviewItem */
 
 export class LabService {
-  /** @param {{ labRepository: import('../repository/labs.repository.js').LabRepository }} deps */
-  constructor({ labRepository }) {
+  /**
+   * @param {{
+   *   labRepository: import('../repository/labs.repository.js').LabRepository,
+   *   judgeJobsRepository?: import('../../grading/repository/judge-jobs.repository.js').JudgeJobsRepository,
+   *   now?: () => Date,
+   * }} deps
+   */
+  constructor({ labRepository, judgeJobsRepository, now = () => new Date() }) {
     this.labRepository = labRepository;
+    this.judgeJobsRepository = judgeJobsRepository;
+    this.now = now;
   }
 
   /**
@@ -64,15 +75,91 @@ export class LabService {
   }
 
   /**
-   * Who may open the review queue. The lab check comes first (404), then the role (403).
-   * The verdicts themselves are added by the review-queue work.
+   * The lab, if the caller may work on its review queue: the lab check first (404), then
+   * the role (403).
    * @param {Viewer} user
    * @param {string} labId
-   * @returns {Promise<{ items: unknown[] }>}
+   * @returns {Promise<Lab>}
+   */
+  async getReviewable(user, labId) {
+    const lab = await this.getVisible(user, labId);
+    assertStaff(user, 'Only TAs and admins open the review queue.');
+    return lab;
+  }
+
+  /**
+   * Every stored verdict of the lab, with the constraint text and the deduction the TA set.
+   * shortcut: lists every verdict; FAQ-10 asks for all violations, all unsure and a 10% sample
+   * of the passes, which comes with the Publish work (PA#4).
+   * @param {Viewer} user
+   * @param {string} labId
+   * @returns {Promise<{ items: ReviewItem[] }>}
    */
   async openReviewQueue(user, labId) {
-    await this.getVisible(user, labId);
-    assertStaff(user, 'Only TAs and admins open the review queue.');
-    return { items: [] };
+    const lab = await this.getReviewable(user, labId);
+    if (!this.judgeJobsRepository) return { items: [] };
+    const rows = await this.judgeJobsRepository.findReviewQueue(lab.id);
+    return { items: rows.map((row) => toItem(lab, row)) };
   }
+
+  /**
+   * Records a TA decision. Only a decision carries a deduction, always the constraint's own.
+   * shortcut: a new decision replaces the old one with no history; FAQ-10 asks for a log of
+   * who changed what, which needs its own table (PA#4).
+   * @param {Viewer} user
+   * @param {Lab} lab a lab from `getReviewable`
+   * @param {string} verdictId
+   * @param {{ verdict: 'pass' | 'violation', evidenceLines?: number[] }} input
+   * @returns {Promise<ReviewItem>}
+   */
+  async decide(user, lab, verdictId, input) {
+    const row = await this.judgeJobsRepository?.findReviewRow(
+      lab.id,
+      verdictId,
+    );
+    if (!row || !this.judgeJobsRepository) {
+      throw new ProblemError(
+        'verdict-not-found',
+        `No verdict "${verdictId}" in lab "${lab.id}".`,
+      );
+    }
+    const lines = row.source.split('\n');
+    const evidence = [];
+    for (const line of new Set(input.evidenceLines ?? [])) {
+      const text = (lines[line - 1] ?? '').replace(/\r$/, '');
+      if (line < 1 || text.trim() === '') {
+        throw new ProblemError(
+          'evidence-not-in-source',
+          `Line ${line} is not a non-blank line of the submitted source.`,
+        );
+      }
+      evidence.push({ line, text });
+    }
+    const constraint = lab.constraints?.find((c) => c.id === row.constraintId);
+    /** @type {Decision} */
+    const decision = {
+      verdict: input.verdict,
+      evidence,
+      deduction:
+        input.verdict === 'violation' ? (constraint?.deduction ?? 0) : 0,
+      reviewedBy: user.id,
+      reviewedAt: this.now().toISOString(),
+    };
+    await this.judgeJobsRepository.saveDecision(row.id, decision);
+    return toItem(lab, { ...row, decision });
+  }
+}
+
+/**
+ * @param {Lab} lab
+ * @param {ReviewRow} row
+ * @returns {ReviewItem}
+ */
+function toItem(lab, row) {
+  const constraint = lab.constraints?.find((c) => c.id === row.constraintId);
+  return {
+    ...row,
+    constraint: constraint?.text ?? '',
+    deduction: constraint?.deduction ?? 0,
+  };
 }

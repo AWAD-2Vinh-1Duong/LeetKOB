@@ -155,8 +155,8 @@
   - **Chi tiết:** Tích hợp `zod` schema validator và HTTP timeout vào `ConstraintJudge` adapter. Mọi lỗi parse/schema hoặc timeout đều fallback an toàn về `unsure` kèm lý do để TA xem xét.
   - **Tiêu chí xong:** Pass 100% test fake-model ở `T14`; commit `feat(rules): enforce schema validation and timeout guardrails`.
 
-- [ ] **T16** — **Xây dựng Review Queue của TA & Khóa cổng công bố điểm (Human Gate)**
-  - **Phụ trách:** `@Quang Vinh`
+- [x] **T16** — **Xây dựng Review Queue của TA & Khóa cổng công bố điểm (Human Gate)**
+  - **Phụ trách:** `@Quang Vinh` (làm thay: `@Thế Vinh`, 27/11)
   - **Phụ thuộc:** `T11`, `T15`
   - **Chi tiết:** Đẩy toàn bộ verdict (kèm `evidence` và `deduction` của TA) vào **Review Queue của TA**. Đảm bảo điểm công bố của sinh viên tuyệt đối không bị trừ trước khi TA duyệt; nếu đã có API/nút `Publish`, API bắt buộc trả lỗi RFC 9457 khi còn bất kỳ verdict nào trong queue chưa được duyệt. Kiểm tra **Product Owners' FAQ** trên group lớp để hiển thị đúng trạng thái cho sinh viên trước khi publish và ghi lại mã câu hỏi FAQ đã áp dụng.
   - **Tiêu chí xong:** Có integration test chứng minh sinh viên không thấy điểm trừ khi TA chưa duyệt.
@@ -187,7 +187,7 @@
 
 ### Giai đoạn 6: Public Deployment, Tài liệu & Đóng gói Nộp Bài (Ngày 25/11 — Trước 22:00)
 
-- [ ] **T20** — **Deploy Public & Tạo 5 tài khoản Test**
+- [x] **T20** — **Deploy Public & Tạo 5 tài khoản Test**
   - **Phụ trách:** `@Dương`
   - **Phụ thuộc:** `T07`, `T09`, `T16`
   - **Chi tiết:** Triển khai toàn bộ Web/API, PostgreSQL, Worker và Docker Sandbox lên server public (giữ chạy liên tục từ 25/11 cho đến khi có điểm PA#4 để đội red-team tấn công). Tạo sẵn 5 tài khoản test (chỉ dùng dữ liệu giả): `1 Admin`, `2 TA ở 2 lớp khác nhau` (TA1 lớp A, TA2 lớp B), và `2 Student thuộc lớp của TA1`. Xác nhận API key `ag/gemini-3.8-flash` thuộc project Free tier không gắn billing ($0 cap).
@@ -203,7 +203,7 @@
     4. TA1 mở Review Queue xem verdict, evidence, deduction; đăng nhập TA2 kiểm tra bị API từ chối (RFC 9457) khi truy cập lab/queue của TA1.
   - **Tiêu chí xong:** Video rõ nét, dưới 5 phút, mở xem được ở chế độ ẩn danh.
 
-- [ ] **T22** — **Cập nhật `README.md`, `PA3.md` & Nhật ký `docs/tasks/PA3/context/`**
+- [x] **T22** — **Cập nhật `README.md`, `PA3.md` & Nhật ký `docs/tasks/PA3/context/`**
   - **Phụ trách:** `@Dương` (phối hợp `@Thế Vinh`, `@Quang Vinh`)
   - **Phụ thuộc:** `T19`, `T20`, `T21`
   - **Chi tiết:**
@@ -212,7 +212,7 @@
     - Kiểm tra nhật ký `docs/tasks/PA3/context/context-dd-mm.md` đã ghi nhận đầy đủ các thay đổi.
   - **Tiêu chí xong:** Commit `docs(docs): add PA3.md and update README with checker commands`.
 
-- [ ] **T23** — **Cập nhật `AI-LOG.md` (Entry mới nhất nằm trên cùng)**
+- [x] **T23** — **Cập nhật `AI-LOG.md` (Entry mới nhất nằm trên cùng)**
   - **Phụ trách:** `@Dương`, `@Quang Vinh`, `@Thế Vinh` (mỗi người tự viết phần việc của mình)
   - **Phụ thuộc:** `T07`, `T11`, `T15`, `T19`
   - **Chi tiết:** Theo convention mục 3 của `AGENTS.md`, đặt entry mới nhất lên **trên cùng** file `AI-LOG.md`. Ghi rõ công cụ AI đã dùng cho từng phần (sandbox, queue, hard rules, model call, guardrails, checker) cùng các mục **`Changed` / `Rejected` thực tế** và phép tính chi phí 80 bài nộp.
@@ -224,7 +224,7 @@
   - **Chi tiết:** Merge các nhánh tính năng vào `main` qua Pull Request (giữ nguyên từng commit nhỏ, không squash). Gắn tag `pa3` (`git tag pa3 && git push origin pa3`). Đợi GitHub Actions chạy xanh toàn bộ workflow (`npm run check` + 9 sandbox attack tests + CLI `MODEL_OFF=1` test) trên tag `pa3`, dán link CI run đó vào `PA3.md` và cập nhật lại tag `pa3` trỏ vào commit cuối cùng.
   - **Tiêu chí xong:** Repo public, tag `pa3` trỏ đúng commit cuối, CI trên tag `pa3` xanh 100%.
 
-- [ ] **T25** — **Viết `SELF_ASSESSMENT_REPORT.md` & Rà soát tính trung thực**
+- [x] **T25** — **Viết `SELF_ASSESSMENT_REPORT.md` & Rà soát tính trung thực**
   - **Phụ trách:** `@Dương` (cùng `@Quang Vinh`, `@Thế Vinh` đối chiếu từng tiêu chí)
   - **Phụ thuộc:** `T24`
   - **Chi tiết:** Tạo `SELF_ASSESSMENT_REPORT.md` (theo template của môn học), lập bảng chấm điểm 8 tiêu chí Rubric PA#3 (tổng 100 điểm) kèm **bằng chứng cụ thể** (file, commit hash, PR, link CI run) và mục _What we did not manage_. Đảm bảo chênh lệch với điểm thật nằm trong khoảng `±10` để không bị trừ điểm Honesty adjustment.
