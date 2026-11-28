@@ -35,3 +35,22 @@
 - `src/modules/grading/repository/judge-jobs.repository.{js,memory.js,postgres.js}`: Bổ sung `tests` của lab vào `JobSubmissionContext` trong `getSubmissionContext`.
 - `src/modules/grading/service/judge-worker.service.js`, `src/container.js`, `src/worker.js`: Inject `sandboxRunner` (lấy `runInSandbox` ở `src/worker.js`) vào đầu `#evaluateDefault` — chạy tất cả test cases của lab trong container `leetkob-sandbox`; chỉ khi đạt `Accepted` mới chạy Hard Rules + LLM `ConstraintJudge`.
 - `tests/grading/judge-worker.test.js`: Bổ sung 2 test kiểm chứng nhánh `Wrong Answer` bỏ qua Hard Rules/LLM và nhánh `Accepted` kích hoạt chấm ràng buộc.
+
+## 2. Hoàn thành Task T16 — Review Queue của TA & Human Gate (`@Thế Vinh` làm thay `@Quang Vinh`, với Claude Code)
+
+- **Contract trước** (commit `52baa3f`): `docs/contract/review-queue.md` Revision 1, nội dung của `GET /labs/{labId}/review-queue` và endpoint mới `PUT /labs/{labId}/review-queue/{verdictId}`. `auth-and-lab-access.md` lên Revision 2, mục 4 trỏ sang file này.
+- **Test trước** (commit `7b3bf7f`):
+  - `tests/labs/review-queue.test.js`: 12 test in-memory. Gồm nội dung queue, queue chỉ chứa bài của lab đó, quyền truy cập (401/404/403), quyết định `violation`/`pass`, gửi lại thì thay quyết định cũ, 400 `validation-error`, 422 `evidence-not-in-source`, 404 `verdict-not-found`, và test human gate: sinh viên không thấy verdict/điểm trừ trước và sau khi TA quyết định.
+  - `tests/labs/review-queue-postgres.test.js`: luồng đầy đủ trên PostgreSQL, kèm kiểm tra worker ghi lại verdict không xóa quyết định của TA.
+- **Code** (commit `b2b83d1`):
+  - Migration `migrations/1795600000000_review-decision.sql` (Tier 2, Thế Vinh đồng ý): thêm cột `decision` và `decision_evidence` vào `verdicts`, để đề xuất của hard rules/model (`verdict`, `evidence`) không bị ghi đè.
+  - `JudgeJobsRepository` thêm `findReviewQueue`, `findReviewRow`, `saveDecision` (bản memory và PostgreSQL).
+  - `LabService.openReviewQueue` trả mọi verdict kèm text và mức trừ của ràng buộc, `LabService.decide` lấy dòng bằng chứng từ source, mức trừ luôn lấy từ ràng buộc (FAQ-11).
+  - `LabsController.decide` validate body bằng zod; route `PUT` trong `labs.routes.js`; `container.js` truyền `judgeJobsRepository` vào `LabService`.
+- **FAQ áp dụng:** FAQ-08 (sinh viên không thấy kết quả soát trước khi công bố), FAQ-09 (`unsure` không phải quyết định, `violation` phải có dòng bằng chứng), FAQ-11 (mức trừ lấy từ ràng buộc). Đã ghi trong `PA3.md`.
+- **Kiểm tra:**
+  - `npm run check` 246/246.
+  - Test PostgreSQL chạy trên container `postgres:16-alpine` tạm (đã dừng và xóa): 72/72. Migration chạy `up`, `down`, `up` đều được.
+  - Mutation check: cho `GET /submissions/:id` lộ `deduction` thì test human gate fail.
+- **Còn nợ (PA#4):** lọc queue theo FAQ-10 (mọi violation, mọi unsure, mẫu 10% pass); Publish (FAQ-12); lịch sử đổi quyết định (FAQ-10); hiện lý do `unsure` trong queue (FAQ-09). Đã ghi `shortcut:` trong `labs.service.js`.
+- **Khi deploy (T20, Dương):** phải chạy `npm run db:migrate` để có migration mới.

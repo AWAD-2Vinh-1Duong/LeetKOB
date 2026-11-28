@@ -17,5 +17,11 @@ export function createLabsRouter({ controller, requireAuth }) {
   );
   router.get('/:labId', requireAuth, controller.get);
   router.get('/:labId/review-queue', requireAuth, controller.reviewQueue);
+  router.put(
+    '/:labId/review-queue/:verdictId',
+    requireAuth,
+    express.json({ limit: '16kb', strict: false }),
+    controller.decide,
+  );
   return router;
 }

@@ -98,7 +98,7 @@ Client ──HTTPS──> Caddy ──> API (src/server.js) ──> PostgreSQL
 ```
 
 - **API** nhận bài nộp (`202 queued`) và ghi `submissions` + `judge_jobs` trong một transaction. **Worker** là tiến trình riêng, kéo job bằng `FOR UPDATE SKIP LOCKED`; verdict lưu idempotent (khóa `sha256(submission, constraint)`), nên dừng/bật worker vẫn chỉ có một bộ verdict (luật `Q1`).
-- Verdict luôn lưu với `deduction = 0`, `is_reviewed = false`: không verdict nào của model đổi điểm sinh viên khi chưa có TA duyệt. Đầu ra model qua kiểm tra schema (`zod`) và timeout; lỗi thì thành `unsure`.
+- Verdict của worker luôn lưu với `deduction = 0`, chưa có quyết định: không verdict nào của model đổi điểm sinh viên. Verdict chỉ hiện trong review queue của TA (`GET /labs/:labId/review-queue`); chỉ quyết định của TA (`PUT /labs/:labId/review-queue/:verdictId`) mới mang mức trừ, lấy từ ràng buộc. Chưa có Publish, sinh viên chỉ thấy trạng thái bài nộp (FAQ-08). Đầu ra model qua kiểm tra schema (`zod`) và timeout; lỗi thì thành `unsure`.
 - **9 giới hạn của sandbox** (`src/modules/grading/service/sandbox-runner.js`, được kiểm bằng 9 bài tấn công `tests/sandbox/attacks/m1`–`m9`, chạy trong CI trên tag `pa3`):
   1. không mạng (`--network none`);
   2. giới hạn CPU (`--ulimit cpu`);

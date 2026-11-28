@@ -1,6 +1,6 @@
 # Auth and class access
 
-Revision 1. Source of truth for `POST /auth/login`, `GET /labs/{labId}` and `GET /labs/{labId}/review-queue`. Errors are RFC 9457 problem details with `type` = `https://leettkob.dev/problems/<slug>`. Problems shared with `post-labs-submissions.md` keep the same slug and status.
+Revision 2. Source of truth for `POST /auth/login`, `GET /labs/{labId}` and who may open `GET /labs/{labId}/review-queue`. Errors are RFC 9457 problem details with `type` = `https://leettkob.dev/problems/<slug>`. Problems shared with `post-labs-submissions.md` keep the same slug and status.
 
 ## 1. POST /auth/login
 
@@ -31,9 +31,9 @@ Anyone else gets `404 lab-not-found`, the same as for a lab that does not exist,
 
 ## 4. GET /labs/{labId}/review-queue
 
-The TA's review queue. Content is filled in by the review-queue work; this section fixes who may open it.
+The TA's review queue. This section fixes who may open it; its content, and `PUT /labs/{labId}/review-queue/{verdictId}`, are in `review-queue.md`.
 
-- 200: `{ "items": [] }` for an `admin` or a `ta` of the lab's class.
+- 200: `{ "items": [...] }` for an `admin` or a `ta` of the lab's class (`{ "items": [] }` while the lab has no judged submission).
 - 401 `unauthenticated`: no valid bearer token.
 - 404 `lab-not-found`: the lab does not exist or the caller cannot see it (this check comes first).
 - 403 `staff-only`: the caller can see the lab but is a student.

@@ -48,9 +48,13 @@ curl -i -sS -X POST "$BASE_URL/labs/$LAB_ID/submissions" -H "Authorization: Bear
   -H "Idempotency-Key: demo-1" -H "Content-Type: application/json" \
   -d '{"language":"cpp","source":"<your C++ source>"}'
 
-# 3. TA1 opens the review queue of the lab (verdicts, evidence, deductions)
-#    NOTE: today this endpoint returns `{"items":[]}` — see "Known gaps" below.
+# 3. TA1 opens the review queue of the lab: for each submission and constraint, the
+#    proposal (verdict + evidence lines), the deduction TA1 set, the source, and the decision
 curl -sS "$BASE_URL/labs/$LAB_ID/review-queue" -H "Authorization: Bearer $TA1"
+
+# 3b. TA1 decides one verdict (violation needs at least one source line; pass takes none)
+curl -sS -X PUT "$BASE_URL/labs/$LAB_ID/review-queue/<verdict id>" -H "Authorization: Bearer $TA1" \
+  -H "Content-Type: application/json" -d '{"verdict":"violation","evidenceLines":[4]}'
 
 # 4. TA2 (Class B) asks for TA1's lab and queue: 404 problem+json (RFC 9457, slug lab-not-found)
 TA2=$(login ta2@leettkob.dev 'Ta2Test#2026')
@@ -62,8 +66,9 @@ A student who asks for the lab of another class gets the same `404`, and a stude
 
 ### What a student sees before publishing
 
-- `<TODO: cite the Product Owners' FAQ entry (number/question) that decides what a student sees before the TA publishes>`
-- In this build `GET /submissions/:id` returns only the status (`queued` → `running` → `judged`/`failed`), never a verdict, evidence, deduction or source (tested in `tests/labs/labs-api.test.js`). Nothing publishes a verdict into a mark.
+- We follow the product owners' **[FAQ-08](https://github.com/tkob-team/LeeTKOB-FAQ/blob/main/FAQ.md#faq-08)** ("Sinh viên có thấy kết quả soát ràng buộc trước khi công bố điểm không?"): before publishing, the student sees no result of the hard rules or the model. Deductions always come from the constraint, never from the model (**FAQ-11**).
+- In this build `GET /submissions/:id` returns only the status (`queued` → `running` → `judged`/`failed`), never a verdict, evidence, deduction or source, before and after a TA decision (`tests/labs/review-queue.test.js`, "the human gate"). There is no Publish action, so nothing turns a verdict into a mark.
+- Verdicts land only in `GET /labs/:labId/review-queue` (contract: `docs/contract/review-queue.md`). Only a TA decision (`PUT /labs/:labId/review-queue/:verdictId`) carries a deduction; `unsure` is not a decision, and a violation needs source lines as evidence (**FAQ-09**).
 
 ## 2. CI Run for `pa3` Tag (Including Sandbox Attack Tests)
 
@@ -113,8 +118,8 @@ Not caught: `reverse-words/s05` C1 (predicted pass) and `gcd-euclid/s07` C2 (pre
 
 ## Known gaps (honest status)
 
-- **Review queue (T16) is not finished:** `GET /labs/:labId/review-queue` checks access (TA of the class or admin, `404` for other classes, `403` for students) but returns `{"items":[]}`. Verdicts are stored in the `verdicts` table with `deduction = 0` and `is_reviewed = false`; no endpoint lists them yet and nothing turns a verdict into a published mark.
-- The Product Owners' FAQ entry above is still to be cited.
+- **Review queue:** it lists every verdict of the lab. FAQ-10 asks for all violations, all `unsure` and a 10% sample of the passes; that filter, Publish (FAQ-12) and a history of changed decisions come with PA#4.
+- The reason a verdict became `unsure` (FAQ-09) is in the call log, not yet in the queue.
 
 ## 5. End-to-End Screen Recording (≤ 5 minutes)
 
