@@ -72,7 +72,7 @@ A student who asks for the lab of another class gets the same `404`, and a stude
 
 ## 2. CI Run for `pa3` Tag (Including Sandbox Attack Tests)
 
-- **GitHub Actions CI Run (`pa3` tag):** `<TODO: https://github.com/AWAD-2Vinh-1Duong/LeetKOB/actions/runs/...>`
+- **GitHub Actions CI Run (`pa3` tag):** `https://github.com/AWAD-2Vinh-1Duong/LeetKOB/actions/runs/46108206454`
 - **Jobs (`.github/workflows/ci.yml`):**
   - `quality`: `npm ci` then `npm run check` (`lint`, `format:check`, `typecheck`, all `node:test` suites, including the checker test with the model off).
   - `sandbox`: builds `Dockerfile.sandbox` and runs the 9 attack submissions `M1`–`M9` in the real container (`SANDBOX_DOCKER=1 node --test tests/sandbox/sandbox-attacks.test.js`).
