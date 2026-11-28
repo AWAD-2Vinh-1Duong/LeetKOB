@@ -20,3 +20,12 @@
 - **`docker-compose.yml`:** service `9router` nhận `INITIAL_PASSWORD` và `JWT_SECRET` từ `NINEROUTER_PASSWORD` và `NINEROUTER_JWT_SECRET` trong `.env`. Thiếu một trong hai thì `docker compose` báo lỗi ngay, không lặng lẽ dùng mặc định.
 - **`.env.example`:** thêm 2 biến trên, để trống.
 - **Kiểm tra:** `docker compose config -q` hợp lệ khi có đủ biến, báo lỗi khi thiếu. Giá trị thật do Thế Vinh tự đặt trong `.env` trên VPS.
+
+## 4. Sandbox mặc định 256 MB để compile `<bits/stdc++.h>` (`@Thế Vinh`, với Claude Code)
+
+- **Phát hiện khi test e2e trên VPS:** bài nộp đúng có `#include <bits/stdc++.h>` bị chấm `compile-error`, worker không soát ràng buộc nào (`verdicts: 0`), review queue rỗng. Log sandbox: `g++: fatal error: Killed signal terminated program cc1plus`.
+- **Nguyên nhân:** giới hạn bộ nhớ mặc định 64 MB. Đo trong sandbox local: 64 và 128 MB bị kill, 192 và 256 MB compile được. 8 bài trong dev set dùng `bits/stdc++.h`.
+- **Test trước** (commit riêng): `tests/sandbox/sandbox-attacks.test.js` thêm test compile `<bits/stdc++.h>` với giới hạn mặc định; chạy với `SANDBOX_DOCKER=1` thì fail ở 64 MB.
+- **Code:** `DEFAULT_LIMITS.memoryMb` trong `sandbox-runner.js` từ 64 lên 256. Vẫn có giới hạn bộ nhớ (`--memory == --memory-swap`); test M4 vẫn tự đặt 64 MB và vẫn bị OOM-kill.
+- **Kiểm tra:** `SANDBOX_DOCKER=1 node --test tests/sandbox/sandbox-attacks.test.js` 21/21; `npm run check` pass.
+- **Trên VPS:** cho tới khi deploy bản này, đặt `SANDBOX_MEMORY_MB=256` trong `.env` rồi `docker compose up -d worker`.
