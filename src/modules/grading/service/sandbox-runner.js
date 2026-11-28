@@ -25,7 +25,8 @@ const execFileAsync = promisify(execFile);
 const DEFAULT_LIMITS = {
   cpuTimeMs: 2000,
   wallTimeMs: 5000,
-  memoryMb: 64,
+  // Compiling <bits/stdc++.h> needs 129-192 MB (cc1plus was killed at 64 and 128 MB).
+  memoryMb: 256,
   maxProcesses: 32,
   maxOutputKb: 64,
 };

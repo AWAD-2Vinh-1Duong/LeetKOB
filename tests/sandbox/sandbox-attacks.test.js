@@ -76,6 +76,16 @@ describe(
       assert.equal(res.stdout, '42\n');
     });
 
+    // Students often include <bits/stdc++.h>; compiling it must fit the default memory limit.
+    test('compiles a submission that includes <bits/stdc++.h> under the default limits', async () => {
+      const res = await runInSandbox({
+        source:
+          '#include <bits/stdc++.h>\nusing namespace std;\nint main(){ vector<int> a{3,1,2}; sort(a.begin(), a.end()); cout << a[0] << "\\n"; }\n',
+      });
+      assert.equal(res.outcome, 'ok', res.stderr);
+      assert.equal(res.stdout, '1\n');
+    });
+
     test('M1: blocks outbound network connections (--network none)', async () => {
       const source = await readFile(
         join(ATTACKS_DIR, 'm1-network.cpp'),
